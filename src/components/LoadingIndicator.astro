@@ -1,0 +1,47 @@
+---
+// src/components/LoadingIndicator.astro
+---
+
+<div class="flex items-center gap-3">
+  <span class="text-[15px] font-medium text-[#191c20] dark:text-white/90 tracking-wide font-sans">
+    Loading
+  </span>
+  <div class="flex items-center gap-1.5 pt-0.5">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+
+<style>
+  .loading-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--color-secondary, #f2791e);
+    animation: pulseDot 1.5s infinite ease-in-out both;
+  }
+
+  .loading-dot:nth-child(1) {
+    animation-delay: -0.4s;
+  }
+
+  .loading-dot:nth-child(2) {
+    animation-delay: -0.2s;
+  }
+
+  .loading-dot:nth-child(3) {
+    animation-delay: 0s;
+  }
+
+  @keyframes pulseDot {
+    0%, 80%, 100% {
+      transform: scale(1);
+      background-color: var(--color-secondary, #f2791e);
+    }
+    40% {
+      transform: scale(1.6);
+      background-color: var(--color-primary, #1b4086);
+    }
+  }
+</style>
