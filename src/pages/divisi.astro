@@ -367,6 +367,7 @@ const divisions = [
 
         // Show targeted content
         const targetId = tab.getAttribute('data-target');
+        if (!targetId) return;
         const targetContent = document.getElementById(targetId);
         if (targetContent) {
           targetContent.classList.remove('hidden');
