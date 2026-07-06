@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* === BRAND COLORS (same as Astro original) === */
+  --color-primary: #1b4086;
+  --color-primary-container: #e1e7ff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #001235;
+  --color-secondary: #f2791e;
+  --color-secondary-container: #ffdbca;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #341100;
+  --color-tertiary: #006684;
+  --color-tertiary-container: #bce9ff;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #001f2a;
+
+  /* === SURFACE & BACKGROUNDS === */
+  --color-background: #f8f9ff;
+  --color-on-background: #191c20;
+  --color-surface: #f8f9ff;
+  --color-on-surface: #191c20;
+  --color-surface-variant: #e1e2ec;
+  --color-on-surface-variant: #44474f;
+  --color-outline: #757780;
+  --color-outline-variant: #c5c6d0;
+  --color-inverse-surface: #2e3035;
+  --color-inverse-on-surface: #f0f0f7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3fa;
+  --color-surface-container: #ededf4;
+  --color-surface-container-high: #e8e7ef;
+
+  /* === TYPOGRAPHY === */
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-display-lg: "Plus Jakarta Sans", sans-serif;
+  --font-headline-lg: "Plus Jakarta Sans", sans-serif;
+  --font-headline-md: "Plus Jakarta Sans", sans-serif;
+  --font-body-lg: "Plus Jakarta Sans", sans-serif;
+  --font-body-md: "Plus Jakarta Sans", sans-serif;
+  --font-label-md: "Plus Jakarta Sans", sans-serif;
+  --font-caption: "Plus Jakarta Sans", sans-serif;
+
+  /* === BORDER RADIUS === */
+  --radius-card: 1.5rem;
+  --radius-button: 9999px;
+
+  /* === SPACING === */
+  --spacing-section-gap: 80px;
+  --spacing-container-padding-mobile: 20px;
+  --spacing-container-padding-desktop: 40px;
+
+  /* === SHADOWS === */
+  --shadow-soft: 0 20px 40px -15px rgba(27, 64, 134, 0.1);
+  --shadow-glow: 0 0 30px rgba(242, 121, 30, 0.3);
+}
+
+/* === GLOBAL BODY === */
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === UTILITY CLASSES === */
+@layer utilities {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #1b4086, #006684);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .bg-mesh {
+    background-color: #f8f9ff;
+    background-image:
+      radial-gradient(at 80% 0%, hsla(217, 66%, 90%, 1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsla(26, 89%, 90%, 1) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, hsla(217, 66%, 90%, 1) 0px, transparent 50%);
+  }
+
+  /* Scroll Animations */
+  .animate-on-scroll {
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-fade-up { transform: translateY(30px); }
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translate(0) scale(1);
+  }
+  .delay-100 { transition-delay: 100ms; }
+  .delay-200 { transition-delay: 200ms; }
+  .delay-300 { transition-delay: 300ms; }
+
+  /* Initial Animations */
+  @keyframes fadeUpInit {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-init-fade-up {
+    animation: fadeUpInit 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  .anim-delay-100 { animation-delay: 100ms; }
+  .anim-delay-200 { animation-delay: 200ms; }
+  .anim-delay-300 { animation-delay: 300ms; }
+  .anim-delay-400 { animation-delay: 400ms; }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* === CUSTOM SCROLLBAR === */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 6px;
+  border: 3px solid var(--color-background);
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--color-secondary); }
