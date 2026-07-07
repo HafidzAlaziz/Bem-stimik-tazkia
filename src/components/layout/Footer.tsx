@@ -1,9 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FiInstagram, FiTwitter, FiLinkedin, FiYoutube, FiMapPin, FiMail, FiBell } from "react-icons/fi";
 
 export default function Footer() {
+  const [showTooltip, setShowTooltip] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowTooltip((prev) => !prev);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <footer className="w-full pt-20 pb-8 bg-primary text-white overflow-hidden relative">
       <div className="absolute top-0 right-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/2"></div>
@@ -20,7 +29,7 @@ export default function Footer() {
           </div>
 
           <div className="relative w-full md:w-auto">
-            <div className="absolute -top-12 right-2 md:right-4 bg-white text-primary px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg pointer-events-none z-20 flex items-center gap-1.5 border border-primary/10 animate-bounce">
+            <div className={`absolute -top-12 right-2 md:right-4 bg-white text-primary px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg pointer-events-none z-20 flex items-center gap-1.5 border border-primary/10 animate-bounce transition-opacity duration-1000 ${showTooltip ? 'opacity-100' : 'opacity-0'}`}>
               <span className="text-base">😁</span>
               Bukan Bayar yah
               <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-primary/10 rotate-45 rounded-sm"></div>

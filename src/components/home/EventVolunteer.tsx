@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { FiCalendar, FiMapPin, FiUsers, FiClock, FiChevronLeft, FiChevronRight, FiArrowRight, FiZap, FiCheckCircle } from "react-icons/fi";
+import { FiCalendar, FiMapPin, FiClock, FiArrowRight, FiZap, FiCheckCircle } from "react-icons/fi";
 
 // --- STATIC DATA (akan diganti dengan data dari backend) ---
 
@@ -38,6 +38,16 @@ const upcomingEvents = [
     location: "Aula Utama",
     slots: 12,
     imgUrl: "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 7,
+    category: "Kompetisi",
+    title: "Tazkia IT Hackathon",
+    date: "10 September 2024",
+    time: "08:00 - 20:00 WIB",
+    location: "Lab Komputer Terpadu",
+    slots: 10,
+    imgUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
   },
 ];
 
@@ -92,83 +102,40 @@ const pastEvents = [
   },
 ];
 
-// --- MINI CALENDAR ---
-
-function MiniCalendar() {
-  const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
-
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
-  const monthName = currentMonth.toLocaleString("en-US", { month: "long" });
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // Highlighted event days
-  const eventDays = [17, 20, 21, 24, 26];
-
-  const cells: (number | null)[] = Array(firstDay).fill(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-  while (cells.length % 7 !== 0) cells.push(null);
-
-  return (
-    <div className="bg-white border border-outline-variant/30 rounded-2xl p-5 shadow-sm">
-      {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={() => setCurrentMonth(new Date(year, month - 1, 1))} className="p-1.5 rounded-full hover:bg-surface-variant transition-colors">
-          <FiChevronLeft size={16} className="text-on-surface-variant" />
-        </button>
-        <span className="font-bold text-sm text-on-background">{monthName} {year}</span>
-        <button onClick={() => setCurrentMonth(new Date(year, month + 1, 1))} className="p-1.5 rounded-full hover:bg-surface-variant transition-colors">
-          <FiChevronRight size={16} className="text-on-surface-variant" />
-        </button>
-      </div>
-
-      {/* Day Headers */}
-      <div className="grid grid-cols-7 mb-2">
-        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-          <div key={d} className="text-center text-[11px] font-bold text-on-surface-variant py-1">{d}</div>
-        ))}
-      </div>
-
-      {/* Day Cells */}
-      <div className="grid grid-cols-7 gap-y-1">
-        {cells.map((day, i) => {
-          const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-          const hasEvent = day !== null && eventDays.includes(day);
-          return (
-            <div key={i} className="flex items-center justify-center">
-              {day !== null ? (
-                <div className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium cursor-pointer transition-colors
-                  ${isToday ? "bg-primary text-white font-bold" : hasEvent ? "bg-secondary/20 text-secondary font-bold hover:bg-secondary/30" : "text-on-surface-variant hover:bg-surface-variant"}`}>
-                  {day}
-                </div>
-              ) : <div className="w-8 h-8" />}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="mt-4 pt-4 border-t border-outline-variant/20 space-y-2">
-        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Tanggal Acara:</p>
-        {upcomingEvents.map((ev) => (
-          <div key={ev.id} className="flex items-center gap-2 text-xs text-on-surface-variant">
-            <span className="text-secondary">•</span>
-            <span>{ev.date} – {ev.title}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 // --- MAIN COMPONENT ---
 
 export default function EventVolunteer() {
   return (
-    <div className="bg-[#f8f9fc] py-12">
+    <div className="bg-[#f8f9fc] py-16">
+
+      {/* ============================================ */}
+      {/*  HERO HEADER                                */}
+      {/* ============================================ */}
+      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16 text-center">
+        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
+          <FiCalendar size={13} /> Program Kegiatan
+        </span>
+        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+          Events &amp; <span className="text-[var(--color-primary)]">Volunteer</span> Hub
+        </h1>
+        <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto mb-8">
+          Temukan event terkini, daftarkan diri sebagai relawan, dan jadilah bagian dari perubahan nyata di kampus.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link
+            href="#upcoming"
+            className="bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all"
+          >
+            Lihat Events
+          </Link>
+          <Link
+            href="#volunteer"
+            className="border border-[var(--color-primary)] text-[var(--color-primary)] px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-primary)]/5 hover:-translate-y-0.5 transition-all"
+          >
+            Jadi Volunteer
+          </Link>
+        </div>
+      </section>
 
       {/* ============================================ */}
       {/*  SECTION 1: LIVE EVENT                      */}
@@ -208,11 +175,8 @@ export default function EventVolunteer() {
               </div>
 
               <div className="flex gap-3">
-                <Link href="#" className="bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md">
-                  Daftar Sekarang
-                </Link>
-                <Link href="#" className="bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-white/30 hover:-translate-y-0.5 transition-all duration-300">
-                  Lihat Publikasi
+                <Link href="#" className="bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md flex items-center gap-2">
+                  Masuk ke Live <FiArrowRight size={16} />
                 </Link>
               </div>
             </div>
@@ -223,7 +187,7 @@ export default function EventVolunteer() {
       {/* ============================================ */}
       {/*  SECTION 2: UPCOMING EVENTS + CALENDAR      */}
       {/* ============================================ */}
-      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16">
+      <section id="upcoming" className="px-5 md:px-10 max-w-7xl mx-auto mb-16">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-on-background">Upcoming Events</h2>
           <Link href="/agenda" className="group flex items-center gap-1.5 text-primary hover:text-secondary font-semibold text-sm transition-colors">
@@ -231,45 +195,36 @@ export default function EventVolunteer() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Event Cards */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            {upcomingEvents.map((event) => (
-              <Link key={event.id} href={`/agenda/${event.id}`}
-                className="group flex items-center gap-5 bg-white border border-outline-variant/30 rounded-2xl p-4 hover:border-primary/30 hover:shadow-md transition-all duration-300"
-              >
-                {/* Thumbnail */}
-                <div className="w-24 h-24 md:w-32 md:h-28 rounded-xl overflow-hidden shrink-0 bg-surface-variant">
-                  <img src={event.imgUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {upcomingEvents.map((event) => (
+            <Link key={event.id} href={`/agenda/${event.id}`}
+              className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 flex flex-col"
+            >
+              {/* Image */}
+              <div className="h-48 overflow-hidden bg-surface-variant relative shrink-0">
+                <img src={event.imgUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-secondary text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                  {event.category}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 flex flex-col flex-grow">
+                <h4 className="font-bold text-lg md:text-xl text-on-background group-hover:text-primary transition-colors mb-3 line-clamp-2">{event.title}</h4>
+                <div className="flex flex-col gap-2 text-sm text-on-surface-variant mb-6 flex-grow">
+                  <span className="flex items-center gap-2"><FiCalendar size={14} className="text-primary" /> {event.date}</span>
+                  <span className="flex items-center gap-2"><FiClock size={14} className="text-primary" /> {event.time}</span>
+                  <span className="flex items-center gap-2"><FiMapPin size={14} className="text-primary" /> {event.location}</span>
                 </div>
 
-                {/* Info */}
-                <div className="flex-grow min-w-0">
-                  <span className="text-[11px] font-bold text-secondary uppercase tracking-wider">{event.category}</span>
-                  <h4 className="font-bold text-base md:text-lg text-on-background group-hover:text-primary transition-colors mt-0.5 mb-2 line-clamp-1">{event.title}</h4>
-                  <div className="flex flex-col gap-1 text-sm text-on-surface-variant">
-                    <span className="flex items-center gap-2"><FiCalendar size={13} className="text-primary" /> {event.date}</span>
-                    <span className="flex items-center gap-2"><FiClock size={13} className="text-primary" /> {event.time}</span>
-                    <span className="flex items-center gap-2"><FiMapPin size={13} className="text-primary" /> {event.location}</span>
-                  </div>
+                <div className="flex items-center justify-end pt-4 border-t border-outline-variant/20 mt-auto">
+                  <span className="text-primary text-sm font-bold group-hover:text-secondary transition-colors flex items-center gap-1.5">
+                    Detail Event <FiArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </div>
-
-                {/* Daftar Button */}
-                <div className="shrink-0">
-                  <div className="text-center">
-                    <span className="text-primary text-sm font-bold group-hover:text-secondary transition-colors flex items-center gap-1">
-                      Daftar Sekarang <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Mini Calendar */}
-          <div className="lg:col-span-1">
-            <MiniCalendar />
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
