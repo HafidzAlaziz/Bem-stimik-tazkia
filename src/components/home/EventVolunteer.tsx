@@ -104,13 +104,14 @@ const pastEvents = [
 
 // --- MAIN COMPONENT ---
 
-export default function EventVolunteer() {
+export default function EventVolunteer({ showHeader = true }: { showHeader?: boolean }) {
   return (
     <div className="bg-[#f8f9fc] py-16">
 
       {/* ============================================ */}
       {/*  HERO HEADER                                */}
       {/* ============================================ */}
+      {showHeader && (
       <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16 text-center">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
           <FiCalendar size={13} /> Program Kegiatan
@@ -136,6 +137,7 @@ export default function EventVolunteer() {
           </Link>
         </div>
       </section>
+      )}
 
       {/* ============================================ */}
       {/*  SECTION 1: LIVE EVENT                      */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -56,12 +57,25 @@ export default function Navbar() {
       }`}
     >
       <div className="flex justify-between items-center h-20 md:h-24 px-5 md:px-10 max-w-7xl mx-auto">
-        <Link href="/" className="flex items-center gap-4 group">
-          <img
-            alt="BEM STMIK Tazkia Logo"
-            className="h-14 md:h-16 object-contain group-hover:scale-105 transition-transform"
-            src="/logo.png"
-          />
+        <Link href="/" className="flex items-center gap-3 md:gap-4 group">
+          <div className="flex items-center gap-2">
+            <Image
+              alt="BEM STMIK Tazkia Logo 1"
+              src="/logo.png"
+              width={64}
+              height={64}
+              priority
+              className="h-12 w-auto md:h-14 object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+            <Image
+              alt="BEM STMIK Tazkia Logo 2"
+              src="/logo2.png"
+              width={64}
+              height={64}
+              priority
+              className="h-12 w-auto md:h-14 object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
           <div className="hidden sm:flex flex-row items-center gap-1.5">
             <span
               className={`font-bold leading-none text-xl transition-colors duration-300 ${

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FiInstagram, FiTwitter, FiLinkedin, FiYoutube, FiMapPin, FiMail, FiBell } from "react-icons/fi";
 
 export default function Footer() {
@@ -57,7 +58,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5 flex flex-col gap-6">
             <div className="flex items-center gap-4 w-fit">
-              <img alt="BEM STMIK Tazkia Logo" className="h-12 w-12 object-contain bg-white rounded-lg p-1.5 shadow-sm" src="/logo.png" />
+              <Image 
+                alt="BEM STMIK Tazkia Logo" 
+                src="/logo.png" 
+                width={48} 
+                height={48} 
+                className="h-12 w-auto object-contain bg-white rounded-lg p-1.5 shadow-sm" 
+              />
               <div className="flex flex-row items-center gap-1.5">
                 <span className="font-bold leading-none text-xl text-white">BEM STMIK</span>
                 <span className="font-bold leading-none text-xl text-secondary">Tazkia</span>

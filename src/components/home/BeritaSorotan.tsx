@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { FiArrowRight, FiChevronRight, FiHeart, FiEye } from "react-icons/fi";
+import { FiArrowRight, FiHeart, FiEye, FiCalendar } from "react-icons/fi";
 
 export default function BeritaSorotan() {
   return (
@@ -11,114 +11,68 @@ export default function BeritaSorotan() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
         <div>
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-2 uppercase tracking-wide">
-            Berita & Sorotan
+            Berita Sorotan
           </h2>
           <p className="text-on-surface-variant text-base md:text-lg max-w-2xl">
-            Informasi terkini mengenai kegiatan dan pencapaian terbaru di lingkungan kampus.
+            Berita sorotan mengenai kegiatan dan pencapaian terbaru di lingkungan kampus.
           </p>
         </div>
-        <Link 
-          href="/berita" 
+        <Link
+          href="/berita"
           className="group flex items-center gap-1.5 text-primary hover:text-secondary font-semibold text-sm transition-colors duration-300 whitespace-nowrap"
         >
           View All Activity <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
-      {/* Grid Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Side: Large Featured Card */}
-        <div className="lg:col-span-8 group relative rounded-3xl overflow-hidden shadow-md cursor-pointer h-[400px] md:h-[500px]">
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+      {/* Featured News Banner - Single consistent card */}
+      <div className="w-full">
+        <div className="group relative rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 bg-surface min-h-[350px] md:min-h-[400px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl">
+          {/* Background Image with Zoom */}
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-102"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80')" }}
           ></div>
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1b4086]/90 via-[#1b4086]/40 to-transparent"></div>
+          {/* Gradient Overlay for Text Visibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1b4086]/95 via-[#1b4086]/50 to-transparent"></div>
 
-          {/* Content */}
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 flex flex-col items-start text-white">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="bg-white text-primary text-xs font-bold px-3 py-1.5 rounded-md shadow-sm uppercase tracking-wider">
-                Berita Utama
-              </span>
-              <div className="flex items-center gap-3 text-xs text-white/90 font-medium">
-                <span className="flex items-center gap-1"><FiHeart size={14} /> 542</span>
-                <span className="flex items-center gap-1"><FiEye size={14} /> 2.1k</span>
-              </div>
-            </div>
-            
-            <h3 className="text-2xl md:text-4xl font-bold mb-3 leading-tight text-white group-hover:text-secondary transition-colors duration-300">
-              Inovasi Kampus Hijau: Menuju Masa Depan Berkelanjutan
-            </h3>
-            <p className="text-white/90 text-sm md:text-base mb-6 max-w-3xl line-clamp-2 md:line-clamp-none">
-              STMIK Tazkia meluncurkan inisiatif kampus ramah lingkungan dengan integrasi panel surya dan sistem pengelolaan limbah mandiri.
+          {/* Featured Badge */}
+          <div className="absolute top-6 left-6 z-10 flex items-center gap-2">
+            <span className="bg-secondary text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+              Sorotan
+            </span>
+            <span className="bg-white/20 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
+              <FiCalendar className="inline shrink-0 text-white" /> 16 Jun 2026
+            </span>
+          </div>
+
+          {/* Featured Content */}
+          <div className="relative z-10 p-6 md:p-10 text-white max-w-4xl text-left">
+            <span className="text-secondary-container font-semibold text-sm uppercase tracking-widest mb-2 block">
+              Pendidikan
+            </span>
+            <h2 className="text-2xl md:text-4xl font-extrabold mb-4 leading-tight group-hover:text-secondary-container transition-colors duration-300">
+              The Future of AI in Campus Management: STMIK Leads the Way
+            </h2>
+            <p className="text-white/85 text-sm md:text-base mb-6 font-light leading-relaxed line-clamp-3">
+              STMIK Tazkia menjadi pionir dalam mengintegrasikan kecerdasan buatan (Artificial Intelligence) guna mengoptimalkan sistem manajemen administrasi kampus, pelayanan akademik, dan analisis data kemahasiswaan untuk menciptakan ekosistem kampus digital yang efisien.
             </p>
-            <Link 
-              href="#" 
-              className="flex items-center gap-2 text-sm font-bold tracking-wider hover:text-secondary transition-colors"
-            >
-              BACA SELENGKAPNYA <FiArrowRight className="text-lg" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Right Side: 2 Small Cards */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          
-          {/* Top Small Card (Berita Terbaru 1) */}
-          <div className="bg-surface-variant/30 hover:bg-surface-variant/60 border border-outline-variant/30 rounded-3xl p-8 flex flex-col h-full justify-between transition-colors duration-300 group cursor-pointer shadow-sm hover:shadow-md">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block">
-                  Berita Terbaru
-                </span>
-                <div className="flex items-center gap-3 text-xs text-on-surface-variant font-medium">
-                  <span className="flex items-center gap-1"><FiHeart size={12} /> 128</span>
-                  <span className="flex items-center gap-1"><FiEye size={12} /> 850</span>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <Link
+                href="/berita"
+                className="inline-flex items-center gap-2 bg-secondary text-white hover:bg-secondary/90 transition-all duration-300 px-6 py-3.5 rounded-full font-bold text-sm hover:translate-x-1"
+              >
+                Baca Selengkapnya <FiArrowRight />
+              </Link>
+              <div className="flex items-center gap-4 text-xs text-white/70">
+                <span className="flex items-center gap-1"><FiHeart /> 350 Suka</span>
+                <span className="flex items-center gap-1"><FiEye /> 1240 Dilihat</span>
               </div>
-              <h4 className="text-xl font-bold text-primary mb-3 leading-snug group-hover:text-secondary transition-colors">
-                Prestasi Mahasiswa: Juara 1 Lomba Web Design Nasional
-              </h4>
-              <p className="text-sm text-on-surface-variant line-clamp-3 mb-6">
-                Tim mahasiswa STMIK Tazkia berhasil meraih juara pertama dalam kompetisi desain antarmuka bergengsi tingkat nasional yang diselenggarakan di Jakarta.
-              </p>
             </div>
-            <Link href="#" className="flex items-center gap-1.5 text-primary font-bold text-sm hover:text-secondary transition-colors w-fit">
-              BACA ARTIKEL <FiChevronRight />
-            </Link>
           </div>
-
-          {/* Bottom Small Card (Berita Terbaru 2) */}
-          <div className="bg-surface-variant/30 hover:bg-surface-variant/60 border border-outline-variant/30 rounded-3xl p-8 flex flex-col h-full justify-between transition-colors duration-300 group cursor-pointer shadow-sm hover:shadow-md">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block">
-                  Berita Terbaru
-                </span>
-                <div className="flex items-center gap-3 text-xs text-on-surface-variant font-medium">
-                  <span className="flex items-center gap-1"><FiHeart size={12} /> 94</span>
-                  <span className="flex items-center gap-1"><FiEye size={12} /> 620</span>
-                </div>
-              </div>
-              <h4 className="text-xl font-bold text-primary mb-3 leading-snug group-hover:text-secondary transition-colors">
-                Advocacy Success: New 24/7 Library Access Policy
-              </h4>
-              <p className="text-sm text-on-surface-variant line-clamp-3 mb-6">
-                Setelah beberapa bulan negosiasi, administrasi kampus menyetujui perpanjangan jam operasional perpustakaan untuk mendukung riset dan masa ujian.
-              </p>
-            </div>
-            <Link href="#" className="flex items-center gap-1.5 text-primary font-bold text-sm hover:text-secondary transition-colors w-fit">
-              BACA ARTIKEL <FiChevronRight />
-            </Link>
-          </div>
-
         </div>
       </div>
     </section>
   );
 }
+

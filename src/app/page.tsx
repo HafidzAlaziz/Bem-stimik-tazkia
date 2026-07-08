@@ -16,7 +16,7 @@ export default function Home() {
       <Hero />
       <KaryaProjek />
       <BeritaSorotan />
-      <EventVolunteer />
+      <EventVolunteer showHeader={false} />
       <SaranAduan />
     </>
   );

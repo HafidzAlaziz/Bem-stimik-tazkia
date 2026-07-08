@@ -1,21 +1,77 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Link from "next/link";
 
 export default function Hero() {
+  const containerRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const hoverRef = useRef(false);
+  const mouseXRef = useRef(0.5);
+
+  useEffect(() => {
+    const imageElement = imageRef.current;
+    if (!imageElement) return;
+
+    let animationFrameId: number;
+    let currentPanX = 0;
+
+    const update = () => {
+      let targetPanX = 0;
+
+      if (hoverRef.current) {
+        // Map mouseX (0..1) to pan range (+10% to -10%)
+        // Since the image is scaled (1.25x), we have space to pan horizontally.
+        targetPanX = (0.5 - mouseXRef.current) * 20;
+      } else {
+        // Subtle auto-pan oscillation when idle (period ~30 seconds)
+        targetPanX = Math.sin(Date.now() / 5000) * 8;
+      }
+
+      // Butter-smooth linear interpolation (lerp)
+      currentPanX += (targetPanX - currentPanX) * 0.05;
+
+      // Apply transform directly to DOM for high performance (60fps+)
+      imageElement.style.transform = `translate3d(${currentPanX}%, 0, 0) scale(1.25)`;
+
+      animationFrameId = requestAnimationFrame(update);
+    };
+
+    // Initial positioning
+    imageElement.style.transform = "translate3d(0%, 0, 0) scale(1.25)";
+    animationFrameId = requestAnimationFrame(update);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    mouseXRef.current = x;
+  };
+
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center px-container-padding-mobile md:px-container-padding-desktop overflow-hidden pt-20 pb-24">
+    <section
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => { hoverRef.current = true; }}
+      onMouseLeave={() => { hoverRef.current = false; mouseXRef.current = 0.5; }}
+      className="relative min-h-[90vh] flex items-center justify-center px-container-padding-mobile md:px-container-padding-desktop overflow-hidden pt-20 pb-24"
+    >
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-black/30 z-10"></div>
-        <div 
-          className="w-full h-full bg-cover bg-center bg-no-repeat scale-105 transform origin-center" 
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2086&auto=format&fit=crop')" }}
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
+        <div
+          ref={imageRef}
+          className="w-full h-full bg-cover bg-center bg-no-repeat origin-center will-change-transform"
+          style={{ backgroundImage: "url('/image copy.png')" }}
         ></div>
       </div>
-      
+
       {/* Decorative elements removed to match the clean background */}
-      
+
       <div className="relative z-30 max-w-5xl mx-auto text-center mt-32">
         <h1 className="font-display-lg font-bold text-display-lg md:text-[72px] md:leading-[1.1] mb-stack-gap-lg text-on-primary drop-shadow-lg animate-init-fade-up hover:scale-[1.02] transition-transform duration-500 cursor-default">
           Satu Langkah untuk <br />

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,13 @@ export default function LoginPage() {
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center p-3 mb-5 shadow-inner">
-            <img src="/logo.png" alt="Logo BEM" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+            <Image 
+              src="/logo.png" 
+              alt="Logo BEM" 
+              width={80} 
+              height={80} 
+              className="w-full h-full object-contain hover:scale-105 transition-transform" 
+            />
           </div>
           <h1 className="text-2xl font-display-md text-on-background mb-1.5 font-bold">Selamat Datang 👋</h1>
           <p className="text-sm text-on-surface-variant">Silakan masuk ke portal internal pengurus.</p>
