@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   FiArrowLeft, FiHeart, FiEye, FiGithub, FiExternalLink,
-  FiCalendar, FiTag, FiUsers, FiAward, FiShare2,
-  FiZap, FiBatteryCharging, FiCpu, FiChevronLeft, FiChevronRight
+  FiCalendar, FiTag, FiShare2,
+  FiChevronLeft, FiChevronRight
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // ─── FULL MOCK DATA ─────────────────────────────────────────────────────────
 const projectsDetail: Record<number, {
@@ -25,7 +26,7 @@ const projectsDetail: Record<number, {
   tech: string[];
   status: string;
   team: { name: string; role: string; avatar: string; github?: string; linkedin?: string }[];
-  challenges: { icon: React.ReactNode; title: string; desc: string }[];
+  challenges: { title: string; desc: string }[];
   process: { phase: string; desc: string; image: string }[];
   quote: string;
   githubUrl?: string;
@@ -62,9 +63,9 @@ const projectsDetail: Record<number, {
       { name: "Dimas Kurniawan", role: "Hardware Engineer", avatar: "https://i.pravatar.cc/80?img=52", github: "https://github.com", linkedin: "https://linkedin.com" },
     ],
     challenges: [
-      { icon: <FiZap size={20} />, title: "Dynamic Obstacles", desc: "Membangun sistem prediksi hambatan bergerak di koridor kampus yang padat menjadi tantangan utama kami." },
-      { icon: <FiBatteryCharging size={20} />, title: "Battery Efficiency", desc: "Mengoptimalkan konsumsi daya agar robot dapat beroperasi penuh selama 8 jam dalam sekali pengisian." },
-      { icon: <FiCpu size={20} />, title: "Real-time Mapping", desc: "Memproses data sensor LIDAR secara real-time dengan latensi kurang dari 50ms pada hardware terbatas." },
+      { title: "Dynamic Obstacles", desc: "Membangun sistem prediksi hambatan bergerak di koridor kampus yang padat menjadi tantangan utama kami." },
+      { title: "Battery Efficiency", desc: "Mengoptimalkan konsumsi daya agar robot dapat beroperasi penuh selama 8 jam dalam sekali pengisian." },
+      { title: "Real-time Mapping", desc: "Memproses data sensor LIDAR secara real-time dengan latensi kurang dari 50ms pada hardware terbatas." },
     ],
     process: [
       { phase: "Research & Design", desc: "Riset mendalam terhadap algoritma navigasi otonom, studi lingkungan kampus, dan desain arsitektur sistem selama 6 minggu.", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" },
@@ -103,9 +104,9 @@ const projectsDetail: Record<number, {
       { name: "Reza Mahendra", role: "Frontend Dev", avatar: "https://i.pravatar.cc/80?img=57", github: "https://github.com", linkedin: "https://linkedin.com" },
     ],
     challenges: [
-      { icon: <FiUsers size={20} />, title: "User Diversity", desc: "Mengakomodasi kebutuhan 3000+ mahasiswa dari berbagai jurusan dengan kebiasaan digital yang berbeda-beda." },
-      { icon: <FiZap size={20} />, title: "Legacy System", desc: "Mengintegrasikan desain baru dengan sistem backend lama yang memiliki keterbatasan API yang signifikan." },
-      { icon: <FiAward size={20} />, title: "Accessibility", desc: "Memastikan WCAG 2.1 AA compliance di seluruh komponen untuk mahasiswa berkebutuhan khusus." },
+      { title: "User Diversity", desc: "Mengakomodasi kebutuhan 3000+ mahasiswa dari berbagai jurusan dengan kebiasaan digital yang berbeda-beda." },
+      { title: "Legacy System", desc: "Mengintegrasikan desain baru dengan sistem backend lama yang memiliki keterbatasan API yang signifikan." },
+      { title: "Accessibility", desc: "Memastikan WCAG 2.1 AA compliance di seluruh komponen untuk mahasiswa berkebutuhan khusus." },
     ],
     process: [
       { phase: "User Research", desc: "Survey kepada 200 mahasiswa, 30 wawancara mendalam, dan analisis heatmap portal lama selama 4 minggu.", image: "https://images.unsplash.com/photo-1553484771-371a605b060b?w=800&q=80" },
@@ -144,15 +145,15 @@ const projectsDetail: Record<number, {
       { name: "Anisa Dewi", role: "Data Analyst", avatar: "https://i.pravatar.cc/80?img=44", github: "https://github.com", linkedin: "https://linkedin.com" },
     ],
     challenges: [
-      { icon: <FiCpu size={20} />, title: "Data Heterogeneity", desc: "Menggabungkan data dari 48 sensor berbeda merk dengan format dan frekuensi sampling yang tidak seragam." },
-      { icon: <FiZap size={20} />, title: "Anomaly Detection", desc: "Membangun model yang dapat membedakan lonjakan energi normal (kegiatan kampus) dari pemborosan yang sesungguhnya." },
-      { icon: <FiUsers size={20} />, title: "Stakeholder Buy-in", desc: "Meyakinkan pihak rektorat tentang validitas data dan urgensi implementasi rekomendasi." },
+      { title: "Data Heterogeneity", desc: "Menggabungkan data dari 48 sensor berbeda merk dengan format dan frekuensi sampling yang tidak seragam." },
+      { title: "Anomaly Detection", desc: "Membangun model yang dapat membedakan lonjakan energi normal (kegiatan kampus) dari pemborosan yang sesungguhnya." },
+      { title: "Stakeholder Buy-in", desc: "Meyakinkan pihak rektorat tentang validitas data dan urgensi implementasi rekomendasi." },
     ],
     process: [
       { phase: "Sensor Deployment", desc: "Pemasangan 48 node sensor IoT di 12 gedung kampus dan kalibrasi jaringan pengumpulan data terpusat.", image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80" },
       { phase: "Analysis & Report", desc: "Analisis 2.3 juta data point menggunakan model time-series dan clustering untuk identifikasi pola konsumsi.", image: "https://images.unsplash.com/photo-1565728744382-61accd4aa148?w=800&q=80" },
     ],
-    quote: "After six months of meticulous data collection, the patterns became clear — the biggest culprits were HVAC systems running overnight in empty buildings.",
+    quote: "After six months of meticulous data collection, the patterns became clear the biggest culprits were HVAC systems running overnight in empty buildings.",
     githubUrl: "https://github.com",
   },
 };
@@ -324,7 +325,13 @@ export default function ProjectDetailPage() {
                 onClick={() => setLiked(!liked)}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border ${liked ? "bg-red-50 border-red-200 text-red-500" : "border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-500"}`}
               >
-                <FiHeart size={16} className={liked ? "fill-red-500" : ""} />
+                <div className="w-6 h-6 flex items-center justify-center -ml-1 shrink-0">
+                  {liked ? (
+                    <DotLottieReact src="/animations/Heart Animated.lottie" autoplay loop={false} />
+                  ) : (
+                    <FiHeart size={16} />
+                  )}
+                </div>
                 {project.likes + (liked ? 1 : 0)}
               </button>
               <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 text-gray-500 hover:border-gray-400">
@@ -427,24 +434,21 @@ export default function ProjectDetailPage() {
               </div>
             </motion.section>
 
-            {/* Fitur */}
+            {/* Fitur / Tantangan */}
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             >
               <h2 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
-                <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Fitur
+                <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Fitur Utama
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {project.challenges.map((ch, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.1 * i }}
-                    className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group"
+                    className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-300">
-                      {ch.icon}
-                    </div>
                     <h4 className="font-bold text-gray-800 mb-2">{ch.title}</h4>
                     <p className="text-sm text-gray-500 leading-relaxed">{ch.desc}</p>
                   </motion.div>

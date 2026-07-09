@@ -263,7 +263,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                   <span>Deadline: <span className="font-semibold text-on-background">{vol.deadline}</span></span>
                 </div>
 
-                <Link href="#"
+                <Link href={`/volunteer/${vol.id}`}
                   className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-bold py-2.5 rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
                 >
                   <FiCheckCircle size={15} /> Apply Posisi

@@ -1,24 +1,27 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { 
   FiSearch, 
   FiCalendar, 
   FiArrowRight, 
-  FiChevronLeft, 
-  FiChevronRight, 
-  FiHeart, 
-  FiEye 
+  FiHeart,
+  FiEye,
+  FiChevronLeft,
+  FiChevronRight
 } from "react-icons/fi";
+import { createClient } from "@/utils/supabase/client";
+import LikeButton from "@/components/ui/LikeButton";
 
 interface NewsItem {
   id: string;
   title: string;
+  slug: string;
   excerpt: string;
   category: string;
-  date: string;
-  imageUrl: string;
+  created_at: string;
+  image_url: string;
   views: number;
   likes: number;
 }
@@ -28,115 +31,30 @@ export default function BeritaPage() {
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Mockup data for Featured News (Berita Utama)
-  const featuredNews: NewsItem = {
-    id: "featured-1",
-    title: "The Future of AI in Campus Management: STMIK Leads the Way",
-    excerpt: "STMIK Tazkia menjadi pionir dalam mengintegrasikan kecerdasan buatan (Artificial Intelligence) guna mengoptimalkan sistem manajemen administrasi kampus, pelayanan akademik, dan analisis data kemahasiswaan untuk menciptakan ekosistem kampus digital yang efisien.",
-    category: "Pendidikan",
-    date: "16 Jun 2026",
-    imageUrl: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-    views: 1240,
-    likes: 350
-  };
+  const [allNews, setAllNews] = useState<NewsItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mockup data for Grid News (Daftar Berita)
-  const newsList: NewsItem[] = [
-    {
-      id: "news-1",
-      title: "BEM STMIK Tazkia Luncurkan Portal Inovasi Mahasiswa Baru",
-      excerpt: "Wadah digital terintegrasi untuk mendokumentasikan, menampilkan, dan mempromosikan karya inovasi teknologi mahasiswa ke publik.",
-      category: "Kampus",
-      date: "14 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 890,
-      likes: 210
-    },
-    {
-      id: "news-2",
-      title: "Sports Week Resmi Dimulai: Rayakan Kebersamaan Lewat Kompetisi Sehat",
-      excerpt: "Turnamen olahraga tahunan antar-program studi resmi dibuka hari ini dengan ratusan atlet mahasiswa bersaing memperebutkan piala bergilir.",
-      category: "Olahraga",
-      date: "12 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 730,
-      likes: 185
-    },
-    {
-      id: "news-3",
-      title: "Graduation Day: Sidang Senat Terbuka Wisuda Sarjana Angkatan IX",
-      excerpt: "Momen bersejarah pelantikan wisudawan-wisudawati berprestasi STMIK Tazkia yang siap berkontribusi nyata di sektor industri digital.",
-      category: "Akademik",
-      date: "10 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 1050,
-      likes: 312
-    },
-    {
-      id: "news-4",
-      title: "Kabinet Sinergi Mulai Jalankan Program Kerja Unggulan Semester Ganjil",
-      excerpt: "Rangkaian program kerja inovatif berfokus pada pengabdian masyarakat, peningkatan soft skill, dan inkubasi start-up mahasiswa.",
-      category: "Rilis",
-      date: "08 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 620,
-      likes: 140
-    },
-    {
-      id: "news-5",
-      title: "Seminar Nasional Cybersecurity: Mengamankan Data Pribadi di Era Cloud",
-      excerpt: "Diskusi mendalam bersama pakar keamanan siber mengenai strategi perlindungan privasi data dan mitigasi ancaman ransomware.",
-      category: "Artikel",
-      date: "05 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 540,
-      likes: 95
-    },
-    {
-      id: "news-6",
-      title: "Pelatihan Kepemimpinan Mahasiswa Sukses Lahirkan Organisator Tangguh",
-      excerpt: "Membekali calon pengurus organisasi kampus dengan kapasitas kepemimpinan kolaboratif, manajemen konflik, dan etika kerja.",
-      category: "Pendidikan",
-      date: "01 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      views: 480,
-      likes: 110
-    }
-  ];
+  useEffect(() => {
+    async function fetchNews() {
+      setIsLoading(true);
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('berita')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  // Mockup data for Popular Sidebar (Berita Populer)
-  const popularNews: NewsItem[] = [
-    {
-      id: "pop-1",
-      title: "Tips Lolos Pendanaan PKM-KC Dikti untuk Mahasiswa IT",
-      excerpt: "",
-      category: "Artikel",
-      date: "15 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-      views: 2450,
-      likes: 680
-    },
-    {
-      id: "pop-2",
-      title: "Panduan Pengajuan Beasiswa Tazkia Unggulan Tahun Pelajaran 2026",
-      excerpt: "",
-      category: "Pengumuman",
-      date: "03 Jun 2026",
-      imageUrl: "https://images.unsplash.com/photo-1525921429624-479b6c294a40?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-      views: 1980,
-      likes: 420
-    },
-    {
-      id: "pop-3",
-      title: "Mengenal Divisi Riset dan Teknologi BEM STMIK Tazkia",
-      excerpt: "",
-      category: "Rilis",
-      date: "28 May 2026",
-      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
-      views: 1530,
-      likes: 310
+      if (data) {
+        setAllNews(data);
+      }
+      setIsLoading(false);
     }
-  ];
+    fetchNews();
+  }, []);
+
+  // Compute featured, popular, and grid news dynamically
+  const featuredNews = allNews.length > 0 ? allNews[0] : null;
+  const newsList = allNews.length > 1 ? allNews.slice(1) : [];
+  const popularNews = [...allNews].sort((a, b) => b.views - a.views).slice(0, 3);
 
   // Categories list
   const categories = ["Semua", "Berita", "Artikel", "Rilis", "Kampus", "Pendidikan"];
@@ -195,13 +113,12 @@ export default function BeritaPage() {
         </header>
 
         {/* Featured News Section */}
-        {selectedCategory === "Semua" && searchQuery === "" && (
+        {selectedCategory === "Semua" && searchQuery === "" && featuredNews && (
           <section className="mb-12">
             <div className="group relative rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 bg-surface min-h-[350px] md:min-h-[400px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl">
-              {/* Background Image with Zoom */}
               <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-102"
-                style={{ backgroundImage: `url('${featuredNews.imageUrl}')` }}
+                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style={{ backgroundImage: `url('${featuredNews.image_url}')` }}
               ></div>
               {/* Gradient Overlay for Text Visibility */}
               <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/50 to-transparent"></div>
@@ -212,7 +129,7 @@ export default function BeritaPage() {
                   Sorotan
                 </span>
                 <span className="bg-white/20 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
-                  <FiCalendar className="inline shrink-0" /> {featuredNews.date}
+                  <FiCalendar className="inline shrink-0" /> {new Date(featuredNews.created_at).toLocaleDateString('id-ID')}
                 </span>
               </div>
 
@@ -229,13 +146,13 @@ export default function BeritaPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                   <Link 
-                    href={`/berita/${featuredNews.id}`}
+                    href={`/berita/${featuredNews.slug}`}
                     className="inline-flex items-center gap-2 bg-secondary text-white hover:bg-secondary/90 transition-all duration-300 px-6 py-3.5 rounded-full font-bold text-sm hover:translate-x-1"
                   >
                     Baca Selengkapnya <FiArrowRight />
                   </Link>
                   <div className="flex items-center gap-4 text-xs text-white/70">
-                    <span className="flex items-center gap-1"><FiHeart /> {featuredNews.likes} Suka</span>
+                    <LikeButton initialLikes={featuredNews.likes} id={featuredNews.id} table="berita" label="Suka" size={16} />
                     <span className="flex items-center gap-1"><FiEye /> {featuredNews.views} Dilihat</span>
                   </div>
                 </div>
@@ -293,7 +210,7 @@ export default function BeritaPage() {
                     {/* Background Image */}
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                      style={{ backgroundImage: `url('${news.imageUrl}')` }}
+                      style={{ backgroundImage: `url('${news.image_url}')` }}
                     ></div>
 
                     {/* Gradient Overlay */}
@@ -307,14 +224,14 @@ export default function BeritaPage() {
                           {news.category}
                         </span>
                         <div className="flex items-center gap-2 text-[10px] text-white/90 font-medium">
-                          <span className="flex items-center gap-0.5"><FiHeart size={11} /> {news.likes}</span>
+                          <LikeButton initialLikes={news.likes} id={news.id} table="berita" size={11} />
                           <span className="flex items-center gap-0.5"><FiEye size={11} /> {news.views}</span>
                         </div>
                       </div>
 
                       {/* Date */}
                       <span className="flex items-center gap-1 text-[10px] text-white/70 mb-2 font-medium">
-                        <FiCalendar size={10} /> {news.date}
+                        <FiCalendar size={10} /> {new Date(news.created_at).toLocaleDateString('id-ID')}
                       </span>
 
                       {/* Title */}
@@ -329,7 +246,7 @@ export default function BeritaPage() {
 
                       {/* Read More */}
                       <Link
-                        href={`/berita/${news.id}`}
+                        href={`/berita/${news.slug}`}
                         className="flex items-center gap-1.5 text-xs font-bold tracking-wider hover:text-secondary transition-colors"
                       >
                         BACA SELENGKAPNYA <FiArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
@@ -398,14 +315,14 @@ export default function BeritaPage() {
             {/* Popular News Cards - Same image-overlay style */}
             {popularNews.map((item) => (
               <Link
-                href={`/berita/${item.id}`}
+                href={`/berita/${item.slug}`}
                 key={item.id}
                 className="group relative rounded-3xl overflow-hidden shadow-md cursor-pointer h-[200px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl"
               >
                 {/* Background Image */}
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url('${item.imageUrl}')` }}
+                  style={{ backgroundImage: `url('${item.image_url}')` }}
                 ></div>
 
                 {/* Gradient Overlay */}
@@ -419,14 +336,14 @@ export default function BeritaPage() {
                     </span>
                     <div className="flex items-center gap-2 text-[9px] text-white/80 font-medium">
                       <span className="flex items-center gap-0.5"><FiEye size={10} /> {item.views}</span>
-                      <span className="flex items-center gap-0.5"><FiHeart size={10} /> {item.likes}</span>
+                      <LikeButton initialLikes={item.likes} id={item.id} table="berita" size={10} />
                     </div>
                   </div>
                   <h4 className="text-sm font-bold leading-snug text-white group-hover:text-secondary transition-colors duration-300 line-clamp-2">
                     {item.title}
                   </h4>
                   <span className="flex items-center gap-1 text-[9px] text-white/60 mt-1.5 font-medium">
-                    <FiCalendar size={9} /> {item.date}
+                    <FiCalendar size={9} /> {new Date(item.created_at).toLocaleDateString('id-ID')}
                   </span>
                 </div>
               </Link>

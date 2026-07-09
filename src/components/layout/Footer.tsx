@@ -57,18 +57,18 @@ export default function Footer() {
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5 flex flex-col gap-6">
-            <div className="flex items-center gap-4 w-fit">
+            <div className="bg-white p-2 rounded-xl mb-6 shadow-sm inline-block w-fit">
               <Image 
-                alt="BEM STMIK Tazkia Logo" 
-                src="/logo.png" 
-                width={48} 
+                src="/images/logo.png" 
+                alt="Logo BEM" 
+                width={80} 
                 height={48} 
                 className="h-12 w-auto object-contain bg-white rounded-lg p-1.5 shadow-sm" 
               />
-              <div className="flex flex-row items-center gap-1.5">
-                <span className="font-bold leading-none text-xl text-white">BEM STMIK</span>
-                <span className="font-bold leading-none text-xl text-secondary">Tazkia</span>
-              </div>
+            </div>
+            <div className="flex flex-row items-center gap-1.5">
+              <span className="font-bold leading-none text-xl text-white">BEM STMIK</span>
+              <span className="font-bold leading-none text-xl text-secondary">Tazkia</span>
             </div>
             <p className="text-white/80 max-w-sm leading-relaxed">
               Badan Eksekutif Mahasiswa STMIK Tazkia Bogor. Satu langkah untuk STMIK Tazkia berdampak.

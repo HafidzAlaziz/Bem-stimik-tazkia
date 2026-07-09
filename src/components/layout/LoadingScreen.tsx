@@ -77,7 +77,7 @@ export default function LoadingScreen() {
           {React.createElement("lottie-player", {
             ref: playerRef,
             id: "lottie-logo",
-            src: "/lottie-logo.json",
+            src: "/animations/lottie-logo.json",
             background: "transparent",
             speed: "1",
             style: { width: "150px", height: "150px" },

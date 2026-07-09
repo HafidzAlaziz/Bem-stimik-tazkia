@@ -32,7 +32,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center p-3 mb-5 shadow-inner">
             <Image 
-              src="/logo.png" 
+              src="/images/logo.png" 
               alt="Logo BEM" 
               width={80} 
               height={80} 

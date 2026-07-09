@@ -66,7 +66,7 @@ export default function Hero() {
         <div
           ref={imageRef}
           className="w-full h-full bg-cover bg-center bg-no-repeat origin-center will-change-transform"
-          style={{ backgroundImage: "url('/image copy.png')" }}
+          style={{ backgroundImage: "url('/images/image copy.png')" }}
         ></div>
       </div>
 
@@ -88,8 +88,8 @@ export default function Hero() {
             </span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
           </Link>
-          <Link href="/tentang" className="group relative overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-button font-label-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 hover:scale-105 hover:border-primary w-full sm:w-auto justify-center cursor-pointer z-10 flex items-center">
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300">Pelajari Lebih Lanjut</span>
+          <Link href="/kabinet" className="group relative overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-button font-label-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 hover:scale-105 hover:border-primary w-full sm:w-auto justify-center cursor-pointer z-10 flex items-center">
+            <span className="relative z-10 group-hover:text-white transition-colors duration-300">Tentang Kami</span>
             <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
           </Link>
         </div>

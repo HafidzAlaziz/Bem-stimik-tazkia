@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 @import "tailwindcss";
-
+@plugin "@tailwindcss/typography";
 @theme {
   /* === BRAND COLORS (same as Astro original) === */
   --color-primary: #1b4086;

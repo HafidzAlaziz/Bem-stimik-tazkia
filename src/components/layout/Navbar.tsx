@@ -34,7 +34,7 @@ export default function Navbar() {
       dropdown: true,
       children: [
         { name: "Berita", path: "/berita" },
-        { name: "Galeri", path: "/galeri" }
+        { name: "Dokumentasi", path: "/dokumentasi" }
       ]
     },
     { 
@@ -61,7 +61,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <Image
               alt="BEM STMIK Tazkia Logo 1"
-              src="/logo.png"
+              src="/images/logo.png"
               width={64}
               height={64}
               priority
@@ -69,7 +69,7 @@ export default function Navbar() {
             />
             <Image
               alt="BEM STMIK Tazkia Logo 2"
-              src="/logo2.png"
+              src="/images/logo2.png"
               width={64}
               height={64}
               priority

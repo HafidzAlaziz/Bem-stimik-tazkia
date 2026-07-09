@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.19.8",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.1",
+    "@tailwindcss/typography": "^0.5.20",
     "framer-motion": "^12.42.2",
     "next": "16.2.10",
     "react": "19.2.4",
