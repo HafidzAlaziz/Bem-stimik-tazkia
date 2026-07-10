@@ -1,15 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    alert("Ini halaman demonstrasi. Sistem belum terhubung ke database.");
+  useEffect(() => {
+    // Check if there's an error in the URL (e.g. from callback or domain restriction)
+    const params = new URLSearchParams(window.location.search);
+    const errorMsg = params.get('error');
+    const errorDesc = params.get('error_description');
+    
+    if (errorMsg || errorDesc) {
+      setError(errorDesc || errorMsg || "Terjadi kesalahan saat login.");
+    }
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    const supabase = createClient();
+    
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,60 +67,34 @@ export default function LoginPage() {
             />
           </div>
           <h1 className="text-2xl font-display-md text-on-background mb-1.5 font-bold">Selamat Datang 👋</h1>
-          <p className="text-sm text-on-surface-variant">Silakan masuk ke portal internal pengurus.</p>
+          <p className="text-sm text-on-surface-variant">Silakan masuk menggunakan email kampus.</p>
         </div>
 
-        {/* Form */}
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-          
-          {/* Email/NIM Input */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-on-background uppercase tracking-wider">NIM / Email</label>
-            <div className="flex items-center w-full rounded-xl border border-outline-variant/40 bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3.5 gap-3">
-              <span className="material-symbols-outlined text-outline text-[20px] shrink-0">person</span>
-              <input type="text" required placeholder="Masukkan NIM atau Email" className="w-full bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-sm text-on-background" />
-            </div>
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-xl text-red-600 text-sm flex items-start gap-2 animate-fade-in mb-6">
+            <span className="material-symbols-outlined text-[18px] shrink-0 mt-0.5">error</span>
+            <p>{error}</p>
           </div>
+        )}
 
-          {/* Password Input */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-on-background uppercase tracking-wider">Kata Sandi</label>
-            <div className="flex items-center w-full rounded-xl border border-outline-variant/40 bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all px-4 py-3.5 gap-3">
-              <span className="material-symbols-outlined text-outline text-[20px] shrink-0">lock</span>
-              <input 
-                type={showPassword ? "text" : "password"} 
-                required 
-                placeholder="Masukkan kata sandi" 
-                className="w-full bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-sm text-on-background" 
-              />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-outline hover:text-primary transition-colors focus:outline-none flex items-center justify-center shrink-0 cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {showPassword ? "visibility_off" : "visibility"}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Options */}
-          <div className="flex items-center justify-between mt-1 mb-2">
-            <label className="flex items-center gap-2 cursor-pointer group">
-              <input type="checkbox" className="w-4 h-4 rounded border-outline-variant/50 text-primary focus:ring-primary transition-all cursor-pointer" />
-              <span className="text-sm text-on-surface-variant group-hover:text-primary transition-colors">Ingat Saya</span>
-            </label>
-            <a href="#" onClick={(e) => { e.preventDefault(); alert('Hubungi Menteri Ristek untuk reset password.'); }} className="text-sm font-bold text-primary hover:text-secondary transition-colors">Lupa Sandi?</a>
-          </div>
-
-          {/* Submit */}
-          <button type="submit" className="w-full bg-primary text-white font-bold py-3.5 px-6 rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 mt-2 cursor-pointer">
-            Masuk Sekarang
-            <span className="material-symbols-outlined text-[18px]">login</span>
-          </button>
-
-        </form>
+        {/* Google OAuth Button */}
+        <button 
+          onClick={handleGoogleLogin} 
+          disabled={isLoading} 
+          className="w-full bg-white border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 mt-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <span className="material-symbols-outlined text-[20px] animate-spin text-primary">progress_activity</span>
+          ) : (
+            <img src="https://www.google.com/favicon.ico" alt="Google" width={20} height={20} className="shrink-0" />
+          )}
+          Lanjutkan dengan Akun Google
+        </button>
+        
+        <p className="text-xs text-center text-on-surface-variant mt-6">
+          *Hanya email resmi kampus STMIK Tazkia yang diizinkan.
+        </p>
 
       </div>
     </main>

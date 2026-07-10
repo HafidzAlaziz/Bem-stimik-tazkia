@@ -115,6 +115,12 @@ body {
   .anim-delay-300 { animation-delay: 300ms; }
   .anim-delay-400 { animation-delay: 400ms; }
 
+  /* Swipe Animation */
+  @keyframes swipe {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
+  }
+
   /* Glassmorphism */
   .glass {
     background: rgba(255, 255, 255, 0.7);

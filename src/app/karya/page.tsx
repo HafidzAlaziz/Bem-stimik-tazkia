@@ -467,7 +467,7 @@ export default function KaryaInovasiPage() {
                       <label className={labelClass} htmlFor="tagline">Tagline / Slogan <span className="text-red-400">*</span></label>
                       <input id="tagline" name="tagline" type="text" required value={formData.tagline} onChange={handleInput} placeholder="Deskripsi singkat satu kalimat tentang proyekmu" className={inputClass} />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className={labelClass} htmlFor="kategori">Kategori <span className="text-red-400">*</span></label>
                         <select id="kategori" name="kategori" required value={formData.kategori} onChange={handleInput} className={inputClass}>
@@ -500,7 +500,7 @@ export default function KaryaInovasiPage() {
                       <label className={labelClass} htmlFor="techStack">Tech Stack <span className="text-red-400">*</span></label>
                       <input id="techStack" name="techStack" type="text" required value={formData.techStack} onChange={handleInput} placeholder="Contoh: React, Next.js, Python, Figma (pisahkan dengan koma)" className={inputClass} />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className={labelClass} htmlFor="githubUrl">GitHub Repository</label>
                         <input id="githubUrl" name="githubUrl" type="url" value={formData.githubUrl} onChange={handleInput} placeholder="https://github.com/..." className={inputClass} />
@@ -564,7 +564,7 @@ export default function KaryaInovasiPage() {
                             </button>
                           )}
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <input type="text" value={anggota.name} onChange={e => handleTim(i, "name", e.target.value)} placeholder="Nama Lengkap" className={inputClass} />
                           <input type="text" value={anggota.role} onChange={e => handleTim(i, "role", e.target.value)} placeholder="Peran / Jabatan" className={inputClass} />
                           <input type="url" value={anggota.github} onChange={e => handleTim(i, "github", e.target.value)} placeholder="GitHub URL (opsional)" className={inputClass} />

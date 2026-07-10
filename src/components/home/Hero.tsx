@@ -14,31 +14,31 @@ export default function Hero() {
     if (!imageElement) return;
 
     let animationFrameId: number;
-    let currentPanX = 0;
+    let currentPanX = 50; // Start at center (50%)
 
     const update = () => {
-      let targetPanX = 0;
+      let targetPanX = 50;
 
       if (hoverRef.current) {
-        // Map mouseX (0..1) to pan range (+10% to -10%)
-        // Since the image is scaled (1.25x), we have space to pan horizontally.
-        targetPanX = (0.5 - mouseXRef.current) * 20;
+        // Map mouseX (0..1) to background position (0%..100%)
+        targetPanX = mouseXRef.current * 100;
       } else {
-        // Subtle auto-pan oscillation when idle (period ~30 seconds)
-        targetPanX = Math.sin(Date.now() / 5000) * 8;
+        // Subtle auto-pan oscillation when idle (period ~40 seconds)
+        // Sweeps fully from 0% to 100%
+        targetPanX = 50 + Math.sin(Date.now() / 6500) * 50;
       }
 
       // Butter-smooth linear interpolation (lerp)
       currentPanX += (targetPanX - currentPanX) * 0.05;
 
-      // Apply transform directly to DOM for high performance (60fps+)
-      imageElement.style.transform = `translate3d(${currentPanX}%, 0, 0) scale(1.25)`;
+      // Apply background position directly to DOM
+      imageElement.style.backgroundPosition = `${currentPanX}% center`;
 
       animationFrameId = requestAnimationFrame(update);
     };
 
     // Initial positioning
-    imageElement.style.transform = "translate3d(0%, 0, 0) scale(1.25)";
+    imageElement.style.backgroundPosition = "50% center";
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
@@ -65,19 +65,19 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         <div
           ref={imageRef}
-          className="w-full h-full bg-cover bg-center bg-no-repeat origin-center will-change-transform"
-          style={{ backgroundImage: "url('/images/image copy.png')" }}
+          className="w-full h-full bg-cover bg-no-repeat origin-center will-change-[background-position]"
+          style={{ backgroundImage: "url('/images/image.png')" }}
         ></div>
       </div>
 
       {/* Decorative elements removed to match the clean background */}
 
       <div className="relative z-30 max-w-5xl mx-auto text-center mt-32">
-        <h1 className="font-display-lg font-bold text-display-lg md:text-[72px] md:leading-[1.1] mb-stack-gap-lg text-on-primary drop-shadow-lg animate-init-fade-up hover:scale-[1.02] transition-transform duration-500 cursor-default">
+        <h1 className="font-display-lg font-bold text-4xl sm:text-5xl md:text-[72px] md:leading-[1.1] mb-stack-gap-lg text-on-primary drop-shadow-lg animate-init-fade-up hover:scale-[1.02] transition-transform duration-500 cursor-default">
           Satu Langkah untuk <br />
           <span className="text-secondary drop-shadow-glow hover:text-[#ff984d] transition-colors duration-300">STMIK Tazkia Berdampak</span>
         </h1>
-        <p className="font-body-lg text-body-lg md:text-[20px] mb-10 text-on-primary/90 max-w-2xl mx-auto font-light animate-init-fade-up anim-delay-100 hover:text-white transition-colors duration-300 cursor-default">
+        <p className="font-body-lg text-base sm:text-lg md:text-[20px] mb-10 text-on-primary/90 max-w-2xl mx-auto font-light animate-init-fade-up anim-delay-100 hover:text-white transition-colors duration-300 cursor-default">
           Membangun sinergi intelektual dan pergerakan mahasiswa yang progresif, inklusif, dan berbasis data.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-init-fade-up anim-delay-200">

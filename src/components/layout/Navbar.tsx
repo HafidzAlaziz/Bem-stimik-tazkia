@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiHome, FiAward, FiCalendar, FiBookOpen, FiUser } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Navbar() {
+export default function Navbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
+  const [activeBottomSheet, setActiveBottomSheet] = useState<'publikasi' | 'profil' | null>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -22,7 +21,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    setActiveBottomSheet(null);
   }, [pathname]);
 
   const navLinks = [
@@ -48,6 +47,7 @@ export default function Navbar() {
   ];
 
   return (
+    <>
     <nav
       id="navbar"
       className={`fixed top-0 w-full z-50 transition-all duration-300 ease-in-out border-b ${
@@ -94,8 +94,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-8 items-center font-semibold text-sm">
+        {/* Desktop Nav Links */}
+        <div className="hidden lg:flex space-x-8 items-center font-semibold text-sm">
           {navLinks.map((link) => {
             if (link.dropdown) {
               const isActive = link.children?.some(child => pathname === child.path);
@@ -150,118 +150,124 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link
-            href="/login"
-            className={`ml-4 px-8 py-3 rounded-full font-semibold transition-all hover:-translate-y-0.5 shadow-soft ${
-              isScrolled || !isHome
-                ? "bg-primary text-on-primary hover:bg-primary/90"
-                : "bg-white/15 backdrop-blur-md border border-white/40 text-white hover:bg-secondary hover:border-secondary"
-            }`}
-          >
-            Masuk
-          </Link>
         </div>
 
-        {/* Mobile Button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`md:hidden p-2 rounded-full transition-colors ${
-            isScrolled || !isHome
-              ? "text-primary bg-surface-container border border-outline-variant/30"
-              : "text-white bg-white/15 backdrop-blur-md border border-white/30"
-          }`}
-        >
-          {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
-        </button>
+        {/* Action Button (Tablet & Desktop) */}
+        <div className="hidden md:flex items-center">
+          {isLoggedIn ? (
+            <Link
+              href="/admin"
+              className={`ml-4 px-8 py-3 rounded-full font-semibold transition-all hover:-translate-y-0.5 shadow-soft flex items-center gap-2 ${
+                isScrolled || !isHome
+                  ? "bg-primary text-on-primary hover:bg-primary/90"
+                  : "bg-white/15 backdrop-blur-md border border-white/40 text-white hover:bg-secondary hover:border-secondary"
+              }`}
+            >
+              Dashboard Admin
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className={`ml-4 px-8 py-3 rounded-full font-semibold transition-all hover:-translate-y-0.5 shadow-soft ${
+                isScrolled || !isHome
+                  ? "bg-primary text-on-primary hover:bg-primary/90"
+                  : "bg-white/15 backdrop-blur-md border border-white/40 text-white hover:bg-secondary hover:border-secondary"
+              }`}
+            >
+              Masuk
+            </Link>
+          )}
+        </div>
       </div>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-surface border-b border-outline-variant/30 overflow-hidden shadow-lg"
-          >
-            <div className="px-5 py-6 flex flex-col gap-3">
-              {navLinks.map((link) => {
-                if (link.dropdown) {
-                  const isActive = link.children?.some(child => pathname === child.path);
-                  const isOpen = openMobileDropdown === link.name;
-                  return (
-                    <div key={link.name} className="flex flex-col gap-1">
-                      <button 
-                        onClick={() => setOpenMobileDropdown(isOpen ? null : link.name)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-colors ${
-                          isActive
-                            ? "text-primary font-bold"
-                            : "text-on-surface-variant hover:bg-surface-container"
-                        }`}
-                      >
-                        {link.name}
-                        <svg className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="flex flex-col gap-1 overflow-hidden"
-                          >
-                            <div className="pl-4 border-l-2 border-outline-variant/30 ml-6 py-1 flex flex-col gap-1">
-                              {link.children?.map(child => {
-                                const isChildActive = pathname === child.path;
-                                return (
-                                  <Link
-                                    key={child.name}
-                                    href={child.path}
-                                    className={`block px-4 py-2.5 rounded-xl font-semibold text-sm ${
-                                      isChildActive
-                                        ? "bg-primary-container text-primary font-bold"
-                                        : "text-on-surface-variant hover:bg-surface-container"
-                                    }`}
-                                  >
-                                    {child.name}
-                                  </Link>
-                                );
-                              })}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                }
-
-                const isActive = pathname === link.path;
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.path!}
-                    className={`block px-4 py-3 rounded-xl font-semibold text-sm ${
-                      isActive
-                        ? "bg-primary-container text-primary font-bold"
-                        : "text-on-surface-variant hover:bg-surface-container"
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-              <Link
-                href="/login"
-                className="mt-2 block w-full bg-primary text-on-primary text-center px-4 py-3 rounded-full font-bold shadow-soft"
-              >
-                Masuk Dashboard
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </nav>
+
+    {/* Mobile & Tablet Bottom Navigation Bar */}
+    <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-white/90 backdrop-blur-lg border-t border-outline-variant/30 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] pb-5 pt-2 px-2 flex justify-between items-center rounded-t-3xl">
+      <Link href="/" className={`flex-1 flex flex-col items-center gap-1 transition-colors ${pathname === "/" ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <FiHome size={22} className={pathname === "/" ? "fill-secondary/20" : ""} />
+        <span className="text-[10px] font-bold">Beranda</span>
+      </Link>
+      
+      <Link href="/agenda" className={`flex-1 flex flex-col items-center gap-1 transition-colors ${pathname.startsWith("/agenda") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <FiCalendar size={22} className={pathname.startsWith("/agenda") ? "fill-secondary/20" : ""} />
+        <span className="text-[10px] font-bold">Agenda</span>
+      </Link>
+
+      <Link href="/karya" className={`flex-1 flex flex-col items-center gap-1 transition-colors ${pathname.startsWith("/karya") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <div className="bg-primary text-white p-3 rounded-full -mt-6 shadow-glow border-4 border-white flex items-center justify-center">
+          <FiAward size={22} />
+        </div>
+        <span className="text-[10px] font-bold">Karya</span>
+      </Link>
+
+      <button onClick={() => setActiveBottomSheet(activeBottomSheet === 'publikasi' ? null : 'publikasi')} className={`flex-1 flex flex-col items-center gap-1 transition-colors ${activeBottomSheet === 'publikasi' || pathname.startsWith("/berita") || pathname.startsWith("/dokumentasi") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <FiBookOpen size={22} className={activeBottomSheet === 'publikasi' || pathname.startsWith("/berita") || pathname.startsWith("/dokumentasi") ? "fill-secondary/20" : ""} />
+        <span className="text-[10px] font-bold">Publikasi</span>
+      </button>
+
+      <button onClick={() => setActiveBottomSheet(activeBottomSheet === 'profil' ? null : 'profil')} className={`flex-1 flex flex-col items-center gap-1 transition-colors ${activeBottomSheet === 'profil' || pathname.startsWith("/kabinet") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <FiUser size={22} className={activeBottomSheet === 'profil' || pathname.startsWith("/kabinet") ? "fill-secondary/20" : ""} />
+        <span className="text-[10px] font-bold text-center">Profil BEM</span>
+      </button>
+    </nav>
+
+    {/* Overlay for Bottom Sheet */}
+    <AnimatePresence>
+      {activeBottomSheet && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="lg:hidden fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+          onClick={() => setActiveBottomSheet(null)}
+        />
+      )}
+    </AnimatePresence>
+
+    {/* Bottom Sheets */}
+    <AnimatePresence>
+      {activeBottomSheet === 'publikasi' && (
+        <motion.div
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="lg:hidden fixed bottom-24 left-4 right-4 z-50 bg-white rounded-2xl shadow-xl overflow-hidden border border-outline-variant/30"
+        >
+          <div className="flex flex-col p-2">
+            <Link href="/berita" className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container transition-colors flex items-center justify-between">
+              Berita
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </Link>
+            <Link href="/dokumentasi" className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container transition-colors flex items-center justify-between">
+              Dokumentasi
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </Link>
+          </div>
+        </motion.div>
+      )}
+      
+      {activeBottomSheet === 'profil' && (
+        <motion.div
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="lg:hidden fixed bottom-24 left-4 right-4 z-50 bg-white rounded-2xl shadow-xl overflow-hidden border border-outline-variant/30"
+        >
+          <div className="flex flex-col p-2">
+            <Link href="/kabinet" className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container transition-colors flex items-center justify-between">
+              Kabinet
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </Link>
+            <Link href="/#saran" onClick={() => setActiveBottomSheet(null)} className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container transition-colors flex items-center justify-between">
+              Kotak Saran & Aduan
+              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+            </Link>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

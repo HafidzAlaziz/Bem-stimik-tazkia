@@ -51,6 +51,52 @@ CREATE TABLE IF NOT EXISTS agendas (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- 4. Create `profiles` table for RBAC
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+  role TEXT DEFAULT 'user' NOT NULL,
+  full_name TEXT
+);
+
+-- Enable RLS
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public profiles are viewable by everyone." ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own profile." ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can update own profile." ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Function and trigger to auto-create profile on sign up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = public
+AS $$
+DECLARE
+  assigned_role TEXT := 'user';
+BEGIN
+  -- 1. Domain Restriction Check
+  IF new.email NOT LIKE '%@tazkia.ac.id' AND new.email NOT LIKE '%@stmik.tazkia.ac.id' THEN
+    RAISE EXCEPTION 'Akses ditolak: Hanya email kampus (@tazkia.ac.id / @stmik.tazkia.ac.id) yang diizinkan.';
+  END IF;
+
+  -- 2. Auto-assign Admin Role
+  IF new.email = 'bem@stmik.tazkia.ac.id' THEN
+    assigned_role := 'admin';
+  END IF;
+
+  -- 3. Create Profile
+  INSERT INTO public.profiles (id, full_name, role)
+  VALUES (new.id, new.raw_user_meta_data->>'full_name', assigned_role);
+  
+  RETURN new;
+END;
+$$;
+
+-- Trigger for auth.users
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
 -- ==========================================
 -- INSERT MOCK DATA
 -- ==========================================

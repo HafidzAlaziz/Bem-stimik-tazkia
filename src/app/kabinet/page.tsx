@@ -425,8 +425,8 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
                 setCurrentPage(1);
               }}
               className={`flex-1 py-3 text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer border-b-2 ${isActive
-                  ? "text-on-background"
-                  : "text-on-surface-variant hover:text-on-background border-transparent"
+                ? "text-on-background"
+                : "text-on-surface-variant hover:text-on-background border-transparent"
                 }`}
               style={isActive ? { borderBottomColor: dept.warna } : {}}
             >
@@ -474,8 +474,8 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
                     key={page}
                     onClick={() => setCurrentPage(page)}
                     className={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${currentPage === page
-                        ? "text-white shadow-sm"
-                        : "bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary"
+                      ? "text-white shadow-sm"
+                      : "bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary"
                       }`}
                     style={currentPage === page ? { backgroundColor: dept.warna } : {}}
                   >
@@ -513,8 +513,8 @@ export default function KabinetPage() {
 
       {/* ── HERO ── */}
       <section className="px-5 md:px-10 max-w-5xl mx-auto pt-12 pb-14 text-center relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[280px] bg-primary/5 rounded-full blur-3xl -z-10" />
-        <div className="absolute top-10 right-1/4 w-40 h-40 bg-secondary/8 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[500px] h-[280px] bg-primary/5 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-10 right-0 md:right-1/4 w-32 md:w-40 h-32 md:h-40 bg-secondary/8 rounded-full blur-3xl -z-10" />
 
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-container text-primary font-bold text-sm mb-6 animate-init-fade-up">
           <UsersIcon />
@@ -522,7 +522,7 @@ export default function KabinetPage() {
         </div>
 
         <h1 className="text-4xl md:text-5xl font-extrabold text-on-background mb-4 animate-init-fade-up anim-delay-100 leading-tight">
-          Profil <span className="text-primary">Kabinet</span>{" "}
+          Profil BEM <span className="text-primary">Kabinet</span>{" "}
           <span className="text-secondary">Sinergi Aktif</span>
         </h1>
         <p className="text-on-surface-variant max-w-xl mx-auto text-base leading-relaxed animate-init-fade-up anim-delay-200">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LayoutClientWrapper from "@/components/layout/LayoutClientWrapper";
+import { createClient } from "@/utils/supabase/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,11 +8,14 @@ export const metadata: Metadata = {
   description: "Website Resmi BEM STMIK Tazkia dan Etalase Karya Inovasi Teknologi Mahasiswa",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <html lang="id" className="light">
       <head>
@@ -27,7 +31,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-background font-sans antialiased overflow-x-hidden">
-        <LayoutClientWrapper>{children}</LayoutClientWrapper>
+        <LayoutClientWrapper isLoggedIn={!!user}>{children}</LayoutClientWrapper>
       </body>
     </html>
   );

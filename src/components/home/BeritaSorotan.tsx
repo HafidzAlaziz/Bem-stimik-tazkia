@@ -34,33 +34,33 @@ export default function BeritaSorotan() {
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80')" }}
           ></div>
           {/* Gradient Overlay for Text Visibility */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1b4086]/95 via-[#1b4086]/50 to-transparent"></div>
-
-          {/* Featured Badge */}
-          <div className="absolute top-6 left-6 z-10 flex items-center gap-2">
-            <span className="bg-secondary text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-              Sorotan
-            </span>
-            <span className="bg-white/20 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
-              <FiCalendar className="inline shrink-0 text-white" /> 16 Jun 2026
-            </span>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1b4086]/95 via-[#1b4086]/60 to-[#1b4086]/10 md:to-transparent"></div>
 
           {/* Featured Content */}
-          <div className="relative z-10 p-6 md:p-10 text-white max-w-4xl text-left">
-            <span className="text-secondary-container font-semibold text-sm uppercase tracking-widest mb-2 block">
+          <div className="relative z-10 p-6 md:p-10 text-white w-full md:max-w-4xl text-left mt-12 md:mt-0">
+            {/* Featured Badge (Moved into document flow on mobile, absolute on desktop) */}
+            <div className="flex items-center gap-2 mb-4 md:absolute md:top-6 md:left-6 md:mb-0">
+              <span className="bg-secondary text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                Sorotan
+              </span>
+              <span className="bg-white/20 backdrop-blur-md text-white text-[10px] md:text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
+                <FiCalendar className="inline shrink-0 text-white" /> 16 Jun 2026
+              </span>
+            </div>
+
+            <span className="text-secondary-container font-semibold text-[10px] md:text-sm uppercase tracking-widest mb-2 block">
               Pendidikan
             </span>
-            <h2 className="text-2xl md:text-4xl font-extrabold mb-4 leading-tight group-hover:text-secondary-container transition-colors duration-300">
+            <h2 className="text-xl md:text-4xl font-extrabold mb-3 md:mb-4 leading-tight group-hover:text-secondary-container transition-colors duration-300">
               The Future of AI in Campus Management: STMIK Leads the Way
             </h2>
-            <p className="text-white/85 text-sm md:text-base mb-6 font-light leading-relaxed line-clamp-3">
+            <p className="text-white/90 text-xs md:text-base mb-5 md:mb-6 font-light leading-relaxed line-clamp-4 md:line-clamp-3">
               STMIK Tazkia menjadi pionir dalam mengintegrasikan kecerdasan buatan (Artificial Intelligence) guna mengoptimalkan sistem manajemen administrasi kampus, pelayanan akademik, dan analisis data kemahasiswaan untuk menciptakan ekosistem kampus digital yang efisien.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <Link
                 href="/berita"
-                className="inline-flex items-center gap-2 bg-secondary text-white hover:bg-secondary/90 transition-all duration-300 px-6 py-3.5 rounded-full font-bold text-sm hover:translate-x-1"
+                className="inline-flex items-center gap-2 bg-secondary text-white hover:bg-secondary/90 transition-all duration-300 px-6 py-2.5 md:py-3.5 rounded-full font-bold text-xs md:text-sm shadow-md hover:translate-x-1"
               >
                 Baca Selengkapnya <FiArrowRight />
               </Link>

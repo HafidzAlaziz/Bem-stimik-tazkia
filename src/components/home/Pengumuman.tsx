@@ -9,8 +9,8 @@ export default function Pengumuman() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 animate-on-scroll animate-fade-up">
           <div>
-            <h2 className="font-headline-lg text-headline-lg text-primary mb-2">Pengumuman Terbaru</h2>
-            <p className="text-on-surface-variant font-body-md">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
+            <h2 className="font-headline-lg text-3xl md:text-4xl text-primary mb-2">Pengumuman Terbaru</h2>
+            <p className="text-on-surface-variant">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
           </div>
           <Link href="/agenda" className="hidden md:flex items-center gap-2 text-primary font-label-md hover:text-secondary transition-colors group cursor-pointer">
             Lihat Semua <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -25,8 +25,8 @@ export default function Pengumuman() {
               <span className="material-symbols-outlined text-[14px]">calendar_month</span>
               24 Okt 2024
             </div>
-            <h3 className="font-headline-md text-headline-md text-on-background mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-3 relative z-10">Pendaftaran Kepanitiaan Seminar Nasional Statistik 2024</h3>
-            <p className="text-on-surface-variant font-body-md mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
+            <h3 className="font-headline-md text-xl md:text-2xl text-on-background mb-4 group-hover:text-primary transition-colors duration-300 line-clamp-3 relative z-10">Pendaftaran Kepanitiaan Seminar Nasional Statistik 2024</h3>
+            <p className="text-on-surface-variant mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
             <div className="mt-auto relative z-10">
               <Link href="/agenda/3" className="w-full text-center bg-surface-container-high text-primary px-6 py-3 rounded-button font-label-md group-hover:bg-primary group-hover:text-white hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer block">Detail Informasi</Link>
             </div>
@@ -39,8 +39,8 @@ export default function Pengumuman() {
               <span className="material-symbols-outlined text-[14px]">calendar_month</span>
               20 Okt 2024
             </div>
-            <h3 className="font-headline-md text-headline-md text-on-background mb-4 group-hover:text-secondary transition-colors duration-300 line-clamp-3 relative z-10">Hasil Audiensi Fasilitas Kampus Semester Ganjil</h3>
-            <p className="text-on-surface-variant font-body-md mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
+            <h3 className="font-headline-md text-xl md:text-2xl text-on-background mb-4 group-hover:text-secondary transition-colors duration-300 line-clamp-3 relative z-10">Hasil Audiensi Fasilitas Kampus Semester Ganjil</h3>
+            <p className="text-on-surface-variant mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
             <div className="mt-auto relative z-10">
               <Link href="/agenda" className="w-full text-center bg-surface-container-high text-secondary px-6 py-3 rounded-button font-label-md group-hover:bg-secondary group-hover:text-white hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer block">Baca Dokumen</Link>
             </div>
@@ -53,8 +53,8 @@ export default function Pengumuman() {
               <span className="material-symbols-outlined text-[14px]">calendar_month</span>
               15 Okt 2024
             </div>
-            <h3 className="font-headline-md text-headline-md text-on-background mb-4 group-hover:text-tertiary transition-colors duration-300 line-clamp-3 relative z-10">Open Donasi Bencana Alam: STIS Peduli Sesama</h3>
-            <p className="text-on-surface-variant font-body-md mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
+            <h3 className="font-headline-md text-xl md:text-2xl text-on-background mb-4 group-hover:text-tertiary transition-colors duration-300 line-clamp-3 relative z-10">Open Donasi Bencana Alam: STIS Peduli Sesama</h3>
+            <p className="text-on-surface-variant mb-8 line-clamp-2 text-sm relative z-10">Informasi terkini kegiatan dan agenda BEM STMIK Tazkia</p>
             <div className="mt-auto relative z-10">
               <Link href="/agenda" className="w-full text-center bg-surface-container-high text-tertiary px-6 py-3 rounded-button font-label-md group-hover:bg-tertiary group-hover:text-white hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer block">Salurkan Bantuan</Link>
             </div>
