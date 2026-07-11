@@ -8,8 +8,10 @@ import LoadingScreen from "./LoadingScreen";
 
 export default function LayoutClientWrapper({
   children,
+  isLoggedIn,
 }: {
   children: React.ReactNode;
+  isLoggedIn?: boolean;
 }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
