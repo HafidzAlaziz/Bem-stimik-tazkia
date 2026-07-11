@@ -222,13 +222,17 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f8f9fc] pt-28 pb-20">
+    <main className="min-h-screen bg-[#f8f9fc] pt-28 pb-32 md:pb-20">
 
       {/* ── HERO BANNER ─────────────────────────────────────────── */}
       <div
         className="relative h-[420px] md:h-[520px] w-full overflow-hidden mb-0"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onMouseEnter={() => {
+          if (typeof window !== "undefined" && window.innerWidth >= 1024) setIsPaused(true);
+        }}
+        onMouseLeave={() => {
+          if (typeof window !== "undefined" && window.innerWidth >= 1024) setIsPaused(false);
+        }}
       >
         {/* Animated slide */}
         <AnimatePresence custom={direction} mode="popLayout">
@@ -278,15 +282,15 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 px-6 md:px-10 pb-10 max-w-7xl mx-auto z-20">
+        <div className="absolute bottom-0 left-0 right-0 px-14 md:px-10 pb-14 md:pb-10 max-w-7xl mx-auto z-20">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 leading-tight max-w-3xl">
+            <h1 className="text-2xl md:text-5xl font-bold text-white mb-2 leading-tight max-w-3xl">
               {project.title}
             </h1>
-            <p className="text-white/70 text-base md:text-lg mb-5 max-w-2xl">{project.tagline}</p>
+            <p className="text-white/70 text-xs md:text-lg mb-4 md:mb-5 max-w-2xl">{project.tagline}</p>
 
             {/* Stats row */}
-            <div className="flex flex-wrap items-center gap-5 text-white/80 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-white/80 text-[11px] md:text-sm">
               <span className="flex items-center gap-1.5"><FiCalendar size={13} /> {project.date}</span>
               <span className="flex items-center gap-1.5"><FiEye size={13} /> {project.views.toLocaleString()} views</span>
               <span className="flex items-center gap-1.5"><FiHeart size={13} /> {project.likes + (liked ? 1 : 0)} likes</span>
@@ -299,7 +303,7 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Thumbnail strip */}
-        <div className="absolute bottom-4 right-6 md:right-10 z-20 flex gap-2">
+        <div className="absolute bottom-4 right-6 md:right-10 z-20 hidden md:flex gap-2">
           {allImages.map((img, i) => (
             <button
               key={i}

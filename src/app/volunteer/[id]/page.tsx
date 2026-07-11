@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   FiArrowLeft,
@@ -59,8 +59,7 @@ const volunteersData: Record<number, any> = {
         desc: "Portofolio nyata dalam manajemen kemitraan B2B."
       }
     ],
-    deadline: "15 Oktober 2024",
-    infoText: "Pendaftaran untuk posisi ini dikelola secara terpusat. Pastikan Anda telah menyiapkan CV (Curriculum Vitae) dan Surat Motivasi (Motivation Letter) terbaik Anda."
+    deadline: "15 Oktober 2024"
   },
   2: {
     id: 2,
@@ -102,10 +101,13 @@ const volunteersData: Record<number, any> = {
   }
 };
 
-export default function VolunteerDetailPage() {
+function VolunteerDetailPageContent() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const id = Number(params.id);
   const volunteer = volunteersData[id] || volunteersData[1]; // Fallback to id 1 if not found for demo
+  const from = searchParams.get("from");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -115,13 +117,11 @@ export default function VolunteerDetailPage() {
     department: "",
     motivation: "",
   });
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,25 +137,46 @@ export default function VolunteerDetailPage() {
     });
   };
 
+  const handleBack = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (from === "home") {
+      router.push("/");
+    } else if (from === "agenda-event") {
+      router.push("/agenda?tab=event");
+    } else if (from === "agenda-volunteer") {
+      router.push("/agenda?tab=volunteer");
+    } else {
+      if (window.history.length > 1) {
+        router.back();
+      } else {
+        router.push("/agenda?tab=volunteer");
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#f8f9fc] pt-28 pb-20">
-      
+    <div className="min-h-screen bg-[#f8f9fc] pt-28 pb-32 md:pb-20">
+
       {/* ── HEADER SECTION ──────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-5 md:px-10 mb-10">
-        <Link href="/agenda" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-6 font-medium text-sm">
+      <section className="max-w-7xl mx-auto px-4 sm:px-5 md:px-10 mb-10">
+        <Link
+          href="/agenda"
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-6 font-medium text-sm"
+        >
           <FiArrowLeft /> Kembali ke Program Kegiatan
         </Link>
-        
+
         <div className="bg-white rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start border border-outline-variant/20 shadow-sm">
           {/* Image */}
           <div className="w-full md:w-1/3 h-64 md:h-auto md:aspect-square rounded-2xl overflow-hidden shrink-0">
-            <img 
-              src={volunteer.imgUrl} 
-              alt={volunteer.title} 
+            <img
+              src={volunteer.imgUrl}
+              alt={volunteer.title}
               className="w-full h-full object-cover"
             />
           </div>
-          
+
           {/* Header Info */}
           <div className="flex-1">
             <div className="flex flex-wrap gap-2 mb-4">
@@ -166,15 +187,15 @@ export default function VolunteerDetailPage() {
                 <FiCheckCircle className="inline mr-1" /> {volunteer.status}
               </span>
             </div>
-            
+
             <h1 className="text-3xl md:text-4xl font-extrabold text-on-background mb-4">
               {volunteer.title}
             </h1>
-            
+
             <p className="text-on-surface-variant text-base md:text-lg mb-6 leading-relaxed max-w-3xl">
               {volunteer.shortDesc}
             </p>
-            
+
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-on-surface-variant">
               <div className="flex items-center gap-2">
                 <FiBriefcase className="text-primary" size={16} />
@@ -194,13 +215,13 @@ export default function VolunteerDetailPage() {
       </section>
 
       {/* ── CONTENT SECTION ─────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-5 md:px-10 mb-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+      <section className="max-w-7xl mx-auto px-4 sm:px-5 md:px-10 mb-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
         {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           {/* Tentang Posisi */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
             className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
@@ -215,7 +236,7 @@ export default function VolunteerDetailPage() {
           </motion.div>
 
           {/* Tanggung Jawab */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
@@ -233,7 +254,7 @@ export default function VolunteerDetailPage() {
           </motion.div>
 
           {/* Kualifikasi */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
@@ -253,9 +274,9 @@ export default function VolunteerDetailPage() {
 
         {/* Right Column - Sidebar */}
         <div className="lg:col-span-1 space-y-6">
-          
+
           {/* Benefit */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}
             className="bg-surface-container-lowest rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
@@ -276,25 +297,25 @@ export default function VolunteerDetailPage() {
           </motion.div>
 
           {/* Registration Info Panel */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-[var(--color-primary)] rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
-            
+
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2 relative z-10">
               <FiInfo /> Informasi Pendaftaran
             </h3>
-            
+
             <p className="text-sm text-white/80 leading-relaxed mb-6 relative z-10">
               {volunteer.infoText}
             </p>
-            
+
             <div className="bg-white/10 border border-white/20 rounded-2xl p-4 relative z-10">
               <p className="text-xs text-white/70 mb-1">Batas Akhir Pendaftaran:</p>
               <p className="text-lg font-extrabold">{volunteer.deadline}</p>
             </div>
-            
+
             <p className="text-[10px] text-white/60 mt-4 leading-relaxed relative z-10">
               *Silakan gunakan formulir di bawah ini untuk proses submit dokumen aplikasi.
             </p>
@@ -304,116 +325,114 @@ export default function VolunteerDetailPage() {
       </section>
 
       {/* ── REGISTRATION FORM ───────────────────────────────────────────── */}
-      <section className="max-w-3xl mx-auto px-5 md:px-10">
-        <motion.div 
+      <section className="max-w-3xl mx-auto px-4 sm:px-5 md:px-10">
+        <motion.div
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-white rounded-3xl p-6 md:p-10 border border-outline-variant/20 shadow-xl"
+          className="bg-white rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 border border-outline-variant/20 shadow-xl"
         >
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-on-background mb-2">Formulir Pendaftaran Relawan</h2>
-            <p className="text-sm text-on-surface-variant">Lengkapi data diri Anda untuk mendaftar sebagai {volunteer.title}.</p>
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-on-background mb-1.5">Formulir Pendaftaran Relawan</h2>
+            <p className="text-xs md:text-sm text-on-surface-variant">Lengkapi data diri Anda untuk mendaftar sebagai {volunteer.title}.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {/* Nama Lengkap */}
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-bold text-on-background">Nama Lengkap</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
+              <div className="space-y-1.5 md:space-y-2">
+                <label htmlFor="name" className="text-xs md:text-sm font-bold text-on-background">Nama Lengkap</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Contoh: Ahmad Fauzi" 
+                  placeholder="Contoh: Ahmad Fauzi"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                 />
               </div>
 
               {/* NIM */}
-              <div className="space-y-2">
-                <label htmlFor="nim" className="text-sm font-bold text-on-background">NIM</label>
-                <input 
-                  type="text" 
-                  id="nim" 
-                  name="nim" 
+              <div className="space-y-1.5 md:space-y-2">
+                <label htmlFor="nim" className="text-xs md:text-sm font-bold text-on-background">NIM</label>
+                <input
+                  type="text"
+                  id="nim"
+                  name="nim"
                   value={formData.nim}
                   onChange={handleInputChange}
-                  placeholder="Contoh: 221011001" 
+                  placeholder="Contoh: 221011001"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                 />
               </div>
 
               {/* Email */}
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-bold text-on-background">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
+              <div className="space-y-1.5 md:space-y-2">
+                <label htmlFor="email" className="text-xs md:text-sm font-bold text-on-background">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="nama@student.tazkia.ac.id" 
+                  placeholder="nama@student.tazkia.ac.id"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                 />
               </div>
 
               {/* No WhatsApp */}
-              <div className="space-y-2">
-                <label htmlFor="whatsapp" className="text-sm font-bold text-on-background">No. WhatsApp</label>
-                <input 
-                  type="tel" 
-                  id="whatsapp" 
-                  name="whatsapp" 
+              <div className="space-y-1.5 md:space-y-2">
+                <label htmlFor="whatsapp" className="text-xs md:text-sm font-bold text-on-background">No. WhatsApp</label>
+                <input
+                  type="tel"
+                  id="whatsapp"
+                  name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleInputChange}
-                  placeholder="0812..." 
+                  placeholder="0812..."
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
                 />
               </div>
             </div>
 
             {/* Departemen / Prodi */}
-            <div className="space-y-2">
-              <label htmlFor="department" className="text-sm font-bold text-on-background">Departemen/Prodi</label>
-              <input 
-                type="text" 
-                id="department" 
-                name="department" 
+            <div className="space-y-1.5 md:space-y-2">
+              <label htmlFor="department" className="text-xs md:text-sm font-bold text-on-background">Departemen/Prodi</label>
+              <input
+                type="text"
+                id="department"
+                name="department"
                 value={formData.department}
                 onChange={handleInputChange}
-                placeholder="Contoh: Akuntansi Syariah" 
+                placeholder="Contoh: Akuntansi Syariah"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm"
               />
             </div>
 
             {/* Motivasi */}
-            <div className="space-y-2">
-              <label htmlFor="motivation" className="text-sm font-bold text-on-background">Mengapa Anda tertarik dengan posisi ini?</label>
-              <textarea 
-                id="motivation" 
-                name="motivation" 
+            <div className="space-y-1.5 md:space-y-2">
+              <label htmlFor="motivation" className="text-xs md:text-sm font-bold text-on-background">Mengapa Anda tertarik dengan posisi ini?</label>
+              <textarea
+                id="motivation"
+                name="motivation"
                 rows={4}
                 value={formData.motivation}
                 onChange={handleInputChange}
-                placeholder="Ceritakan motivasi dan pengalaman relevan Anda..." 
+                placeholder="Ceritakan motivasi dan pengalaman relevan Anda..."
                 required
-                className="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm resize-none"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-sm resize-none"
               ></textarea>
             </div>
 
-
-
             {/* Submit Button */}
-            <button 
+            <button
               type="submit"
-              className="w-full bg-[var(--color-primary)] text-white font-bold py-4 rounded-xl hover:bg-[var(--color-primary)]/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex justify-center items-center gap-2 mt-4"
+              className="w-full bg-[var(--color-primary)] text-white font-bold py-3 md:py-4 rounded-xl hover:bg-[var(--color-primary)]/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex justify-center items-center gap-2 mt-4 text-sm md:text-base"
             >
               Kirim Lamaran
             </button>
@@ -422,5 +441,13 @@ export default function VolunteerDetailPage() {
       </section>
 
     </div>
+  );
+}
+
+export default function VolunteerDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-primary font-bold">Memuat...</div>}>
+      <VolunteerDetailPageContent />
+    </Suspense>
   );
 }

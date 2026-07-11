@@ -586,16 +586,12 @@ export default function KabinetPage() {
             <div className="flex-1 h-px bg-outline-variant/30" />
           </div>
 
-          {/* Baris 1: Ketua + Wakil */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            {pengurusInti.slice(0, 2).map((p, i) => (
-              <PengurusCard key={i} person={p} />
-            ))}
-          </div>
-          {/* Baris 2: Sekretaris + Bendahara */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {pengurusInti.slice(2, 4).map((p, i) => (
-              <PengurusCard key={i} person={p} />
+          {/* Horizontal scroll on mobile, 2-col grid on desktop */}
+          <div className="flex flex-row overflow-x-auto gap-4 pb-3 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 flex-nowrap sm:flex-wrap">
+            {pengurusInti.map((p, i) => (
+              <div key={i} className="w-[80vw] sm:w-auto shrink-0 sm:shrink">
+                <PengurusCard person={p} />
+              </div>
             ))}
           </div>
         </section>
@@ -608,11 +604,12 @@ export default function KabinetPage() {
             <div className="flex-1 h-px bg-outline-variant/30" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Horizontal scroll on mobile, 2-col grid on desktop */}
+          <div className="flex flex-row overflow-x-auto gap-4 pb-3 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 flex-nowrap sm:flex-wrap">
             {prokerUtama.map((p, i) => (
               <div
                 key={i}
-                className="group bg-white rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex gap-4 items-start"
+                className="group w-[80vw] sm:w-auto shrink-0 sm:shrink bg-white rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex gap-4 items-start"
               >
                 <div className="text-2xl shrink-0 pt-0.5">{p.icon}</div>
                 <div className="flex-1 min-w-0">

@@ -126,60 +126,44 @@ function KategoriChip({ kategori }: { kategori: string }) {
 
 function DocCard({ item }: { item: (typeof dokumentasiData)[0] }) {
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-outline-variant/20 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-400 flex flex-col">
-      {/* Image */}
-      <div className="relative overflow-hidden aspect-[4/3]">
-        <Image
-          src={item.image}
-          alt={item.judul}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        {/* Media badge */}
-        <div className="absolute top-3 right-3">
-          <MediaBadge count={item.mediaCount} type={item.mediaType} />
-        </div>
+    <div className="group relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-[260px] md:h-[300px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      {/* Full-bleed Image */}
+      <Image
+        src={item.image}
+        alt={item.judul}
+        fill
+        className="object-cover transition-transform duration-500 group-hover:scale-105"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+
+      {/* Media badge top-right */}
+      <div className="absolute top-3 right-3 z-10">
+        <MediaBadge count={item.mediaCount} type={item.mediaType} />
       </div>
 
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
-        {/* Kategori chips */}
-        <div className="flex items-center gap-2 mb-3">
-          <KategoriChip kategori={item.kategori} />
-          <span className="text-outline-variant text-xs">·</span>
-          <span className="text-xs text-on-surface-variant font-medium">{item.subKategori}</span>
-        </div>
+      {/* Category badge top-left */}
+      <div className="absolute top-3 left-3 z-10">
+        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm text-white px-2.5 py-1 rounded-full border border-white/20">
+          {item.kategori}
+        </span>
+      </div>
 
-        {/* Title */}
-        <h3 className="font-bold text-on-background text-lg leading-snug mb-3 flex-1 group-hover:text-primary transition-colors duration-200">
+      {/* Text content at bottom */}
+      <div className="relative z-10 p-4 md:p-5">
+        <h3 className="font-bold text-white text-sm md:text-base leading-snug mb-2 line-clamp-2 group-hover:text-secondary transition-colors duration-200">
           {item.judul}
         </h3>
-
-        {/* Date */}
-        <div className="flex items-center gap-2 text-on-surface-variant text-sm mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="flex items-center gap-1.5 text-white/70 text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
             <line x1="16" y1="2" x2="16" y2="6" />
             <line x1="8" y1="2" x2="8" y2="6" />
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
           {item.tanggal}
-        </div>
-
-        {/* CTA */}
-        <div className="flex items-center justify-between pt-4 border-t border-outline-variant/20">
-          <span className="text-sm font-bold text-primary group-hover:text-secondary transition-colors duration-200">
-            Lihat Dokumentasi
-          </span>
-          <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center group-hover:bg-secondary group-hover:scale-110 transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary group-hover:text-white transition-colors duration-200">
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </div>
         </div>
       </div>
     </div>
@@ -349,52 +333,50 @@ export default function DokumentasiPage() {
       <div className="w-full h-px bg-gradient-to-r from-transparent via-outline-variant/40 to-transparent mb-12" />
 
       {/* ── FILTER & SEARCH BAR ── */}
-      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          {/* Filter Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab.value}
-                id={`filter-${tab.value}`}
-                onClick={() => handleFilter(tab.value)}
-                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer ${
-                  activeFilter === tab.value
-                    ? "bg-primary text-white shadow-md shadow-primary/30"
-                    : "bg-white text-on-surface-variant border border-outline-variant/40 hover:border-primary hover:text-primary"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Search */}
-          <div className="relative w-full sm:w-auto sm:min-w-[260px]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-8">
+        {/* Scrollable filter chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-3 scrollbar-hide">
+          {filterTabs.map((tab) => (
+            <button
+              key={tab.value}
+              id={`filter-${tab.value}`}
+              onClick={() => handleFilter(tab.value)}
+              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 ${
+                activeFilter === tab.value
+                  ? "bg-primary text-white shadow-md shadow-primary/30"
+                  : "bg-white text-on-surface-variant border border-outline-variant/40 hover:border-primary hover:text-primary"
+              }`}
             >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              id="search-dokumentasi"
-              type="text"
-              placeholder="Cari dokumentasi event..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full pl-11 pr-5 py-2.5 rounded-full border border-outline-variant/40 bg-white text-sm text-on-background placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-            />
-          </div>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Search bar */}
+        <div className="relative w-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            id="search-dokumentasi"
+            type="text"
+            placeholder="Cari dokumentasi event..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full pl-11 pr-5 py-2.5 rounded-2xl border border-outline-variant/40 bg-white text-sm text-on-background placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+          />
         </div>
       </section>
 
@@ -412,16 +394,20 @@ export default function DokumentasiPage() {
             <p className="text-on-surface-variant text-sm">Coba ubah kata pencarian atau pilih kategori lain.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-row overflow-x-auto gap-5 pb-4 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:pb-0 flex-nowrap sm:flex-wrap">
             {paginated.map((item) => (
-              <DocCard key={item.id} item={item} />
+              <div key={item.id} className="w-[75vw] sm:w-auto shrink-0 sm:shrink">
+                <DocCard item={item} />
+              </div>
             ))}
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Pagination — hidden on mobile (cards are swipeable) */}
         {totalPages > 1 && (
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPage={setCurrentPage} />
+          <div className="hidden sm:block">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPage={setCurrentPage} />
+          </div>
         )}
       </section>
     </div>

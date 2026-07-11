@@ -13,6 +13,8 @@ export default function LayoutClientWrapper({
 }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
+  const isAdminPage = pathname?.startsWith("/admin") || false;
+  const hideLayout = isLoginPage || isAdminPage;
 
   useEffect(() => {
     const showElement = (el: Element) => el.classList.add("is-visible");
@@ -57,11 +59,11 @@ export default function LayoutClientWrapper({
   return (
     <>
       <LoadingScreen />
-      {!isLoginPage && <Navbar />}
-      <main className={isLoginPage ? "" : "flex-1 flex flex-col"}>
+      {!hideLayout && <Navbar />}
+      <main className={hideLayout ? "w-full max-w-full overflow-x-hidden" : "flex-1 flex flex-col w-full max-w-full overflow-x-hidden"}>
         {children}
       </main>
-      {!isLoginPage && <Footer />}
+      {!hideLayout && <Footer />}
     </>
   );
 }

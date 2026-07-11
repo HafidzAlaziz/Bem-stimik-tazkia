@@ -207,24 +207,70 @@ export default function KaryaInovasiPage() {
   };
   return (
     <>
-      <main className="min-h-screen bg-[var(--color-background)] pt-32 pb-16">
+      <main className="min-h-screen bg-[var(--color-background)] pt-28 pb-32 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header Section */}
-          <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-primary)] mb-4">
+          <div className="mb-8 md:mb-12">
+            <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-primary)] mb-3 md:mb-4">
               Karya & Inovasi
             </h1>
-            <p className="text-[var(--color-on-surface-variant)] text-lg max-w-2xl leading-relaxed">
+            <p className="text-[var(--color-on-surface-variant)] text-sm md:text-lg max-w-2xl leading-relaxed">
               Discover a collection of student-led initiatives, technological breakthroughs, and innovative research driving our campus community forward.
             </p>
           </div>
 
+          {/* ── CTA BANNER ──────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-10 md:mb-14 relative overflow-hidden rounded-3xl bg-[var(--color-primary)] px-6 py-8 md:px-16 md:py-10 flex flex-col md:flex-row items-center gap-6 md:gap-8 shadow-lg"
+          >
+            {/* Decorative blobs */}
+            <div className="absolute -top-10 -right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-secondary)]/20 rounded-full blur-2xl pointer-events-none" />
+
+            {/* Lottie Animation */}
+            <div className="shrink-0 w-20 h-20 md:w-28 md:h-28">
+              <DotLottieReact
+                src="/animations/Marketing Campaign - Creative 3D Animation.lottie"
+                autoplay
+                loop
+              />
+            </div>
+
+            {/* Text */}
+            <div className="flex-1 text-center md:text-left relative z-10">
+              <span className="inline-block text-xs font-bold tracking-widest uppercase text-white/60 mb-1.5">Showcase Karyamu</span>
+              <h2 className="text-xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
+                Ingin Mengajukan Karya?<br />
+                <span className="text-white/70 font-normal text-sm md:text-lg">Tampilkan inovasi terbaikmu ke seluruh mahasiswa STMIK Tazkia.</span>
+              </h2>
+              <p className="text-white/60 text-xs md:text-sm max-w-xl">
+                Daftarkan proyekmu mulai dari aplikasi, riset, desain, hingga karya multimedia dan jadilah inspirasi bagi ribuan mahasiswa lainnya.
+              </p>
+            </div>
+
+            {/* CTA Button */}
+            <div className="shrink-0 relative z-10 w-full md:w-auto">
+              <button
+                id="btn-ajukan-karya"
+                onClick={() => setShowModal(true)}
+                className="group flex items-center justify-center gap-3 w-full md:w-auto px-8 py-3.5 bg-white text-[var(--color-primary)] font-extrabold rounded-2xl hover:bg-white/90 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-sm whitespace-nowrap"
+              >
+                <FiUpload className="group-hover:-translate-y-0.5 transition-transform" size={18} />
+                Ajukan Karya Sekarang
+              </button>
+            </div>
+          </motion.div>
+
           {/* Filter and Search Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 mb-8 md:mb-12">
 
             {/* Categories */}
-            <div className="flex flex-wrap gap-3 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-hide">
+            <div className="flex flex-row gap-2 overflow-x-auto pb-3 md:pb-0 w-full md:w-auto scrollbar-hide">
               {categories.map((category) => (
                 <button
                   key={category}
@@ -232,7 +278,7 @@ export default function KaryaInovasiPage() {
                     setActiveCategory(category);
                     setCurrentPage(1);
                   }}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
+                  className={`px-4 py-2 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
                       ? "bg-[var(--color-primary)] text-white shadow-md"
                       : "bg-white text-[var(--color-on-surface-variant)] border border-gray-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                     }`}
@@ -252,7 +298,7 @@ export default function KaryaInovasiPage() {
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-sm"
+                className="w-full pl-11 pr-4 py-2.5 md:py-3 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-sm"
               />
             </div>
           </div>
@@ -350,53 +396,6 @@ export default function KaryaInovasiPage() {
               </button>
             </div>
           )}
-
-          {/* ── CTA BANNER ──────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mt-20 relative overflow-hidden rounded-3xl bg-[var(--color-primary)] px-8 py-12 md:px-16 md:py-16 flex flex-col md:flex-row items-center gap-8"
-          >
-            {/* Decorative blobs */}
-            <div className="absolute -top-10 -right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-secondary)]/20 rounded-full blur-2xl pointer-events-none" />
-
-            {/* Lottie Animation */}
-            <div className="shrink-0 w-28 h-28">
-              <DotLottieReact
-                src="/animations/Marketing Campaign - Creative 3D Animation.lottie"
-                autoplay
-                loop
-              />
-            </div>
-
-            {/* Text */}
-            <div className="flex-1 text-center md:text-left relative z-10">
-              <span className="inline-block text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Showcase Karyamu</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3 leading-tight">
-                Ingin Mengajukan Karya?<br />
-                <span className="text-white/70 font-normal text-lg md:text-xl">Tampilkan inovasi terbaikmu ke seluruh mahasiswa STMIK Tazkia.</span>
-              </h2>
-              <p className="text-white/60 text-sm max-w-xl">
-                Daftarkan proyekmu mulai dari aplikasi, riset, desain, hingga karya multimedia dan jadilah inspirasi bagi ribuan mahasiswa lainnya.
-              </p>
-            </div>
-
-            {/* CTA Button */}
-            <div className="shrink-0 relative z-10">
-              <button
-                id="btn-ajukan-karya"
-                onClick={() => setShowModal(true)}
-                className="group flex items-center gap-3 px-8 py-4 bg-white text-[var(--color-primary)] font-extrabold rounded-2xl hover:bg-white/90 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-sm whitespace-nowrap"
-              >
-                <FiUpload className="group-hover:-translate-y-0.5 transition-transform" size={18} />
-                Ajukan Karya Sekarang
-              </button>
-            </div>
-          </motion.div>
 
         </div>
       </main>

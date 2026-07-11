@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { FiCalendar, FiMapPin, FiClock, FiArrowRight, FiZap, FiCheckCircle } from "react-icons/fi";
+import { FiCalendar, FiMapPin, FiClock, FiArrowRight, FiZap, FiCheckCircle, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 // --- STATIC DATA (akan diganti dengan data dari backend) ---
 
@@ -105,14 +107,157 @@ const pastEvents = [
 // --- MAIN COMPONENT ---
 
 export default function EventVolunteer({ showHeader = true }: { showHeader?: boolean }) {
+  const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const AUTOPLAY_INTERVAL = 5000;
+
+  const goTo = useCallback((index: number, dir?: number) => {
+    if (upcomingEvents.length === 0) return;
+    const d = dir ?? (index > active ? 1 : -1);
+    setDirection(d);
+    setActive(index);
+    setProgress(0);
+  }, [active]);
+
+  const next = useCallback(() => {
+    if (upcomingEvents.length === 0) return;
+    goTo((active + 1) % upcomingEvents.length, 1);
+  }, [active, goTo]);
+
+  const prev = useCallback(() => {
+    if (upcomingEvents.length === 0) return;
+    goTo((active - 1 + upcomingEvents.length) % upcomingEvents.length, -1);
+  }, [active, goTo]);
+
+  useEffect(() => {
+    if (paused || upcomingEvents.length <= 1) return;
+    intervalRef.current = setInterval(next, AUTOPLAY_INTERVAL);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [paused, next]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(0), 0);
+    if (paused || upcomingEvents.length <= 1) return () => clearTimeout(timer);
+    const start = Date.now();
+    progressRef.current = setInterval(() => {
+      setProgress(Math.min(((Date.now() - start) / AUTOPLAY_INTERVAL) * 100, 100));
+    }, 40);
+    return () => {
+      clearTimeout(timer);
+      if (progressRef.current) clearInterval(progressRef.current);
+    };
+  }, [active, paused]);
+
+  const variants = {
+    enter: (d: number) => ({ x: d > 0 ? "60%" : "-60%", opacity: 0, scale: 0.95 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (d: number) => ({ x: d > 0 ? "-60%" : "60%", opacity: 0, scale: 0.95 }),
+  };
+
+  // Volunteer Slider States
+  const [activeVol, setActiveVol] = useState(0);
+  const [directionVol, setDirectionVol] = useState(1);
+  const [pausedVol, setPausedVol] = useState(false);
+  const [progressVol, setProgressVol] = useState(0);
+  const intervalVolRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressVolRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goToVol = useCallback((index: number, dir?: number) => {
+    if (volunteerOpportunities.length === 0) return;
+    const d = dir ?? (index > activeVol ? 1 : -1);
+    setDirectionVol(d);
+    setActiveVol(index);
+    setProgressVol(0);
+  }, [activeVol]);
+
+  const nextVol = useCallback(() => {
+    if (volunteerOpportunities.length === 0) return;
+    goToVol((activeVol + 1) % volunteerOpportunities.length, 1);
+  }, [activeVol, goToVol]);
+
+  const prevVol = useCallback(() => {
+    if (volunteerOpportunities.length === 0) return;
+    goToVol((activeVol - 1 + volunteerOpportunities.length) % volunteerOpportunities.length, -1);
+  }, [activeVol, goToVol]);
+
+  useEffect(() => {
+    if (pausedVol || volunteerOpportunities.length <= 1) return;
+    intervalVolRef.current = setInterval(nextVol, AUTOPLAY_INTERVAL);
+    return () => { if (intervalVolRef.current) clearInterval(intervalVolRef.current); };
+  }, [pausedVol, nextVol]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressVol(0), 0);
+    if (pausedVol || volunteerOpportunities.length <= 1) return () => clearTimeout(timer);
+    const start = Date.now();
+    progressVolRef.current = setInterval(() => {
+      setProgressVol(Math.min(((Date.now() - start) / AUTOPLAY_INTERVAL) * 100, 100));
+    }, 40);
+    return () => {
+      clearTimeout(timer);
+      if (progressVolRef.current) clearInterval(progressVolRef.current);
+    };
+  }, [activeVol, pausedVol]);
+
+  // Past Events Slider States
+  const [activePast, setActivePast] = useState(0);
+  const [directionPast, setDirectionPast] = useState(1);
+  const [pausedPast, setPausedPast] = useState(false);
+  const [progressPast, setProgressPast] = useState(0);
+  const intervalPastRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressPastRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goToPast = useCallback((index: number, dir?: number) => {
+    if (pastEvents.length === 0) return;
+    const d = dir ?? (index > activePast ? 1 : -1);
+    setDirectionPast(d);
+    setActivePast(index);
+    setProgressPast(0);
+  }, [activePast]);
+
+  const nextPast = useCallback(() => {
+    if (pastEvents.length === 0) return;
+    goToPast((activePast + 1) % pastEvents.length, 1);
+  }, [activePast, goToPast]);
+
+  const prevPast = useCallback(() => {
+    if (pastEvents.length === 0) return;
+    goToPast((activePast - 1 + pastEvents.length) % pastEvents.length, -1);
+  }, [activePast, goToPast]);
+
+  useEffect(() => {
+    if (pausedPast || pastEvents.length <= 1) return;
+    intervalPastRef.current = setInterval(nextPast, AUTOPLAY_INTERVAL);
+    return () => { if (intervalPastRef.current) clearInterval(intervalPastRef.current); };
+  }, [pausedPast, nextPast]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressPast(0), 0);
+    if (pausedPast || pastEvents.length <= 1) return () => clearTimeout(timer);
+    const start = Date.now();
+    progressPastRef.current = setInterval(() => {
+      setProgressPast(Math.min(((Date.now() - start) / AUTOPLAY_INTERVAL) * 100, 100));
+    }, 40);
+    return () => {
+      clearTimeout(timer);
+      if (progressPastRef.current) clearInterval(progressPastRef.current);
+    };
+  }, [activePast, pausedPast]);
+
+
   return (
-    <div className="bg-[#f8f9fc] py-16">
+    <div className="bg-[#f8f9fc] py-10 md:py-16">
 
       {/* ============================================ */}
       {/*  HERO HEADER                                */}
       {/* ============================================ */}
       {showHeader && (
-      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16 text-center">
+      <section className="px-4 sm:px-6 md:px-10 max-w-7xl mx-auto mb-10 md:mb-16 text-center">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
           <FiCalendar size={13} /> Program Kegiatan
         </span>
@@ -142,7 +287,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
       {/* ============================================ */}
       {/*  SECTION 1: LIVE EVENT                      */}
       {/* ============================================ */}
-      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16">
+      <section className="px-4 sm:px-6 md:px-10 max-w-7xl mx-auto mb-10 md:mb-16">
         {/* Section Label */}
         <div className="flex items-center gap-3 mb-6">
           <h2 className="text-xl font-bold text-on-background">Event Sedang Berjalan</h2>
@@ -152,156 +297,373 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
         </div>
 
         {/* Live Event Card */}
-        <div className="relative rounded-3xl overflow-hidden shadow-lg h-72 md:h-80 group cursor-pointer">
+        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group cursor-pointer">
           {/* BG Image */}
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
             style={{ backgroundImage: `url('${liveEvent.imgUrl}')` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/75 to-primary/20" />
 
           {/* Content */}
-          <div className="relative z-10 h-full flex flex-col justify-between p-8 md:p-10">
-            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm w-fit border border-white/30">
+          <div className="relative z-10 flex flex-col justify-end p-5 sm:p-7 md:p-10 min-h-[280px] sm:min-h-[300px] md:min-h-[320px]">
+            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm w-fit border border-white/30 mb-3">
               {liveEvent.category}
             </span>
 
-            <div className="max-w-xl">
-              <h3 className="text-white text-2xl md:text-4xl font-bold mb-3 leading-tight">{liveEvent.title}</h3>
-              <p className="text-white/90 text-sm md:text-base mb-5 line-clamp-2">{liveEvent.desc}</p>
+            <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight">{liveEvent.title}</h3>
 
-              <div className="flex flex-wrap gap-4 text-white/80 text-sm mb-6">
-                <span className="flex items-center gap-1.5"><FiCalendar size={14} /> {liveEvent.date}</span>
-                <span className="flex items-center gap-1.5"><FiClock size={14} /> {liveEvent.time}</span>
-                <span className="flex items-center gap-1.5"><FiMapPin size={14} /> {liveEvent.location}</span>
-              </div>
+            <div className="flex flex-col gap-1 text-white/80 text-xs sm:text-sm mb-4">
+              <span className="flex items-center gap-1.5"><FiCalendar size={13} /> {liveEvent.date}</span>
+              <span className="flex items-center gap-1.5"><FiClock size={13} /> {liveEvent.time}</span>
+              <span className="flex items-center gap-1.5"><FiMapPin size={13} /> {liveEvent.location}</span>
+            </div>
 
-              <div className="flex gap-3">
-                <Link href="#" className="bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md flex items-center gap-2">
-                  Masuk ke Live <FiArrowRight size={16} />
-                </Link>
-              </div>
+            <div>
+              <Link href="#" className="bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-2">
+                Masuk ke Live <FiArrowRight size={16} />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============================================ */}
-      {/*  SECTION 2: UPCOMING EVENTS + CALENDAR      */}
-      {/* ============================================ */}
-      <section id="upcoming" className="px-5 md:px-10 max-w-7xl mx-auto mb-16">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-on-background">Upcoming Events</h2>
-          <Link href="/agenda" className="group flex items-center gap-1.5 text-primary hover:text-secondary font-semibold text-sm transition-colors">
-            Lihat Semua <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {upcomingEvents.map((event) => (
-            <Link key={event.id} href={`/agenda/${event.id}`}
-              className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 flex flex-col"
-            >
-              {/* Image */}
-              <div className="h-48 overflow-hidden bg-surface-variant relative shrink-0">
-                <img src={event.imgUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-secondary text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                  {event.category}
-                </div>
+      {/* ============================================ */}
+      {/*  SECTIONS 2, 3, 4: 3-COLUMN GRID (desktop) */}
+      {/* ============================================ */}
+      <div className="px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          {/* ---- COLUMN 1: UPCOMING EVENTS ---- */}
+          <section
+            id="upcoming"
+            onMouseEnter={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPaused(true);
+            }}
+            onMouseLeave={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPaused(false);
+            }}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-start gap-3 mb-4">
+              <div>
+                <h2 className="text-base font-bold text-on-background">Upcoming Events</h2>
+                <p className="text-xs text-on-surface-variant mt-0.5">Agenda kegiatan BEM terdekat</p>
               </div>
+              <Link href="/agenda" className="group flex items-center gap-1 text-primary hover:text-secondary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
+                Lihat Semua <FiArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
 
-              {/* Content */}
-              <div className="p-6 flex flex-col flex-grow">
-                <h4 className="font-bold text-lg md:text-xl text-on-background group-hover:text-primary transition-colors mb-3 line-clamp-2">{event.title}</h4>
-                <div className="flex flex-col gap-2 text-sm text-on-surface-variant mb-6 flex-grow">
-                  <span className="flex items-center gap-2"><FiCalendar size={14} className="text-primary" /> {event.date}</span>
-                  <span className="flex items-center gap-2"><FiClock size={14} className="text-primary" /> {event.time}</span>
-                  <span className="flex items-center gap-2"><FiMapPin size={14} className="text-primary" /> {event.location}</span>
-                </div>
-
-                <div className="flex items-center justify-end pt-4 border-t border-outline-variant/20 mt-auto">
-                  <span className="text-primary text-sm font-bold group-hover:text-secondary transition-colors flex items-center gap-1.5">
-                    Detail Event <FiArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/*  SECTION 3: VOLUNTEER OPPORTUNITIES         */}
-      {/* ============================================ */}
-      <section className="px-5 md:px-10 max-w-7xl mx-auto mb-16">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-on-background mb-1">Volunteer Opportunities</h2>
-          <p className="text-sm text-on-surface-variant">Kembangkan dirimu, bangun jaringan, dan tinggalkan jejak nyata di kampus. Bergabunglah sebagai relawan!</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {volunteerOpportunities.map((vol) => (
-            <div key={vol.id} className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-              {/* Image */}
-              <div className="h-40 overflow-hidden bg-surface-variant relative">
-                <img src={vol.imgUrl} alt={vol.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                {vol.isUrgent && (
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                    <FiClock size={10} /> SEGERA
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5">
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-2">{vol.category}</span>
-                <h4 className="font-bold text-base text-on-background group-hover:text-primary transition-colors mb-2">{vol.title}</h4>
-                <p className="text-sm text-on-surface-variant leading-relaxed mb-4 line-clamp-3">{vol.desc}</p>
-
-                <div className="flex items-center gap-1.5 text-xs text-on-surface-variant mb-4">
-                  <FiClock size={12} className="text-primary" />
-                  <span>Deadline: <span className="font-semibold text-on-background">{vol.deadline}</span></span>
-                </div>
-
-                <Link href={`/volunteer/${vol.id}`}
-                  className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-bold py-2.5 rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
-                >
-                  <FiCheckCircle size={15} /> Apply Posisi
+            {upcomingEvents.length === 0 ? (
+              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+                <FiCalendar size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+                <h3 className="text-base font-bold text-on-background">Belum Ada Event Mendatang</h3>
+                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada agenda kegiatan terdekat yang dijadwalkan.</p>
+                <Link href="/agenda" className="mt-4 inline-flex items-center gap-2 bg-primary text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-primary/95 transition-all shadow-md">
+                  Lihat Arsip <FiArrowRight />
                 </Link>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/*  SECTION 4: PAST EVENTS                     */}
-      {/* ============================================ */}
-      <section className="px-5 md:px-10 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-on-background">Event yang Sudah Berakhir</h2>
-          <Link href="/agenda" className="group flex items-center gap-1.5 text-on-surface-variant hover:text-primary font-semibold text-sm transition-colors">
-            Lihat Arsip <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {pastEvents.map((ev) => (
-            <Link key={ev.id} href="#"
-              className="group relative h-44 rounded-2xl overflow-hidden cursor-pointer shadow-sm"
-            >
-              <img src={ev.imgUrl} alt={ev.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-5">
-                <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-1">{ev.category}</span>
-                <h4 className="text-white font-bold text-sm leading-tight">{ev.title}</h4>
+            ) : (
+              <div
+                className="relative"
+                onMouseDown={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.clientX); }}
+                onMouseUp={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) next();
+                    else prev();
+                  }
+                }}
+                onTouchStart={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.touches[0].clientX); }}
+                onTouchEnd={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) next();
+                    else prev();
+                  }
+                }}
+              >
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                  {upcomingEvents.length > 1 && (
+                    <div
+                      className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full"
+                      style={{ width: `${progress}%`, backgroundColor: "var(--color-primary)" }}
+                    />
+                  )}
+                  <AnimatePresence custom={direction} initial={false}>
+                    <motion.div
+                      key={upcomingEvents[active].id}
+                      custom={direction}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+                      className="absolute inset-0"
+                      style={{ willChange: "transform" }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.08}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -40) next();
+                        if (info.offset.x > 40) prev();
+                      }}
+                    >
+                      <img src={upcomingEvents[active].imgUrl} alt={upcomingEvents[active].title} className="w-full h-full object-cover select-none" draggable={false} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                        {upcomingEvents[active].category}
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                        <h3 className="font-extrabold text-sm leading-tight mb-2">{upcomingEvents[active].title}</h3>
+                        <div className="flex flex-col gap-0.5 text-white/80 text-[10px] mb-3">
+                          <span className="flex items-center gap-1.5"><FiCalendar size={11} className="text-secondary" /> {upcomingEvents[active].date}</span>
+                          <span className="flex items-center gap-1.5"><FiClock size={11} className="text-secondary" /> {upcomingEvents[active].time}</span>
+                          <span className="flex items-center gap-1.5"><FiMapPin size={11} className="text-secondary" /> {upcomingEvents[active].location}</span>
+                        </div>
+                        <Link href={`/agenda/${upcomingEvents[active].id}?from=home`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
+                          Detail Event <FiArrowRight size={12} />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+                {upcomingEvents.length > 1 && (
+                  <>
+                    <button onClick={prev} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={next} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                  </>
+                )}
+                {upcomingEvents.length > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-3">
+                    {upcomingEvents.map((p, i) => (
+                      <button key={p.id} onClick={() => goTo(i)} aria-label={`Event ${i + 1}`} className="rounded-full transition-all duration-300" style={{ width: active === i ? 20 : 6, height: 6, backgroundColor: active === i ? "var(--color-primary)" : "#c5c6d0" }} />
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/20 rounded-2xl transition-all duration-300" />
-            </Link>
-          ))}
-        </div>
-      </section>
+            )}
+          </section>
 
+          {/* ---- COLUMN 2: VOLUNTEER OPPORTUNITIES ---- */}
+          <section
+            id="volunteer"
+            onMouseEnter={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedVol(true);
+            }}
+            onMouseLeave={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedVol(false);
+            }}
+          >
+            <div className="flex justify-between items-start gap-3 mb-4">
+              <div>
+                <h2 className="text-base font-bold text-on-background">Volunteer Opportunities</h2>
+                <p className="text-xs text-on-surface-variant mt-0.5">Bergabunglah dan jadilah bagian perubahan!</p>
+              </div>
+              <Link href="/volunteer" className="group flex items-center gap-1 text-primary hover:text-secondary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
+                Lihat Semua <FiArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {volunteerOpportunities.length === 0 ? (
+              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+                <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+                <h3 className="text-base font-bold text-on-background">Belum Ada Lowongan</h3>
+                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada posisi relawan baru. Pantau terus!</p>
+              </div>
+            ) : (
+              <div
+                className="relative"
+                onMouseDown={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.clientX); }}
+                onMouseUp={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) nextVol();
+                    else prevVol();
+                  }
+                }}
+                onTouchStart={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.touches[0].clientX); }}
+                onTouchEnd={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) nextVol();
+                    else prevVol();
+                  }
+                }}
+              >
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                  {volunteerOpportunities.length > 1 && (
+                    <div className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full" style={{ width: `${progressVol}%`, backgroundColor: "var(--color-primary)" }} />
+                  )}
+                  <AnimatePresence custom={directionVol} initial={false}>
+                    <motion.div
+                      key={volunteerOpportunities[activeVol].id}
+                      custom={directionVol}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+                      className="absolute inset-0"
+                      style={{ willChange: "transform" }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.08}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -40) nextVol();
+                        if (info.offset.x > 40) prevVol();
+                      }}
+                    >
+                      <img src={volunteerOpportunities[activeVol].imgUrl} alt={volunteerOpportunities[activeVol].title} className="w-full h-full object-cover select-none" draggable={false} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
+                      {volunteerOpportunities[activeVol].isUrgent && (
+                        <div className="absolute top-4 left-4 bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                          <FiClock size={10} /> SEGERA
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                        <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-1">{volunteerOpportunities[activeVol].category}</span>
+                        <h3 className="font-extrabold text-sm leading-tight mb-1">{volunteerOpportunities[activeVol].title}</h3>
+                        <p className="text-white/80 text-[10px] mb-2 leading-relaxed line-clamp-2">{volunteerOpportunities[activeVol].desc}</p>
+                        <div className="flex items-center gap-1 text-[10px] text-white/70 mb-3">
+                          <FiClock size={11} className="text-secondary" />
+                          <span>Deadline: <span className="font-semibold text-white">{volunteerOpportunities[activeVol].deadline}</span></span>
+                        </div>
+                        <Link href={`/volunteer/${volunteerOpportunities[activeVol].id}?from=home`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
+                          <FiCheckCircle size={12} /> Apply Posisi
+                        </Link>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+                {volunteerOpportunities.length > 1 && (
+                  <>
+                    <button onClick={prevVol} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={nextVol} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                  </>
+                )}
+                {volunteerOpportunities.length > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-3">
+                    {volunteerOpportunities.map((p, i) => (
+                      <button key={p.id} onClick={() => goToVol(i)} aria-label={`Volunteer ${i + 1}`} className="rounded-full transition-all duration-300" style={{ width: activeVol === i ? 20 : 6, height: 6, backgroundColor: activeVol === i ? "var(--color-primary)" : "#c5c6d0" }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* ---- COLUMN 3: PAST EVENTS ---- */}
+          <section
+            id="past-events"
+            onMouseEnter={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedPast(true);
+            }}
+            onMouseLeave={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedPast(false);
+            }}
+          >
+            <div className="flex justify-between items-start gap-3 mb-4">
+              <div>
+                <h2 className="text-base font-bold text-on-background">Event yang Sudah Berakhir</h2>
+                <p className="text-xs text-on-surface-variant mt-0.5">Galeri arsip kegiatan BEM terdahulu</p>
+              </div>
+              <Link href="/agenda" className="group flex items-center gap-1 text-on-surface-variant hover:text-primary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
+                Lihat Semua <FiArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+
+            {pastEvents.length === 0 ? (
+              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+                <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+                <h3 className="text-base font-bold text-on-background">Belum Ada Arsip</h3>
+                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada data dokumentasi kegiatan.</p>
+              </div>
+            ) : (
+              <div
+                className="relative"
+                onMouseDown={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.clientX); }}
+                onMouseUp={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) nextPast();
+                    else prevPast();
+                  }
+                }}
+                onTouchStart={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.touches[0].clientX); }}
+                onTouchEnd={(e) => {
+                  const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+                  const diff = start - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) nextPast();
+                    else prevPast();
+                  }
+                }}
+              >
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                  {pastEvents.length > 1 && (
+                    <div className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full" style={{ width: `${progressPast}%`, backgroundColor: "var(--color-primary)" }} />
+                  )}
+                  <AnimatePresence custom={directionPast} initial={false}>
+                    <motion.div
+                      key={pastEvents[activePast].id}
+                      custom={directionPast}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+                      className="absolute inset-0"
+                      style={{ willChange: "transform" }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.08}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -40) nextPast();
+                        if (info.offset.x > 40) prevPast();
+                      }}
+                    >
+                      <img src={pastEvents[activePast].imgUrl} alt={pastEvents[activePast].title} className="w-full h-full object-cover grayscale select-none" draggable={false} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
+                      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                        {pastEvents[activePast].category}
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                        <h3 className="font-extrabold text-sm leading-tight mb-3">{pastEvents[activePast].title}</h3>
+                        <Link href="#" className="bg-white/20 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-sm">
+                          Lihat Dokumentasi <FiArrowRight size={12} />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+                {pastEvents.length > 1 && (
+                  <>
+                    <button onClick={prevPast} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={nextPast} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                  </>
+                )}
+                {pastEvents.length > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-3">
+                    {pastEvents.map((p, i) => (
+                      <button key={p.id} onClick={() => goToPast(i)} aria-label={`Arsip ${i + 1}`} className="rounded-full transition-all duration-300" style={{ width: activePast === i ? 20 : 6, height: 6, backgroundColor: activePast === i ? "var(--color-primary)" : "#c5c6d0" }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+        </div>
+      </div>
     </div>
   );
 }
+

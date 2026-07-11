@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   FiSearch, 
@@ -45,11 +46,21 @@ const volunteerOpportunities = [
   },
 ];
 
-export default function AgendaPage() {
-  const [activeTab, setActiveTab] = useState<"event" | "volunteer">("event");
+function AgendaPageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const tabParam = searchParams.get("tab");
+  const activeTab = tabParam === "volunteer" ? "volunteer" : "event";
+
+  const setActiveTab = (tab: "event" | "volunteer") => {
+    router.replace(`/agenda?tab=${tab}`, { scroll: false });
+  };
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
+  const [volunteerSearchQuery, setVolunteerSearchQuery] = useState("");
+  
   // Filter Logic untuk Agenda
   const filteredAgendas = useMemo(() => {
     return agendas.filter((item) => {
@@ -64,6 +75,15 @@ export default function AgendaPage() {
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, selectedCategory]);
+
+  // Filter Logic untuk Volunteer
+  const filteredVolunteers = useMemo(() => {
+    return volunteerOpportunities.filter((vol) =>
+      vol.title.toLowerCase().includes(volunteerSearchQuery.toLowerCase()) ||
+      vol.category.toLowerCase().includes(volunteerSearchQuery.toLowerCase()) ||
+      vol.desc.toLowerCase().includes(volunteerSearchQuery.toLowerCase())
+    );
+  }, [volunteerSearchQuery]);
 
   // Pagination Logic
   const ITEMS_PER_PAGE = 6;
@@ -82,84 +102,94 @@ export default function AgendaPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pt-24 pb-20 font-sans">
+    <div className="relative flex flex-col min-h-screen bg-background pt-24 pb-20 font-sans overflow-x-hidden w-full">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
       <main className="px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto w-full pt-8">
         
         {/* Header */}
-        <header className="mb-10 text-left">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-secondary-container text-secondary font-semibold text-xs uppercase tracking-wider mb-4">
+        <header className="mb-6 md:mb-10 text-left">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-container text-secondary font-semibold text-[10px] md:text-xs uppercase tracking-wider mb-3 md:mb-4">
             Event & Rekrutmen
           </div>
-          <h1 className="font-display-lg text-4xl md:text-5xl text-primary mb-4 font-black tracking-tight leading-none">
+          <h1 className="font-display-lg text-3xl md:text-5xl text-primary mb-2 md:mb-4 font-black tracking-tight leading-tight">
             Agenda Kegiatan BEM
           </h1>
-          <p className="font-body-lg text-on-surface-variant max-w-2xl text-base md:text-lg font-light leading-relaxed">
+          <p className="font-body-lg text-on-surface-variant max-w-2xl text-sm md:text-lg font-light leading-relaxed">
             Ikuti berbagai acara, kompetisi, dan program rekrutmen terbaru yang diselenggarakan oleh BEM STMIK Tazkia.
           </p>
         </header>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-4 mb-8 border-b border-outline-variant/30 pb-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-outline-variant/30 pb-2 overflow-x-auto scrollbar-hide">
           <button 
             onClick={() => setActiveTab("event")}
-            className={`pb-2 px-2 text-lg font-bold transition-all whitespace-nowrap ${
+            className={`pb-2 px-2 text-sm sm:text-base md:text-lg font-bold transition-all whitespace-nowrap ${
               activeTab === "event" ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary"
             }`}
           >
-            Agenda & Event
+            <span className="hidden sm:inline">Agenda & Event</span>
+            <span className="sm:hidden">Agenda</span>
           </button>
           <button 
             onClick={() => setActiveTab("volunteer")}
-            className={`pb-2 px-2 text-lg font-bold transition-all whitespace-nowrap ${
+            className={`pb-2 px-2 text-sm sm:text-base md:text-lg font-bold transition-all whitespace-nowrap ${
               activeTab === "volunteer" ? "text-primary border-b-4 border-primary" : "text-on-surface-variant hover:text-primary"
             }`}
           >
-            Open Recruitment / Volunteer
+            <span className="hidden sm:inline">Open Recruitment & Volunteer</span>
+            <span className="sm:hidden">Oprec & Volunteer</span>
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-3 bg-white border border-outline-variant/30 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
+          <FiSearch size={17} className="text-on-surface-variant shrink-0" />
+          {activeTab === "event" ? (
+            <input
+              type="text"
+              placeholder="Cari agenda atau event..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              className="flex-1 bg-transparent text-sm text-on-background placeholder-on-surface-variant/60 focus:outline-none"
+            />
+          ) : (
+            <input
+              type="text"
+              placeholder="Cari posisi volunteer atau rekrutmen..."
+              value={volunteerSearchQuery}
+              onChange={(e) => setVolunteerSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent text-sm text-on-background placeholder-on-surface-variant/60 focus:outline-none"
+            />
+          )}
+        </div>
+
+        {/* Category Filter Chips — scrollable bar (event tab only) */}
+        {activeTab === "event" && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => { setSelectedCategory(category); setCurrentPage(1); }}
+                className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap shrink-0 ${
+                  selectedCategory === category
+                    ? "bg-primary text-white shadow-md"
+                    : "bg-white border border-outline-variant/30 text-on-surface-variant hover:bg-surface-variant/60"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Spacer for volunteer tab */}
+        {activeTab === "volunteer" && <div className="mb-6" />}
+
         {activeTab === "event" && (
           <>
-            {/* Filter and Search Section */}
-            <section className="mb-10 bg-white border border-outline-variant/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-              <div className="relative flex-1 max-w-md">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
-                  <FiSearch size={18} />
-                </span>
-                <input
-                  type="text"
-                  placeholder="Cari agenda atau event..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-background border border-outline-variant/40 rounded-xl text-sm placeholder-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-thin">
-                <FiFilter className="text-on-surface-variant shrink-0 mr-1" />
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      setCurrentPage(1);
-                    }}
-                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
-                      selectedCategory === category
-                        ? "bg-primary text-white shadow-md"
-                        : "bg-surface-variant/45 text-on-surface-variant hover:bg-surface-variant/80"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </section>
-
             {/* Grid Content Agenda */}
-            {paginatedAgendas.length > 0 ? (
+            {filteredAgendas.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {paginatedAgendas.map((agenda, index) => (
                   <motion.div
@@ -169,38 +199,38 @@ export default function AgendaPage() {
                     key={agenda.id}
                   >
                     <Link 
-                      href={`/agenda/${agenda.id}`}
+                       href={`/agenda/${agenda.id}?from=agenda-event`}
                       className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 flex flex-col h-full"
                     >
                       {/* Image */}
-                      <div className="h-48 overflow-hidden bg-surface-variant relative shrink-0">
+                      <div className="h-44 md:h-48 overflow-hidden bg-surface-variant relative shrink-0">
                         <img src={agenda.imgUrl} alt={agenda.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-secondary text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                        <div className="absolute top-3.5 left-3.5 bg-white/90 backdrop-blur-sm text-secondary text-[10px] md:text-xs font-bold px-2.5 py-1 md:py-1.5 rounded-full uppercase tracking-wider">
                           {agenda.category}
                         </div>
                       </div>
 
                       {/* Content */}
-                      <div className="p-6 flex flex-col flex-grow">
-                        <h4 className="font-bold text-lg md:text-xl text-on-background group-hover:text-primary transition-colors mb-4 line-clamp-2">
+                      <div className="p-4 md:p-6 flex flex-col flex-grow">
+                        <h4 className="font-bold text-base md:text-xl text-on-background group-hover:text-primary transition-colors mb-3 md:mb-4 line-clamp-2">
                           {agenda.title}
                         </h4>
                         
-                        <div className="flex flex-col gap-2 text-sm text-on-surface-variant mb-6 flex-grow">
+                        <div className="flex flex-col gap-1.5 md:gap-2 text-xs md:text-sm text-on-surface-variant mb-4 md:mb-6 flex-grow">
                           <span className="flex items-center gap-2">
-                            <FiCalendar size={14} className="text-primary shrink-0" /> {agenda.date}
+                            <FiCalendar size={13} className="text-primary shrink-0" /> {agenda.date}
                           </span>
                           <span className="flex items-center gap-2">
-                            <FiClock size={14} className="text-primary shrink-0" /> {agenda.time}
+                            <FiClock size={13} className="text-primary shrink-0" /> {agenda.time}
                           </span>
                           <span className="flex items-center gap-2">
-                            <FiMapPin size={14} className="text-primary shrink-0" /> {agenda.location}
+                            <FiMapPin size={13} className="text-primary shrink-0" /> {agenda.location}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-end pt-4 border-t border-outline-variant/20 mt-auto">
-                          <span className="text-primary text-sm font-bold group-hover:text-secondary transition-colors flex items-center gap-1.5">
-                            Detail Event <FiArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        <div className="flex items-center justify-end pt-3 border-t border-outline-variant/20 mt-auto">
+                          <span className="text-primary text-xs md:text-sm font-bold group-hover:text-secondary transition-colors flex items-center gap-1.5">
+                            Detail Event <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                           </span>
                         </div>
                       </div>
@@ -258,7 +288,14 @@ export default function AgendaPage() {
         {/* ========================================================= */}
         {activeTab === "volunteer" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {volunteerOpportunities.map((vol, index) => (
+            {filteredVolunteers.length === 0 && (
+              <div className="col-span-3 text-center py-16 bg-white border border-outline-variant/30 rounded-3xl shadow-sm">
+                <span className="material-symbols-outlined text-6xl text-primary/30 mb-4 block">person_search</span>
+                <h3 className="text-xl font-bold text-primary mb-2">Posisi Tidak Ditemukan</h3>
+                <p className="text-on-surface-variant text-sm max-w-sm mx-auto">Tidak ada posisi volunteer yang sesuai dengan pencarian Anda.</p>
+              </div>
+            )}
+            {filteredVolunteers.map((vol, index) => (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -277,20 +314,20 @@ export default function AgendaPage() {
                     )}
                   </div>
 
-                  <div className="p-6 flex flex-col flex-grow">
-                    <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-2">{vol.category}</span>
-                    <h4 className="font-bold text-lg text-on-background group-hover:text-primary transition-colors mb-2">{vol.title}</h4>
-                    <p className="text-sm text-on-surface-variant leading-relaxed mb-6 flex-grow">{vol.desc}</p>
+                  <div className="p-4 md:p-6 flex flex-col flex-grow">
+                    <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-1 md:mb-2">{vol.category}</span>
+                    <h4 className="font-bold text-base md:text-lg text-on-background group-hover:text-primary transition-colors mb-1 md:mb-2">{vol.title}</h4>
+                    <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed mb-4 md:mb-6 flex-grow">{vol.desc}</p>
 
-                    <div className="flex items-center gap-1.5 text-xs text-on-surface-variant mb-5">
-                      <FiClock size={14} className="text-primary" />
+                    <div className="flex items-center gap-1.5 text-xs text-on-surface-variant mb-4 md:mb-5">
+                      <FiClock size={13} className="text-primary" />
                       <span>Deadline: <span className="font-semibold text-on-background">{vol.deadline}</span></span>
                     </div>
 
-                    <Link href={`/volunteer/${vol.id}`}
-                      className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-bold py-3 rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 mt-auto"
+                    <Link href={`/volunteer/${vol.id}?from=agenda-volunteer`}
+                      className="w-full flex items-center justify-center gap-2 bg-primary text-white text-xs md:text-sm font-bold py-2.5 md:py-3 rounded-xl hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 mt-auto"
                     >
-                      <FiCheckCircle size={16} /> Apply Posisi
+                      <FiCheckCircle size={15} /> Apply Posisi
                     </Link>
                   </div>
                 </div>
@@ -301,5 +338,13 @@ export default function AgendaPage() {
 
       </main>
     </div>
+  );
+}
+
+export default function AgendaPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-primary font-bold">Memuat...</div>}>
+      <AgendaPageContent />
+    </Suspense>
   );
 }

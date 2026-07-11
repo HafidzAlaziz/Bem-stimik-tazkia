@@ -57,11 +57,17 @@
 }
 
 /* === GLOBAL BODY === */
+html {
+  overflow-x: clip;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-on-background);
   font-family: "Plus Jakarta Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* === UTILITY CLASSES === */
@@ -127,6 +133,15 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
