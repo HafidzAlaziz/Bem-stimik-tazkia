@@ -59,7 +59,7 @@ export default function AdminDashboardCharts({
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="h-[400px] w-full flex items-center justify-center animate-pulse bg-gray-50 rounded-2xl">Memuat Grafik...</div>;
+  if (!mounted) return <div className="h-[400px] w-full flex items-center justify-center animate-pulse bg-surface-variant/20 rounded-2xl">Memuat Grafik...</div>;
 
   const distributionData = [
     { name: "Berita", value: beritaCount },
@@ -71,11 +71,11 @@ export default function AdminDashboardCharts({
     <div className="flex flex-col gap-6">
       
       {/* BARIS 1: Grafik Utama (Upload Konten) */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+      <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/20 p-6 relative overflow-hidden">
         <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-xl font-bold text-gray-900">Aktivitas Publikasi</h3>
-            <p className="text-sm text-gray-500">Statistik penambahan konten dalam 6 bulan terakhir</p>
+            <h3 className="text-xl font-bold text-on-surface">Aktivitas Publikasi</h3>
+            <p className="text-sm text-on-surface-variant">Statistik penambahan konten dalam 6 bulan terakhir</p>
           </div>
         </div>
 
@@ -105,10 +105,10 @@ export default function AdminDashboardCharts({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Grafik Pengunjung */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:col-span-2">
+        <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/20 p-6 lg:col-span-2">
           <div className="mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Tren Pengunjung</h3>
-            <p className="text-sm text-gray-500">Jumlah pengunjung portal BEM</p>
+            <h3 className="text-xl font-bold text-on-surface">Tren Pengunjung</h3>
+            <p className="text-sm text-on-surface-variant">Jumlah pengunjung portal BEM</p>
           </div>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -135,10 +135,10 @@ export default function AdminDashboardCharts({
         </div>
 
         {/* Distribusi Konten */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+        <div className="bg-surface rounded-2xl shadow-sm border border-outline-variant/20 p-6 flex flex-col">
           <div className="mb-2">
-            <h3 className="text-xl font-bold text-gray-900">Total Konten</h3>
-            <p className="text-sm text-gray-500">Berdasarkan kategori data</p>
+            <h3 className="text-xl font-bold text-on-surface">Total Konten</h3>
+            <p className="text-sm text-on-surface-variant">Berdasarkan kategori data</p>
           </div>
           <div className="flex-1 h-[200px] w-full flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">
@@ -164,10 +164,10 @@ export default function AdminDashboardCharts({
             </ResponsiveContainer>
             {/* Center Text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-3xl font-black text-gray-900 leading-none">
+              <span className="text-3xl font-black text-on-surface leading-none">
                 {beritaCount + karyaCount + agendaCount}
               </span>
-              <span className="text-xs text-gray-500 font-medium">Total</span>
+              <span className="text-xs text-on-surface-variant font-medium">Total</span>
             </div>
           </div>
           
@@ -176,9 +176,9 @@ export default function AdminDashboardCharts({
               <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index] }}></div>
-                  <span className="text-sm text-gray-700 font-medium">{item.name}</span>
+                  <span className="text-sm text-on-surface font-medium">{item.name}</span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">{item.value}</span>
+                <span className="text-sm font-bold text-on-surface">{item.value}</span>
               </div>
             ))}
           </div>

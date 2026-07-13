@@ -21,7 +21,7 @@ export default function Footer() {
       <div className="px-5 md:px-10 max-w-7xl mx-auto flex flex-col gap-12 relative z-10">
 
         {/* Subscription Banner */}
-        <div className="w-full bg-white/10 border border-white/10 rounded-2xl md:rounded-3xl p-5 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8 shadow-lg relative overflow-hidden">
+        <div className="w-full bg-surface/10 border border-white/10 rounded-2xl md:rounded-3xl p-5 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
 
           <div className="flex-1 relative z-10">
@@ -33,10 +33,10 @@ export default function Footer() {
           </div>
 
           <div className="relative w-full md:w-auto">
-            <div className={`absolute -top-10 right-2 md:-top-12 md:right-4 bg-white text-primary px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg pointer-events-none z-20 flex items-center gap-1.5 border border-primary/10 animate-bounce transition-opacity duration-1000 ${showTooltip ? 'opacity-100' : 'opacity-0'}`}>
+            <div className={`absolute -top-10 right-2 md:-top-12 md:right-4 bg-surface text-primary px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg pointer-events-none z-20 flex items-center gap-1.5 border border-primary/10 animate-bounce transition-opacity duration-1000 ${showTooltip ? 'opacity-100' : 'opacity-0'}`}>
               <span className="text-base">😁</span>
               Bukan Bayar yah
-              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-primary/10 rotate-45 rounded-sm"></div>
+              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-surface border-b border-r border-primary/10 rotate-45 rounded-sm"></div>
             </div>
 
             <form className="w-full flex flex-col sm:flex-row gap-2 md:gap-3 relative z-10" onSubmit={(e) => { e.preventDefault(); alert("Berhasil Berlangganan! Anda akan menerima notifikasi via WhatsApp."); }}>
@@ -44,7 +44,7 @@ export default function Footer() {
                 type="tel"
                 required
                 placeholder="Nomor WhatsApp (Cth: 0812...)"
-                className="w-full sm:w-64 md:w-80 px-4 py-3 md:px-5 md:py-3.5 rounded-xl bg-white/10 border border-white/20 text-white text-sm placeholder-white/50 focus:outline-none focus:border-secondary focus:bg-white/20 focus:ring-1 focus:ring-secondary transition-all"
+                className="w-full sm:w-64 md:w-80 px-4 py-3 md:px-5 md:py-3.5 rounded-xl bg-surface/10 border border-white/20 text-white text-sm placeholder-white/50 focus:outline-none focus:border-secondary focus:bg-surface/20 focus:ring-1 focus:ring-secondary transition-all"
               />
               <button
                 type="submit"
@@ -60,13 +60,13 @@ export default function Footer() {
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5 flex flex-col gap-6">
-            <div className="bg-white p-2 rounded-xl mb-6 shadow-sm inline-block w-fit">
+            <div className="bg-surface p-2 rounded-xl mb-6 shadow-sm inline-block w-fit">
               <Image 
                 src="/images/logo.png" 
                 alt="Logo BEM" 
                 width={80} 
                 height={48} 
-                className="h-12 w-auto object-contain bg-white rounded-lg p-1.5 shadow-sm" 
+                className="h-12 w-auto object-contain bg-surface rounded-lg p-1.5 shadow-sm" 
               />
             </div>
             <div className="flex flex-row items-center gap-1.5">

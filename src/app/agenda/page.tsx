@@ -143,7 +143,7 @@ function AgendaPageContent() {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-3 bg-white border border-outline-variant/30 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
+        <div className="mb-3 bg-surface border border-outline-variant/30 rounded-2xl px-4 py-3 shadow-sm flex items-center gap-3">
           <FiSearch size={17} className="text-on-surface-variant shrink-0" />
           {activeTab === "event" ? (
             <input
@@ -174,7 +174,7 @@ function AgendaPageContent() {
                 className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all duration-300 whitespace-nowrap shrink-0 ${
                   selectedCategory === category
                     ? "bg-primary text-white shadow-md"
-                    : "bg-white border border-outline-variant/30 text-on-surface-variant hover:bg-surface-variant/60"
+                    : "bg-surface border border-outline-variant/30 text-on-surface-variant hover:bg-surface-variant/60"
                 }`}
               >
                 {category}
@@ -200,12 +200,12 @@ function AgendaPageContent() {
                   >
                     <Link 
                        href={`/agenda/${agenda.id}?from=agenda-event`}
-                      className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 flex flex-col h-full"
+                      className="group bg-surface border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 flex flex-col h-full"
                     >
                       {/* Image */}
                       <div className="h-44 md:h-48 overflow-hidden bg-surface-variant relative shrink-0">
                         <img src={agenda.imgUrl} alt={agenda.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute top-3.5 left-3.5 bg-white/90 backdrop-blur-sm text-secondary text-[10px] md:text-xs font-bold px-2.5 py-1 md:py-1.5 rounded-full uppercase tracking-wider">
+                        <div className="absolute top-3.5 left-3.5 bg-surface/90 backdrop-blur-sm text-secondary text-[10px] md:text-xs font-bold px-2.5 py-1 md:py-1.5 rounded-full uppercase tracking-wider">
                           {agenda.category}
                         </div>
                       </div>
@@ -239,7 +239,7 @@ function AgendaPageContent() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 bg-white border border-outline-variant/30 rounded-3xl shadow-sm">
+              <div className="text-center py-16 bg-surface border border-outline-variant/30 rounded-3xl shadow-sm">
                 <span className="material-symbols-outlined text-6xl text-primary/30 mb-4 block">event_busy</span>
                 <h3 className="text-xl font-bold text-primary mb-2">Agenda Tidak Ditemukan</h3>
                 <p className="text-on-surface-variant text-sm max-w-sm mx-auto">
@@ -254,7 +254,7 @@ function AgendaPageContent() {
                 <button 
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 text-sm text-gray-500 hover:text-primary disabled:opacity-50 disabled:hover:text-gray-500 transition-colors"
+                  className="px-4 py-2 text-sm text-on-surface-variant hover:text-primary disabled:opacity-50 disabled:hover:text-on-surface-variant transition-colors"
                 >
                   Previous
                 </button>
@@ -265,7 +265,7 @@ function AgendaPageContent() {
                     className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
                       currentPage === page
                         ? "bg-primary text-white shadow-md"
-                        : "bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary"
+                        : "bg-surface text-on-surface-variant border border-outline-variant/30 hover:border-primary hover:text-primary"
                     }`}
                   >
                     {page}
@@ -274,7 +274,7 @@ function AgendaPageContent() {
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 text-sm text-gray-500 hover:text-primary disabled:opacity-50 disabled:hover:text-gray-500 transition-colors"
+                  className="px-4 py-2 text-sm text-on-surface-variant hover:text-primary disabled:opacity-50 disabled:hover:text-on-surface-variant transition-colors"
                 >
                   Next
                 </button>
@@ -289,7 +289,7 @@ function AgendaPageContent() {
         {activeTab === "volunteer" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filteredVolunteers.length === 0 && (
-              <div className="col-span-3 text-center py-16 bg-white border border-outline-variant/30 rounded-3xl shadow-sm">
+              <div className="col-span-3 text-center py-16 bg-surface border border-outline-variant/30 rounded-3xl shadow-sm">
                 <span className="material-symbols-outlined text-6xl text-primary/30 mb-4 block">person_search</span>
                 <h3 className="text-xl font-bold text-primary mb-2">Posisi Tidak Ditemukan</h3>
                 <p className="text-on-surface-variant text-sm max-w-sm mx-auto">Tidak ada posisi volunteer yang sesuai dengan pencarian Anda.</p>
@@ -302,7 +302,7 @@ function AgendaPageContent() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 key={vol.id}
               >
-                <div className="group bg-white border border-outline-variant/30 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                <div className="group bg-surface border border-outline-variant/30 rounded-2xl overflow-hidden hover:border-primary/30 hover:shadow-lg transition-all duration-300 h-full flex flex-col">
                   {/* Image */}
                   <div className="h-40 overflow-hidden bg-surface-variant relative shrink-0">
                     <img src={vol.imgUrl} alt={vol.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />

@@ -55,9 +55,18 @@ export async function updateSession(request: NextRequest) {
       .single()
 
     if (profile?.role !== 'admin') {
-      // User is not an admin, redirect to home page
+      // User is not an admin, redirect to user dashboard
       const url = request.nextUrl.clone()
-      url.pathname = '/'
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Protect /dashboard routes (only logged-in users)
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
       return NextResponse.redirect(url)
     }
   }
@@ -71,7 +80,7 @@ export async function updateSession(request: NextRequest) {
       .single()
 
     const url = request.nextUrl.clone()
-    url.pathname = profile?.role === 'admin' ? '/admin' : '/'
+    url.pathname = profile?.role === 'admin' ? '/admin' : '/dashboard'
     return NextResponse.redirect(url)
   }
 

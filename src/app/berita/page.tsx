@@ -176,7 +176,7 @@ export default function BeritaPage() {
         </header>
 
         {/* Filter and Search Section */}
-        <section className="mb-8 bg-white border border-outline-variant/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+        <section className="mb-8 bg-surface border border-outline-variant/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
@@ -225,7 +225,7 @@ export default function BeritaPage() {
                 <span className="bg-secondary text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm whitespace-nowrap">
                   {featuredNews.category} • Sorotan
                 </span>
-                <span className="bg-white/20 backdrop-blur-md text-white text-[10px] md:text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
+                <span className="bg-surface/20 backdrop-blur-md text-white text-[10px] md:text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1 border border-white/10">
                   <FiCalendar className="inline shrink-0" /> {new Date(featuredNews.created_at).toLocaleDateString('id-ID')}
                 </span>
               </div>
@@ -290,7 +290,7 @@ export default function BeritaPage() {
                       <div className="relative z-10 p-6 flex flex-col items-start text-white">
                         {/* Category Badge + Stats */}
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="bg-white text-primary text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm uppercase tracking-wider">
+                          <span className="bg-surface text-primary text-[10px] font-bold px-2.5 py-1 rounded-md shadow-sm uppercase tracking-wider">
                             {news.category}
                           </span>
                           <div className="flex items-center gap-2 text-[10px] text-white/90 font-medium">
@@ -327,7 +327,7 @@ export default function BeritaPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 bg-white border border-outline-variant/30 rounded-3xl shadow-sm">
+              <div className="text-center py-16 bg-surface border border-outline-variant/30 rounded-3xl shadow-sm">
                 <span className="material-symbols-outlined text-6xl text-primary/30 mb-4 block">search_off</span>
                 <h3 className="text-xl font-bold text-primary mb-1">Berita Tidak Ditemukan</h3>
                 <p className="text-on-surface-variant text-sm max-w-sm mx-auto">
@@ -342,7 +342,7 @@ export default function BeritaPage() {
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="p-2.5 rounded-xl border border-outline-variant/35 bg-white text-primary hover:bg-primary-container disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="p-2.5 rounded-xl border border-outline-variant/35 bg-surface text-primary hover:bg-primary-container disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   aria-label="Halaman Sebelumnya"
                 >
                   <FiChevronLeft size={18} />
@@ -355,7 +355,7 @@ export default function BeritaPage() {
                     className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${
                       currentPage === page
                         ? "bg-secondary text-white shadow-glow"
-                        : "border border-outline-variant/35 bg-white text-primary hover:bg-primary-container"
+                        : "border border-outline-variant/35 bg-surface text-primary hover:bg-primary-container"
                     }`}
                   >
                     {page}
@@ -365,7 +365,7 @@ export default function BeritaPage() {
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="p-2.5 rounded-xl border border-outline-variant/35 bg-white text-primary hover:bg-primary-container disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="p-2.5 rounded-xl border border-outline-variant/35 bg-surface text-primary hover:bg-primary-container disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   aria-label="Halaman Selanjutnya"
                 >
                   <FiChevronRight size={18} />
@@ -409,7 +409,7 @@ export default function BeritaPage() {
                     {/* Content */}
                     <div className="relative z-10 p-5 flex flex-col items-start text-white">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-white text-primary text-[9px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
+                        <span className="bg-surface text-primary text-[9px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
                           {item.category}
                         </span>
                         <div className="flex items-center gap-2 text-[9px] text-white/80 font-medium">

@@ -30,6 +30,9 @@ export default function LoginPage() {
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: 'consent select_account',
+        },
       }
     });
 
@@ -47,7 +50,7 @@ export default function LoginPage() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
       {/* Login Card */}
-      <div className="w-full max-w-md bg-white rounded-[2rem] shadow-xl p-8 sm:p-10 relative z-10 border border-outline-variant/20 animate-fade-up">
+      <div className="w-full max-w-md bg-surface rounded-[2rem] shadow-xl p-8 sm:p-10 relative z-10 border border-outline-variant/20 animate-fade-up">
         
         {/* Back Button */}
         <Link href="/" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md mb-6">
@@ -82,7 +85,7 @@ export default function LoginPage() {
         <button 
           onClick={handleGoogleLogin} 
           disabled={isLoading} 
-          className="w-full bg-white border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 mt-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full bg-surface border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 mt-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <span className="material-symbols-outlined text-[20px] animate-spin text-primary">progress_activity</span>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LayoutClientWrapper from "@/components/layout/LayoutClientWrapper";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { createClient } from "@/utils/supabase/server";
 import "./globals.css";
 
@@ -17,7 +18,7 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="id" className="light overflow-x-hidden w-full max-w-full">
+    <html lang="id" className="light overflow-x-hidden w-full max-w-full" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -30,9 +31,27 @@ export default async function RootLayout({
           rel="stylesheet"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                let theme = localStorage.getItem('theme') || 'system';
+                let isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
       </head>
-      <body className="bg-background text-on-background font-sans antialiased overflow-x-hidden w-full max-w-full">
-        <LayoutClientWrapper isLoggedIn={!!user}>{children}</LayoutClientWrapper>
+      <body className="bg-background text-on-background font-sans antialiased overflow-x-hidden w-full max-w-full transition-colors duration-300" suppressHydrationWarning>
+        <ThemeProvider defaultTheme="system">
+          <LayoutClientWrapper isLoggedIn={!!user}>{children}</LayoutClientWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

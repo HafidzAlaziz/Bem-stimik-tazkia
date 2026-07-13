@@ -206,7 +206,7 @@ export default function ProjectDetailPage() {
       <main className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-[var(--color-primary)] mb-4">404</h1>
-          <p className="text-gray-500 mb-6">Proyek tidak ditemukan.</p>
+          <p className="text-on-surface-variant mb-6">Proyek tidak ditemukan.</p>
           <Link href="/karya" className="text-[var(--color-primary)] font-semibold flex items-center gap-2 justify-center hover:gap-3 transition-all">
             <FiArrowLeft /> Kembali ke Karya
           </Link>
@@ -276,7 +276,7 @@ export default function ProjectDetailPage() {
 
         {/* Category badge */}
         <div className="absolute top-6 right-6 md:right-10 z-20">
-          <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${categoryColors[project.category] ?? "bg-white/20 text-white"} backdrop-blur-sm`}>
+          <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${categoryColors[project.category] ?? "bg-surface/20 text-white"} backdrop-blur-sm`}>
             {project.category}
           </span>
         </div>
@@ -324,10 +324,10 @@ export default function ProjectDetailPage() {
           <aside className="lg:col-span-1 space-y-6">
 
             {/* Action buttons */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex gap-3">
+            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm flex gap-3">
               <button
                 onClick={() => setLiked(!liked)}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border ${liked ? "bg-red-50 border-red-200 text-red-500" : "border-gray-200 text-gray-500 hover:border-red-200 hover:text-red-500"}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border ${liked ? "bg-red-50 border-red-200 text-red-500" : "border-outline-variant/30 text-on-surface-variant hover:border-red-200 hover:text-red-500"}`}
               >
                 <div className="w-6 h-6 flex items-center justify-center -ml-1 shrink-0">
                   {liked ? (
@@ -338,15 +338,15 @@ export default function ProjectDetailPage() {
                 </div>
                 {project.likes + (liked ? 1 : 0)}
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border border-gray-200 text-gray-500 hover:border-gray-400">
+              <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border border-outline-variant/30 text-on-surface-variant hover:border-gray-400">
                 <FiShare2 size={16} /> Share
               </button>
             </div>
 
             {/* Links */}
             {(project.githubUrl || project.liveUrl) && (
-              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Links</h3>
+              <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm space-y-3">
+                <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider">Links</h3>
                 {project.githubUrl && (
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all">
@@ -363,16 +363,16 @@ export default function ProjectDetailPage() {
             )}
 
             {/* Team */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Project Creator</h3>
+            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Project Creator</h3>
               <div className="space-y-5">
                 {project.team.map((member) => (
                   <div key={member.name} className="flex flex-col gap-2">
                     <div className="flex items-center gap-3">
                       <img src={member.avatar} alt={member.name} className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-100" />
                       <div>
-                        <p className="font-bold text-sm text-gray-800">{member.name}</p>
-                        <p className="text-xs text-gray-500">{member.role}</p>
+                        <p className="font-bold text-sm text-on-surface">{member.name}</p>
+                        <p className="text-xs text-on-surface-variant">{member.role}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -384,7 +384,7 @@ export default function ProjectDetailPage() {
                       )}
                       {member.linkedin && (
                         <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-gray-200 text-gray-600 text-xs font-bold hover:-translate-y-0.5 hover:border-gray-400 transition-all">
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-outline-variant/30 text-on-surface-variant text-xs font-bold hover:-translate-y-0.5 hover:border-gray-400 transition-all">
                           <FiExternalLink size={12} /> LinkedIn
                         </a>
                       )}
@@ -395,21 +395,21 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Specs */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Detail Proyek</h3>
+            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Detail Proyek</h3>
               <div className="space-y-3">
                 {Object.entries(project.specs).map(([key, val]) => (
                   <div key={key} className="flex justify-between items-start gap-4 text-sm">
-                    <span className="text-gray-400 font-medium shrink-0">{key}</span>
-                    <span className="font-semibold text-gray-700 text-right">{val}</span>
+                    <span className="text-on-surface-variant/70 font-medium shrink-0">{key}</span>
+                    <span className="font-semibold text-on-surface text-right">{val}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Tech Stack */}
-            <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Tech Stack</h3>
+            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Tech Stack</h3>
               <div className="flex flex-wrap gap-2">
                 {project.tech.map((t) => (
                   <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
@@ -426,12 +426,12 @@ export default function ProjectDetailPage() {
             {/* Overview */}
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm"
+              className="bg-surface rounded-2xl p-8 border border-outline-variant/20 shadow-sm"
             >
               <h2 className="text-2xl font-bold text-[var(--color-primary)] mb-5 flex items-center gap-3">
                 <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Overview
               </h2>
-              <div className="text-gray-600 leading-relaxed space-y-4 text-[15px]">
+              <div className="text-on-surface-variant leading-relaxed space-y-4 text-[15px]">
                 {project.description.split("\n\n").map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
@@ -442,7 +442,7 @@ export default function ProjectDetailPage() {
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-on-surface mb-5 flex items-center gap-3">
                 <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Fitur Utama
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -451,10 +451,10 @@ export default function ProjectDetailPage() {
                     key={i}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.1 * i }}
-                    className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                    className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                   >
-                    <h4 className="font-bold text-gray-800 mb-2">{ch.title}</h4>
-                    <p className="text-sm text-gray-500 leading-relaxed">{ch.desc}</p>
+                    <h4 className="font-bold text-on-surface mb-2">{ch.title}</h4>
+                    <p className="text-sm text-on-surface-variant leading-relaxed">{ch.desc}</p>
                   </motion.div>
                 ))}
               </div>
@@ -464,12 +464,12 @@ export default function ProjectDetailPage() {
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <h2 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-on-surface mb-5 flex items-center gap-3">
                 <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Process & Development
               </h2>
               <div className="space-y-6">
                 {project.process.map((phase, i) => (
-                  <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col md:flex-row group hover:shadow-md transition-all duration-300">
+                  <div key={i} className="bg-surface rounded-2xl overflow-hidden border border-outline-variant/20 shadow-sm flex flex-col md:flex-row group hover:shadow-md transition-all duration-300">
                     <div className="md:w-64 shrink-0 h-48 md:h-auto overflow-hidden">
                       <img src={phase.image} alt={phase.phase} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
@@ -478,7 +478,7 @@ export default function ProjectDetailPage() {
                         <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center">{i + 1}</span>
                         <h4 className="font-bold text-[var(--color-primary)]">{phase.phase}</h4>
                       </div>
-                      <p className="text-sm text-gray-500 leading-relaxed">{phase.desc}</p>
+                      <p className="text-sm text-on-surface-variant leading-relaxed">{phase.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -486,8 +486,8 @@ export default function ProjectDetailPage() {
             </motion.section>
 
             {/* Navigate to more */}
-            <div className="flex items-center pt-4 border-t border-gray-200">
-              <Link href="/karya" className="flex items-center gap-2 text-gray-500 hover:text-[var(--color-primary)] font-semibold text-sm transition-colors group">
+            <div className="flex items-center pt-4 border-t border-outline-variant/30">
+              <Link href="/karya" className="flex items-center gap-2 text-on-surface-variant hover:text-[var(--color-primary)] font-semibold text-sm transition-colors group">
                 <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Semua Proyek
               </Link>
             </div>

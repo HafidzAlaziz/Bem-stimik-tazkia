@@ -68,7 +68,7 @@ export default function LoadingScreen() {
   return (
     <div
       id="page-loader"
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white dark:bg-[#001235] transition-all duration-700 ${
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-surface dark:bg-[#001235] transition-all duration-700 ${
         isFading ? "opacity-0 scale-[1.05] pointer-events-none" : "opacity-100 scale-100"
       }`}
     >

@@ -43,7 +43,7 @@ export default function BeritaSorotan() {
               <span className="bg-secondary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                 Sorotan
               </span>
-              <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/10">
+              <span className="bg-surface/20 backdrop-blur-md text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/10">
                 <FiCalendar className="inline shrink-0 text-white" /> 16 Jun 2026
               </span>
             </div>

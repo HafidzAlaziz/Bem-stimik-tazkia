@@ -167,7 +167,7 @@ function VolunteerDetailPageContent() {
           <FiArrowLeft /> Kembali ke Program Kegiatan
         </Link>
 
-        <div className="bg-white rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start border border-outline-variant/20 shadow-sm">
+        <div className="bg-surface rounded-3xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start border border-outline-variant/20 shadow-sm">
           {/* Image */}
           <div className="w-full md:w-1/3 h-64 md:h-auto md:aspect-square rounded-2xl overflow-hidden shrink-0">
             <img
@@ -223,7 +223,7 @@ function VolunteerDetailPageContent() {
           {/* Tentang Posisi */}
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
+            className="bg-surface rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
             <h2 className="text-xl font-bold text-on-background mb-4 flex items-center gap-2">
               <FiInfo className="text-primary" /> Tentang Posisi
@@ -238,7 +238,7 @@ function VolunteerDetailPageContent() {
           {/* Tanggung Jawab */}
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
+            className="bg-surface rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
             <h2 className="text-xl font-bold text-on-background mb-4 flex items-center gap-2">
               <FiCheckCircle className="text-secondary" /> Tanggung Jawab
@@ -256,7 +256,7 @@ function VolunteerDetailPageContent() {
           {/* Kualifikasi */}
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
+            className="bg-surface rounded-3xl p-6 md:p-8 border border-outline-variant/20 shadow-sm"
           >
             <h2 className="text-xl font-bold text-on-background mb-4 flex items-center gap-2">
               <FiBriefcase className="text-tertiary" /> Kualifikasi
@@ -301,7 +301,7 @@ function VolunteerDetailPageContent() {
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
             className="bg-[var(--color-primary)] rounded-3xl p-6 md:p-8 text-white shadow-lg relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-surface/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
 
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2 relative z-10">
               <FiInfo /> Informasi Pendaftaran
@@ -311,7 +311,7 @@ function VolunteerDetailPageContent() {
               {volunteer.infoText}
             </p>
 
-            <div className="bg-white/10 border border-white/20 rounded-2xl p-4 relative z-10">
+            <div className="bg-surface/10 border border-white/20 rounded-2xl p-4 relative z-10">
               <p className="text-xs text-white/70 mb-1">Batas Akhir Pendaftaran:</p>
               <p className="text-lg font-extrabold">{volunteer.deadline}</p>
             </div>
@@ -328,7 +328,7 @@ function VolunteerDetailPageContent() {
       <section className="max-w-3xl mx-auto px-4 sm:px-5 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-white rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 border border-outline-variant/20 shadow-xl"
+          className="bg-surface rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-10 border border-outline-variant/20 shadow-xl"
         >
           <div className="text-center mb-6 md:mb-8">
             <h2 className="text-xl md:text-2xl font-bold text-on-background mb-1.5">Formulir Pendaftaran Relawan</h2>

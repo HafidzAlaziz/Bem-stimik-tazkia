@@ -146,7 +146,7 @@ function DocCard({ item }: { item: (typeof dokumentasiData)[0] }) {
 
       {/* Category badge top-left */}
       <div className="absolute top-3 left-3 z-10">
-        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm text-white px-2.5 py-1 rounded-full border border-white/20">
+        <span className="text-[10px] font-bold uppercase tracking-wider bg-surface/20 backdrop-blur-sm text-white px-2.5 py-1 rounded-full border border-white/20">
           {item.kategori}
         </span>
       </div>
@@ -344,7 +344,7 @@ export default function DokumentasiPage() {
               className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer whitespace-nowrap shrink-0 ${
                 activeFilter === tab.value
                   ? "bg-primary text-white shadow-md shadow-primary/30"
-                  : "bg-white text-on-surface-variant border border-outline-variant/40 hover:border-primary hover:text-primary"
+                  : "bg-surface text-on-surface-variant border border-outline-variant/40 hover:border-primary hover:text-primary"
               }`}
             >
               {tab.label}
@@ -375,7 +375,7 @@ export default function DokumentasiPage() {
             placeholder="Cari dokumentasi event..."
             value={searchQuery}
             onChange={handleSearch}
-            className="w-full pl-11 pr-5 py-2.5 rounded-2xl border border-outline-variant/40 bg-white text-sm text-on-background placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+            className="w-full pl-11 pr-5 py-2.5 rounded-2xl border border-outline-variant/40 bg-surface text-sm text-on-background placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
           />
         </div>
       </section>

@@ -35,7 +35,7 @@ export default function SaranAduan() {
 
             <div className="flex flex-col gap-3 md:gap-6">
               <div className="flex items-start gap-3 md:gap-4">
-                <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white shadow-soft flex items-center justify-center shrink-0 text-secondary">
+                <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-surface-variant/50 shadow-soft flex items-center justify-center shrink-0 text-secondary">
                   <span className="material-symbols-outlined text-[18px] md:text-[24px]">lightbulb</span>
                 </div>
                 <div>
@@ -45,7 +45,7 @@ export default function SaranAduan() {
               </div>
               
               <div className="flex items-start gap-3 md:gap-4">
-                <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white shadow-soft flex items-center justify-center shrink-0 text-error">
+                <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-surface-variant/50 shadow-soft flex items-center justify-center shrink-0 text-error">
                   <span className="material-symbols-outlined text-[18px] md:text-[24px]">report</span>
                 </div>
                 <div>
@@ -57,7 +57,7 @@ export default function SaranAduan() {
           </div>
 
           {/* Form Box */}
-          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-10 shadow-[0_20px_60px_-15px_rgba(27,64,134,0.1)] border border-outline-variant/30">
+          <div className="bg-surface rounded-2xl md:rounded-3xl p-5 md:p-10 shadow-[0_20px_60px_-15px_rgba(27,64,134,0.1)] border border-outline-variant/30">
             <form className="flex flex-col gap-3 md:gap-5" onSubmit={handleSubmit}>
               
               <div className="grid grid-cols-2 gap-3 md:gap-5">
@@ -71,10 +71,12 @@ export default function SaranAduan() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-xs md:text-sm font-bold text-on-background">Kategori Pesan <span className="text-error">*</span></label>
+              <div className="mb-2">
+                <label className="block text-sm font-semibold text-on-surface mb-2 px-1">
+                  Kategori Laporan <span className="text-error">*</span>
+                </label>
                 <div className="relative">
-                  <select required defaultValue="" className="w-full px-3 py-2 md:px-4 md:py-3 text-sm rounded-xl border border-outline-variant/40 bg-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer text-on-background">
+                  <select required defaultValue="" className="w-full bg-surface-variant/30 border border-outline-variant/50 rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all duration-300 text-sm text-on-surface appearance-none cursor-pointer">
                     <option value="" disabled>Pilih Kategori</option>
                     <option value="saran">Saran & Masukan</option>
                     <option value="aduan">Aduan Mahasiswa</option>
@@ -84,9 +86,11 @@ export default function SaranAduan() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-xs md:text-sm font-bold text-on-background">Pesan Anda <span className="text-error">*</span></label>
-                <textarea required rows={3} placeholder="Tuliskan detail saran atau aduan Anda di sini..." className="w-full px-3 py-2 md:px-4 md:py-3 text-sm rounded-xl border border-outline-variant/40 bg-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none text-on-background"></textarea>
+              <div className="mb-2">
+                <label className="block text-sm font-semibold text-on-surface mb-2 px-1">
+                  Deskripsi Detail <span className="text-error">*</span>
+                </label>
+                <textarea required rows={5} placeholder="Jelaskan secara rinci apa yang ingin Anda sampaikan..." className="w-full bg-surface-variant/30 border border-outline-variant/50 rounded-2xl px-5 py-3.5 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all duration-300 text-sm text-on-surface resize-none"></textarea>
               </div>
 
               <button type="submit" className="mt-1 w-full bg-primary text-white font-bold py-2.5 md:py-3.5 px-6 rounded-xl text-sm hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group cursor-pointer">

@@ -138,7 +138,7 @@ export default function KaryaProjek() {
             <Link
               key={p.id}
               href={`/karya/${p.id}`}
-              className="group relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100 block"
+              className="group relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-surface-variant/30 block"
             >
               <img
                 src={p.imgUrl}
@@ -186,7 +186,7 @@ export default function KaryaProjek() {
             }}
           >
             {/* Card */}
-            <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+            <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-surface-variant/30">
               {/* Progress bar */}
               <div
                 className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full"
@@ -235,14 +235,14 @@ export default function KaryaProjek() {
             {/* Prev / Next */}
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200"
+              className="absolute left-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
               aria-label="Sebelumnya"
             >
               <FiChevronLeft size={18} />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200"
+              className="absolute right-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
               aria-label="Berikutnya"
             >
               <FiChevronRight size={18} />

@@ -193,9 +193,9 @@ function KaryaPanel() {
           <Link
             key={item.id}
             href={`/karya/${item.id}`}
-            className="group flex gap-3 items-center p-3 rounded-2xl bg-white border border-gray-100 hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+            className="group flex gap-3 items-center p-3 rounded-2xl bg-surface border border-outline-variant/20 hover:border-primary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
-            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-variant/30">
               <img src={item.imgUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
             </div>
             <div className="flex-1 min-w-0">
@@ -227,9 +227,9 @@ function VolunteerPanel() {
         {volunteer.map((vol) => (
           <div
             key={vol.id}
-            className="group flex gap-3 items-center p-3 rounded-2xl bg-white border border-gray-100 hover:border-secondary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+            className="group flex gap-3 items-center p-3 rounded-2xl bg-surface border border-outline-variant/20 hover:border-secondary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
-            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-100 relative">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-variant/30 relative">
               <img src={vol.imgUrl} alt={vol.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               {vol.isUrgent && (
                 <div className="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">SEGERA</div>
@@ -267,9 +267,9 @@ function EventPanel() {
           <Link
             key={ev.id}
             href={`/agenda/${ev.id}`}
-            className="group flex gap-3 items-center p-3 rounded-2xl bg-white border border-gray-100 hover:border-tertiary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+            className="group flex gap-3 items-center p-3 rounded-2xl bg-surface border border-outline-variant/20 hover:border-tertiary/30 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
           >
-            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-gray-100 relative">
+            <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-variant/30 relative">
               <img src={ev.imgUrl} alt={ev.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               {ev.isLive && (
                 <div className="absolute top-1 left-1 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 animate-pulse">
@@ -310,7 +310,7 @@ function DokumentasiPanel() {
           <Link
             key={doc.id}
             href="/dokumentasi"
-            className={`group relative overflow-hidden rounded-2xl bg-gray-100 ${i === 0 ? "row-span-2" : ""}`}
+            className={`group relative overflow-hidden rounded-2xl bg-surface-variant/30 ${i === 0 ? "row-span-2" : ""}`}
             style={{ minHeight: i === 0 ? "100%" : "80px" }}
           >
             <img

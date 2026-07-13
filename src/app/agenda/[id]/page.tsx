@@ -158,7 +158,7 @@ function EventDetailPageContent() {
             className="mt-4 md:mt-6 p-4 md:p-6 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-red-400"
           >
             <div className="flex items-center gap-3 md:gap-4 text-white w-full sm:w-auto">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 flex items-center justify-center animate-pulse shrink-0">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-surface/20 flex items-center justify-center animate-pulse shrink-0">
                 <FiVideo size={20} />
               </div>
               <div>
@@ -170,7 +170,7 @@ function EventDetailPageContent() {
               href={eventDetail.liveUrl} 
               target="_blank" 
               rel="noreferrer"
-              className="w-full sm:w-auto px-6 py-3 bg-white text-red-600 font-extrabold rounded-xl shadow-md hover:bg-red-50 hover:scale-105 transition-all text-center flex items-center justify-center gap-2 text-sm"
+              className="w-full sm:w-auto px-6 py-3 bg-surface text-red-600 font-extrabold rounded-xl shadow-md hover:bg-red-50 hover:scale-105 transition-all text-center flex items-center justify-center gap-2 text-sm"
             >
               Masuk ke Live <FiExternalLink size={16} />
             </a>
@@ -185,7 +185,7 @@ function EventDetailPageContent() {
         <div className="lg:col-span-8 flex flex-col gap-6 md:gap-8">
           
           {/* Tentang Workshop */}
-          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm">
+          <div className="bg-surface rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm">
             <h3 className="text-lg md:text-xl font-bold text-on-background mb-4 md:mb-6 flex items-center gap-2">
               <FiInfo className="text-primary" size={20} /> Tentang Workshop
             </h3>
@@ -209,7 +209,7 @@ function EventDetailPageContent() {
           </div>
 
           {/* Mentor / Pembicara */}
-          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm">
+          <div className="bg-surface rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm">
             <h3 className="text-lg md:text-xl font-bold text-on-background mb-4 md:mb-6 flex items-center gap-2">
               <FiUsers className="text-primary" size={20} /> Mentor / Pembicara
             </h3>
@@ -233,7 +233,7 @@ function EventDetailPageContent() {
 
         {/* RIGHT COLUMN (Benefit) */}
         <div className="lg:col-span-4">
-          <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm sticky top-28">
+          <div className="bg-surface rounded-2xl md:rounded-3xl p-5 md:p-8 border border-outline-variant/30 shadow-sm sticky top-28">
             <h3 className="text-lg md:text-xl font-bold text-on-background mb-4 md:mb-6 flex items-center gap-2">
               <FiCheckCircle className="text-[var(--color-primary)]" size={20} /> Benefit Peserta
             </h3>

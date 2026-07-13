@@ -81,7 +81,7 @@ export default function BeritaDetailPage() {
   if (!newsDetail) {
     return (
       <div className="min-h-screen pt-32 pb-20 flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-800">Berita tidak ditemukan</h1>
+        <h1 className="text-2xl font-bold text-on-surface">Berita tidak ditemukan</h1>
         <Link href="/berita" className="mt-4 text-primary hover:underline">Kembali ke daftar berita</Link>
       </div>
     );
@@ -107,7 +107,7 @@ export default function BeritaDetailPage() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3 text-base font-bold text-on-background">
-            <span className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/30 shadow-sm">
+            <span className="flex items-center gap-2 px-4 py-2 bg-surface rounded-full border border-outline-variant/30 shadow-sm">
               <FiEye className="text-[var(--color-primary)]" size={20} /> {newsDetail.views}
             </span>
             <button 
@@ -116,16 +116,16 @@ export default function BeritaDetailPage() {
                 setLiked(newLiked);
                 await toggleLike('berita', newsDetail.id, newLiked);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-outline-variant/30 shadow-sm hover:border-red-200 transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-surface rounded-full border border-outline-variant/30 shadow-sm hover:border-red-200 transition-colors cursor-pointer"
             >
               <div className="w-6 h-6 flex items-center justify-center -ml-1 -mr-1 shrink-0">
                 {liked ? (
                   <DotLottieReact src="/animations/Heart Animated.lottie" autoplay loop={false} />
                 ) : (
-                  <FiHeart className="text-gray-400 hover:text-red-500 transition-colors" size={20} />
+                  <FiHeart className="text-on-surface-variant/70 hover:text-red-500 transition-colors" size={20} />
                 )}
               </div>
-              <span className={liked ? "text-red-500 font-bold" : "text-gray-600 font-bold"}>
+              <span className={liked ? "text-red-500 font-bold" : "text-on-surface-variant font-bold"}>
                 {newsDetail.likes + (liked ? 1 : 0)}
               </span>
             </button>
@@ -167,7 +167,7 @@ export default function BeritaDetailPage() {
       <section className="max-w-7xl mx-auto px-5 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         
         {/* Article Body */}
-        <article className="lg:col-span-8 bg-white rounded-3xl p-8 md:p-12 border border-outline-variant/20 shadow-sm">
+        <article className="lg:col-span-8 bg-surface rounded-3xl p-8 md:p-12 border border-outline-variant/20 shadow-sm">
           <div 
             className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-on-background prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-p:text-on-surface-variant prose-p:leading-relaxed prose-a:text-[var(--color-primary)] hover:prose-a:text-[var(--color-secondary)] prose-blockquote:border-l-4 prose-blockquote:border-[var(--color-secondary)] prose-blockquote:bg-[var(--color-secondary)]/5 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:text-[var(--color-primary)] prose-blockquote:font-medium prose-blockquote:italic prose-li:text-on-surface-variant"
             dangerouslySetInnerHTML={{ __html: newsDetail.content }}
@@ -191,13 +191,13 @@ export default function BeritaDetailPage() {
           <div className="mt-10 p-6 bg-[var(--color-primary)]/5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-[var(--color-primary)]/10">
             <span className="font-bold text-[var(--color-primary)]">Bagikan artikel ini:</span>
             <div className="flex items-center gap-3">
-              <button className="w-10 h-10 rounded-full bg-white text-blue-600 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
+              <button className="w-10 h-10 rounded-full bg-surface text-blue-600 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
                 <FiFacebook size={18} />
               </button>
-              <button className="w-10 h-10 rounded-full bg-white text-sky-500 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
+              <button className="w-10 h-10 rounded-full bg-surface text-sky-500 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
                 <FiTwitter size={18} />
               </button>
-              <button className="w-10 h-10 rounded-full bg-white text-blue-800 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
+              <button className="w-10 h-10 rounded-full bg-surface text-blue-800 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
                 <FiLinkedin size={18} />
               </button>
             </div>
@@ -208,7 +208,7 @@ export default function BeritaDetailPage() {
         <aside className="lg:col-span-4 space-y-8">
           
           {/* Related News Widget */}
-          <div className="bg-white rounded-3xl p-6 border border-outline-variant/20 shadow-sm">
+          <div className="bg-surface rounded-3xl p-6 border border-outline-variant/20 shadow-sm">
             <h3 className="text-lg font-bold text-on-background mb-6 flex items-center gap-2">
               <span className="w-2 h-6 bg-[var(--color-secondary)] rounded-full"></span>
               Berita Terkait

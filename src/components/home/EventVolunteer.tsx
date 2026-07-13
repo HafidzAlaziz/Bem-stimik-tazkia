@@ -251,7 +251,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
 
 
   return (
-    <div className="bg-[#f8f9fc] py-10 md:py-16">
+    <div className="bg-surface py-10 md:py-16">
 
       {/* ============================================ */}
       {/*  HERO HEADER                                */}
@@ -261,10 +261,10 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
           <FiCalendar size={13} /> Program Kegiatan
         </span>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight">
           Events &amp; <span className="text-[var(--color-primary)]">Volunteer</span> Hub
         </h1>
-        <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto mb-8">
+        <p className="text-on-surface-variant text-sm md:text-base max-w-2xl mx-auto mb-8">
           Temukan event terkini, daftarkan diri sebagai relawan, dan jadilah bagian dari perubahan nyata di kampus.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
@@ -307,7 +307,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
 
           {/* Content */}
           <div className="relative z-10 flex flex-col justify-end p-5 sm:p-7 md:p-10 min-h-[280px] sm:min-h-[300px] md:min-h-[320px]">
-            <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm w-fit border border-white/30 mb-3">
+            <span className="bg-surface/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm w-fit border border-white/30 mb-3">
               {liveEvent.category}
             </span>
 
@@ -357,7 +357,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
             </div>
 
             {upcomingEvents.length === 0 ? (
-              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
                 <FiCalendar size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
                 <h3 className="text-base font-bold text-on-background">Belum Ada Event Mendatang</h3>
                 <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada agenda kegiatan terdekat yang dijadwalkan.</p>
@@ -387,7 +387,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                   }
                 }}
               >
-                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-surface-variant/30">
                   {upcomingEvents.length > 1 && (
                     <div
                       className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full"
@@ -415,7 +415,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                     >
                       <img src={upcomingEvents[active].imgUrl} alt={upcomingEvents[active].title} className="w-full h-full object-cover select-none" draggable={false} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                      <div className="absolute top-4 left-4 bg-surface/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                         {upcomingEvents[active].category}
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -434,8 +434,8 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                 </div>
                 {upcomingEvents.length > 1 && (
                   <>
-                    <button onClick={prev} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
-                    <button onClick={next} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                    <button onClick={prev} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={next} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
                   </>
                 )}
                 {upcomingEvents.length > 1 && (
@@ -470,7 +470,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
             </div>
 
             {volunteerOpportunities.length === 0 ? (
-              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
                 <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
                 <h3 className="text-base font-bold text-on-background">Belum Ada Lowongan</h3>
                 <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada posisi relawan baru. Pantau terus!</p>
@@ -497,7 +497,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                   }
                 }}
               >
-                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-surface-variant/30">
                   {volunteerOpportunities.length > 1 && (
                     <div className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full" style={{ width: `${progressVol}%`, backgroundColor: "var(--color-primary)" }} />
                   )}
@@ -544,8 +544,8 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                 </div>
                 {volunteerOpportunities.length > 1 && (
                   <>
-                    <button onClick={prevVol} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
-                    <button onClick={nextVol} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                    <button onClick={prevVol} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={nextVol} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
                   </>
                 )}
                 {volunteerOpportunities.length > 1 && (
@@ -580,7 +580,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
             </div>
 
             {pastEvents.length === 0 ? (
-              <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 text-center shadow-sm">
+              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
                 <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
                 <h3 className="text-base font-bold text-on-background">Belum Ada Arsip</h3>
                 <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada data dokumentasi kegiatan.</p>
@@ -607,7 +607,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                   }
                 }}
               >
-                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-gray-100">
+                <div className="relative overflow-hidden rounded-3xl aspect-[4/3] shadow-lg bg-surface-variant/30">
                   {pastEvents.length > 1 && (
                     <div className="absolute top-0 left-0 h-1 z-20 transition-none rounded-full" style={{ width: `${progressPast}%`, backgroundColor: "var(--color-primary)" }} />
                   )}
@@ -632,12 +632,12 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                     >
                       <img src={pastEvents[activePast].imgUrl} alt={pastEvents[activePast].title} className="w-full h-full object-cover grayscale select-none" draggable={false} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
-                      <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                      <div className="absolute top-4 left-4 bg-surface/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                         {pastEvents[activePast].category}
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                         <h3 className="font-extrabold text-sm leading-tight mb-3">{pastEvents[activePast].title}</h3>
-                        <Link href="#" className="bg-white/20 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-white/30 transition-all duration-300 inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-sm">
+                        <Link href="#" className="bg-surface/20 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-surface/30 transition-all duration-300 inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-sm">
                           Lihat Dokumentasi <FiArrowRight size={12} />
                         </Link>
                       </div>
@@ -646,8 +646,8 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                 </div>
                 {pastEvents.length > 1 && (
                   <>
-                    <button onClick={prevPast} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
-                    <button onClick={nextPast} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-white hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
+                    <button onClick={prevPast} className="absolute left-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Sebelumnya"><FiChevronLeft size={15} /></button>
+                    <button onClick={nextPast} className="absolute right-3 top-[38%] -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200" aria-label="Berikutnya"><FiChevronRight size={15} /></button>
                   </>
                 )}
                 {pastEvents.length > 1 && (

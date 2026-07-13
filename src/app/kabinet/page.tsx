@@ -238,7 +238,7 @@ const TAG_COLORS: Record<string, string> = {
 
 function ProkerTag({ tag }: { tag: string }) {
   return (
-    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${TAG_COLORS[tag] ?? "bg-gray-100 text-gray-600"}`}>
+    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${TAG_COLORS[tag] ?? "bg-surface-variant/30 text-on-surface-variant"}`}>
       {tag}
     </span>
   );
@@ -249,7 +249,7 @@ function ProkerTag({ tag }: { tag: string }) {
 // ─────────────────────────────────────────────
 function PengurusCard({ person }: { person: (typeof pengurusInti)[0] }) {
   return (
-    <div className="group bg-white rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 p-4">
+    <div className="group bg-surface rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 p-4">
       {/* Avatar */}
       <div
         className="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center text-lg font-black select-none"
@@ -305,7 +305,7 @@ function AnggotaCard({
   warnaBg: string;
 }) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/60 border border-outline-variant/10 hover:border-outline-variant/30 hover:bg-white transition-all duration-200">
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/60 border border-outline-variant/10 hover:border-outline-variant/30 hover:bg-surface transition-all duration-200">
       <div
         className="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-xs font-black"
         style={{ backgroundColor: warnaBg, color: warna }}
@@ -345,7 +345,7 @@ function AnggotaCard({
 // ─────────────────────────────────────────────
 function ProkerRow({ proker }: { proker: { nama: string; deskripsi: string; tag: string } }) {
   return (
-    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low/60 border border-outline-variant/10 hover:border-outline-variant/30 hover:bg-white transition-all duration-200">
+    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low/60 border border-outline-variant/10 hover:border-outline-variant/30 hover:bg-surface transition-all duration-200">
       <div className="w-5 h-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 text-primary">
         <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12" />
@@ -386,7 +386,7 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-outline-variant/20 shadow-sm overflow-hidden">
+    <div className="bg-surface rounded-2xl border border-outline-variant/20 shadow-sm overflow-hidden">
 
       {/* ── Header ── */}
       <div className="flex items-start gap-4 p-6" style={{ borderLeft: `4px solid ${dept.warna}` }}>
@@ -465,7 +465,7 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-xs text-gray-500 hover:text-primary disabled:opacity-50 disabled:hover:text-gray-500 transition-colors"
+                  className="px-3 py-1.5 text-xs text-on-surface-variant hover:text-primary disabled:opacity-50 disabled:hover:text-on-surface-variant transition-colors"
                 >
                   Prev
                 </button>
@@ -475,7 +475,7 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
                     onClick={() => setCurrentPage(page)}
                     className={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${currentPage === page
                       ? "text-white shadow-sm"
-                      : "bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary"
+                      : "bg-surface text-on-surface-variant border border-outline-variant/30 hover:border-primary hover:text-primary"
                       }`}
                     style={currentPage === page ? { backgroundColor: dept.warna } : {}}
                   >
@@ -485,7 +485,7 @@ function DepartemenCard({ dept }: { dept: (typeof departemen)[0] }) {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-xs text-gray-500 hover:text-primary disabled:opacity-50 disabled:hover:text-gray-500 transition-colors"
+                  className="px-3 py-1.5 text-xs text-on-surface-variant hover:text-primary disabled:opacity-50 disabled:hover:text-on-surface-variant transition-colors"
                 >
                   Next
                 </button>
@@ -542,7 +542,7 @@ export default function KabinetPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-init-fade-up anim-delay-400">
           {/* VISI */}
-          <div className="bg-white rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-primary/50 hover:shadow-xl transition-all duration-300 group">
+          <div className="bg-surface rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-primary/50 hover:shadow-xl transition-all duration-300 group">
             <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
             </div>
@@ -553,7 +553,7 @@ export default function KabinetPage() {
           </div>
 
           {/* MISI */}
-          <div className="bg-white rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-secondary/50 hover:shadow-xl transition-all duration-300 group">
+          <div className="bg-surface rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-secondary/50 hover:shadow-xl transition-all duration-300 group">
             <div className="w-14 h-14 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
             </div>
@@ -609,7 +609,7 @@ export default function KabinetPage() {
             {prokerUtama.map((p, i) => (
               <div
                 key={i}
-                className="group w-[80vw] sm:w-auto shrink-0 sm:shrink bg-white rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex gap-4 items-start"
+                className="group w-[80vw] sm:w-auto shrink-0 sm:shrink bg-surface rounded-2xl border border-outline-variant/20 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-5 flex gap-4 items-start"
               >
                 <div className="text-2xl shrink-0 pt-0.5">{p.icon}</div>
                 <div className="flex-1 min-w-0">

@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-surface-variant/20 flex flex-col md:flex-row">
       <AdminSidebar />
 
       {/* Main Content Area */}
