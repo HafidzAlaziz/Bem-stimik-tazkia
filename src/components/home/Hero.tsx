@@ -73,11 +73,11 @@ export default function Hero() {
       {/* Decorative elements removed to match the clean background */}
 
       <div className="relative z-30 max-w-5xl mx-auto text-center mt-32">
-        <h1 className="font-display-lg font-bold text-4xl sm:text-5xl md:text-[72px] md:leading-[1.1] mb-stack-gap-lg text-on-primary drop-shadow-lg animate-init-fade-up hover:scale-[1.02] transition-transform duration-500 cursor-default">
+        <h1 className="font-display-lg font-bold text-4xl sm:text-5xl md:text-[72px] md:leading-[1.1] mb-stack-gap-lg text-white drop-shadow-lg animate-init-fade-up hover:scale-[1.02] transition-transform duration-500 cursor-default">
           Satu Langkah untuk <br />
           <span className="text-secondary drop-shadow-glow hover:text-[#ff984d] transition-colors duration-300">STMIK Tazkia Berdampak</span>
         </h1>
-        <p className="font-body-lg text-base sm:text-lg md:text-[20px] mb-10 text-on-primary/90 max-w-2xl mx-auto font-light animate-init-fade-up anim-delay-100 hover:text-white transition-colors duration-300 cursor-default">
+        <p className="font-body-lg text-base sm:text-lg md:text-[20px] mb-10 text-white/90 max-w-2xl mx-auto font-light animate-init-fade-up anim-delay-100 hover:text-white transition-colors duration-300 cursor-default">
           Membangun sinergi intelektual dan pergerakan mahasiswa yang progresif, inklusif, dan berbasis data.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-init-fade-up anim-delay-200">

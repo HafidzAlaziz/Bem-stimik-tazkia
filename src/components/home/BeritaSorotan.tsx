@@ -39,7 +39,7 @@ export default function BeritaSorotan() {
           {/* Featured Content */}
           <div className="relative z-10 p-5 sm:p-6 md:p-10 text-white w-full md:max-w-4xl text-left">
             {/* Featured Badge */}
-            <div className="flex items-center gap-2 mb-3 md:absolute md:top-6 md:left-6 md:mb-0">
+            <div className="flex items-center gap-2 mb-3 md:mb-4">
               <span className="bg-secondary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                 Sorotan
               </span>

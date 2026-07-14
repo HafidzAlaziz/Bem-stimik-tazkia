@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers } from "react-icons/fi";
+import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers, FiAward } from "react-icons/fi";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: FiHome },
+  { name: "Profil Kabinet", href: "/admin/kabinet", icon: FiAward },
   { name: "Kelola Berita", href: "/admin/berita", icon: FiFileText },
   { name: "Kelola Karya", href: "/admin/karya", icon: FiBriefcase },
   { name: "Kelola Agenda", href: "/admin/agenda", icon: FiCalendar },
@@ -19,7 +20,7 @@ export default function AdminSidebar() {
 
   return (
     <aside 
-      className={`transition-all duration-300 ease-in-out bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] border-r border-outline-variant/30 md:h-screen md:sticky top-0 flex flex-col shadow-sm w-full relative z-20 ${
+      className={`transition-all duration-300 ease-in-out bg-gradient-to-b from-[#f8fafc] to-[#f1f5f9] border-r border-outline-variant/30 md:h-screen md:sticky top-0 flex flex-col shadow-sm w-full shrink-0 relative z-20 ${
         isCollapsed ? "md:w-24" : "md:w-72"
       }`}
     >

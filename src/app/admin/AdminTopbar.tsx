@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FiHome, FiLogOut } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function AdminTopbar({ user }: { user?: any }) {
   const router = useRouter();
   const supabase = createClient();
+  const [imgError, setImgError] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -30,8 +30,13 @@ export default function AdminTopbar({ user }: { user?: any }) {
           <p className="text-sm font-bold text-on-surface leading-tight">{fullName}</p>
           <p className="text-xs text-on-surface-variant">Administrator</p>
         </div>
-        {avatarUrl ? (
-          <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full border border-outline-variant/50 shrink-0 object-cover" />
+        {avatarUrl && !imgError ? (
+          <img 
+            src={avatarUrl} 
+            alt="Avatar" 
+            className="w-10 h-10 rounded-full border border-outline-variant/50 shrink-0 object-cover" 
+            onError={() => setImgError(true)}
+          />
         ) : (
           <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shrink-0">
             {initial}
@@ -43,7 +48,6 @@ export default function AdminTopbar({ user }: { user?: any }) {
 
       {/* Actions */}
       <div className="flex items-center gap-3">
-        <ThemeToggle />
         <Link 
           href="/" 
           title="Kembali ke Web"

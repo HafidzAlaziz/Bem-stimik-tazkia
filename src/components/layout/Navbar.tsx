@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { FiHome, FiAward, FiCalendar, FiBookOpen, FiUser, FiLogOut, FiChevronDown } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/utils/supabase/client";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?: boolean }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -191,7 +190,6 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
 
           {/* Action Button (Mobile, Tablet, Desktop) */}
           <div className="flex items-center ml-auto lg:ml-0 gap-2 md:gap-3">
-            <ThemeToggle />
             {userProfile ? (
               <div className="relative" ref={profileMenuRef}>
                 <button

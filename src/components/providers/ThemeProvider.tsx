@@ -28,12 +28,7 @@ export function ThemeProvider({
   const [resolvedTheme, setResolvedTheme] = React.useState<"dark" | "light">("light");
 
   React.useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    if (savedTheme) {
-      setThemeState(savedTheme);
-    } else {
-      setThemeState(defaultTheme);
-    }
+    setThemeState("light");
   }, [defaultTheme]);
 
   React.useEffect(() => {

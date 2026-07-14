@@ -62,7 +62,7 @@ export default function LayoutClientWrapper({
     <>
       <LoadingScreen />
       {!hideLayout && <Navbar />}
-      <main className={hideLayout ? "w-full max-w-full overflow-x-hidden" : "flex-1 flex flex-col w-full max-w-full overflow-x-hidden"}>
+      <main className={hideLayout ? "w-full max-w-full" : "flex-1 flex flex-col w-full max-w-full"}>
         {children}
       </main>
       {!hideLayout && <Footer />}
