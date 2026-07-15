@@ -88,17 +88,21 @@ function AnggotaCard({
         <h3 className="font-bold text-on-background text-base leading-tight truncate">{member.name}</h3>
       </div>
       <div className="flex gap-2 shrink-0">
-        {member.wa && (
-          <a
-            href={member.wa.startsWith('http') ? member.wa : `https://wa.me/${member.wa.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-8 h-8 rounded-xl border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300"
-            aria-label={`WhatsApp ${member.name}`}
-          >
-            <WaIcon />
-          </a>
-        )}
+        {member.wa && (() => {
+          const sanitizedWa = member.wa.replace(/\D/g, '');
+          const waNumber = sanitizedWa.startsWith('0') ? '62' + sanitizedWa.slice(1) : sanitizedWa;
+          return (
+            <a
+              href={member.wa.startsWith('http') ? member.wa : `https://wa.me/${waNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-xl border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300"
+              aria-label={`WhatsApp ${member.name}`}
+            >
+              <WaIcon />
+            </a>
+          );
+        })()}
         {member.ig && (
           <a
             href={member.ig.startsWith('http') ? member.ig : `https://instagram.com/${member.ig.replace("@", "")}`}

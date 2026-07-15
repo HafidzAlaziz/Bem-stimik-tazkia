@@ -81,17 +81,21 @@ function PengurusCard({ person }: { person: KabinetPengurusInti }) {
 
       {/* Social buttons */}
       <div className="flex gap-2 shrink-0">
-        {person.wa && (
-          <a
-            href={person.wa.startsWith('http') ? person.wa : `https://wa.me/${person.wa.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-8 h-8 rounded-xl border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300"
-            aria-label={`WhatsApp ${person.name}`}
-          >
-            <WaIcon />
-          </a>
-        )}
+        {person.wa && (() => {
+          const sanitizedWa = person.wa.replace(/\D/g, '');
+          const waNumber = sanitizedWa.startsWith('0') ? '62' + sanitizedWa.slice(1) : sanitizedWa;
+          return (
+            <a
+              href={person.wa.startsWith('http') ? person.wa : `https://wa.me/${waNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-xl border border-outline-variant/30 flex items-center justify-center text-on-surface-variant hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all duration-300"
+              aria-label={`WhatsApp ${person.name}`}
+            >
+              <WaIcon />
+            </a>
+          );
+        })()}
         {person.ig && (
           <a
             href={person.ig.startsWith('http') ? person.ig : `https://instagram.com/${person.ig.replace("@", "")}`}
