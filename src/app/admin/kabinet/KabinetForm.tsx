@@ -13,13 +13,45 @@ import DynamicDepartemen from "./DynamicDepartemen";
 export default function KabinetForm({ initialData }: { initialData: KabinetProfile }) {
   const [formData, setFormData] = useState<KabinetProfile>(initialData);
   const [isLoading, setIsLoading] = useState(false);
-  const { success, error: showError } = useToast();
+  const { success, error: showError, toast } = useToast();
+  const toastShown = React.useRef(false);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem("kabinet_draft");
+    if (saved) {
+      try {
+        setFormData(JSON.parse(saved));
+        if (!toastShown.current) {
+          toast("Draft tersimpan dimuat ulang.", "success");
+          toastShown.current = true;
+        }
+      } catch (e) {}
+    }
+  }, [toast]);
+
+  React.useEffect(() => {
+    localStorage.setItem("kabinet_draft", JSON.stringify(formData));
+  }, [formData]);
+
+  const isDirty = JSON.stringify(formData) !== JSON.stringify(initialData);
+
+  React.useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
 
   const handleSave = async () => {
     setIsLoading(true);
     
     try {
       await saveKabinetProfile(formData);
+      localStorage.removeItem("kabinet_draft");
       success("Profil Kabinet berhasil disimpan!");
     } catch (e: any) {
       console.error(e);

@@ -1,162 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   FiArrowLeft, FiHeart, FiEye, FiGithub, FiExternalLink,
-  FiCalendar, FiTag, FiShare2,
-  FiChevronLeft, FiChevronRight
+  FiCalendar, FiTag, FiShare2
 } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-
-// ─── FULL MOCK DATA ─────────────────────────────────────────────────────────
-const projectsDetail: Record<number, {
-  id: number;
-  category: string;
-  title: string;
-  tagline: string;
-  description: string;
-  date: string;
-  image: string;
-  galleryImages: string[];
-  likes: number;
-  views: number;
-  tech: string[];
-  status: string;
-  team: { name: string; role: string; avatar: string; github?: string; linkedin?: string }[];
-  challenges: { title: string; desc: string }[];
-  process: { phase: string; desc: string; image: string }[];
-  quote: string;
-  githubUrl?: string;
-  liveUrl?: string;
-  specs: Record<string, string>;
-}> = {
-  1: {
-    id: 1,
-    category: "TECHNOLOGY",
-    title: "Autonomous Campus Rover",
-    tagline: "Self-navigating delivery robot untuk logistik intra-kampus",
-    description:
-      "The Autonomous Campus Rover adalah robot pengiriman mandiri yang dirancang untuk navigasi intra-kampus menggunakan algoritma SLAM dan pemetaan berbasis AI. Robot dapat menavigasi lingkungan kampus yang kompleks, menghindari hambatan, dan mengantarkan dokumen medis antar gedung secara efisien.\n\nProyek ini diluncurkan untuk mengatasi tantangan distribusi dokumen antar laboratorium dengan biaya rendah. Ini merupakan langkah signifikan menuju tujuan kami membangun 'Smart Campus' di STMIK Tazkia.",
-    date: "Jan 2024",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&q=80",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1561144257-e32e8efc6c4f?w=800&q=80",
-      "https://images.unsplash.com/photo-1518314916381-77a37c2a49ae?w=800&q=80",
-      "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
-    ],
-    likes: 145,
-    views: 1205,
-    tech: ["Python", "ROS", "LIDAR", "Raspberry Pi"],
-    status: "Completed",
-    specs: {
-      Platform: "ROS, LIDAR, Raspberry Pi 4",
-      Sensor: "LIDAR 360°, Ultrasonic",
-      Kecepatan: "1.2 m/s max",
-      Baterai: "8 jam continuous",
-    },
-    team: [
-      { name: "Adrian Pratama", role: "Project Lead / Robotics Eng.", avatar: "https://i.pravatar.cc/80?img=11", github: "https://github.com", linkedin: "https://linkedin.com" },
-      { name: "Siti Rahayu", role: "Software Engineer", avatar: "https://i.pravatar.cc/80?img=47", github: "https://github.com", linkedin: "https://linkedin.com" },
-      { name: "Dimas Kurniawan", role: "Hardware Engineer", avatar: "https://i.pravatar.cc/80?img=52", github: "https://github.com", linkedin: "https://linkedin.com" },
-    ],
-    challenges: [
-      { title: "Dynamic Obstacles", desc: "Membangun sistem prediksi hambatan bergerak di koridor kampus yang padat menjadi tantangan utama kami." },
-      { title: "Battery Efficiency", desc: "Mengoptimalkan konsumsi daya agar robot dapat beroperasi penuh selama 8 jam dalam sekali pengisian." },
-      { title: "Real-time Mapping", desc: "Memproses data sensor LIDAR secara real-time dengan latensi kurang dari 50ms pada hardware terbatas." },
-    ],
-    process: [
-      { phase: "Research & Design", desc: "Riset mendalam terhadap algoritma navigasi otonom, studi lingkungan kampus, dan desain arsitektur sistem selama 6 minggu.", image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" },
-      { phase: "Prototyping", desc: "Membangun prototipe pertama dengan chassis aluminium custom dan integrasi sensor LIDAR + kamera untuk pengujian awal.", image: "https://images.unsplash.com/photo-1518314916381-77a37c2a49ae?w=800&q=80" },
-    ],
-    quote: "The development phase involved over 200 hours of testing across three different faculty buildings to fine-tune the mapping accuracy.",
-    githubUrl: "https://github.com",
-    liveUrl: "#",
-  },
-  2: {
-    id: 2,
-    category: "UI/UX",
-    title: "Student Portal Redesign",
-    tagline: "Transformasi pengalaman digital mahasiswa secara menyeluruh",
-    description:
-      "Proyek Student Portal Redesign hadir untuk mengatasi frustrasi mahasiswa terhadap antarmuka portal lama yang rumit dan tidak intuitif. Pendekatan user-centric dengan 50+ sesi user testing memastikan setiap keputusan desain berbasis data nyata.\n\nHasilnya adalah portal baru yang meningkatkan task completion rate sebesar 67% dan mengurangi waktu navigasi rata-rata hingga 40%.",
-    date: "Sept 2023",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&q=80",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&q=80",
-      "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&q=80",
-      "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=80",
-    ],
-    likes: 312,
-    views: 2840,
-    tech: ["Figma", "Next.js", "Tailwind CSS", "Framer Motion"],
-    status: "Completed",
-    specs: {
-      Tools: "Figma, Maze",
-      Framework: "Next.js 14",
-      "User Testing": "50+ sesi",
-      "Task Completion": "+67%",
-    },
-    team: [
-      { name: "Laila Firdaus", role: "Lead Designer", avatar: "https://i.pravatar.cc/80?img=49", github: "https://github.com", linkedin: "https://linkedin.com" },
-      { name: "Reza Mahendra", role: "Frontend Dev", avatar: "https://i.pravatar.cc/80?img=57", github: "https://github.com", linkedin: "https://linkedin.com" },
-    ],
-    challenges: [
-      { title: "User Diversity", desc: "Mengakomodasi kebutuhan 3000+ mahasiswa dari berbagai jurusan dengan kebiasaan digital yang berbeda-beda." },
-      { title: "Legacy System", desc: "Mengintegrasikan desain baru dengan sistem backend lama yang memiliki keterbatasan API yang signifikan." },
-      { title: "Accessibility", desc: "Memastikan WCAG 2.1 AA compliance di seluruh komponen untuk mahasiswa berkebutuhan khusus." },
-    ],
-    process: [
-      { phase: "User Research", desc: "Survey kepada 200 mahasiswa, 30 wawancara mendalam, dan analisis heatmap portal lama selama 4 minggu.", image: "https://images.unsplash.com/photo-1553484771-371a605b060b?w=800&q=80" },
-      { phase: "Design & Testing", desc: "Iterasi cepat dengan 12 versi prototype yang diuji ke pengguna nyata menggunakan platform Maze.", image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?w=800&q=80" },
-    ],
-    quote: "Every pixel was validated by real students. We ran over 50 usability testing sessions to ensure the portal truly works for everyone.",
-    githubUrl: "https://github.com",
-    liveUrl: "#",
-  },
-  3: {
-    id: 3,
-    category: "RESEARCH",
-    title: "Sustainable Energy Audit",
-    tagline: "Analisis konsumsi energi kampus berbasis IoT & machine learning",
-    description:
-      "Proyek ini melakukan audit menyeluruh terhadap konsumsi energi kampus STMIK Tazkia menggunakan jaringan sensor IoT yang dipasang di 12 gedung. Data dikumpulkan selama 6 bulan dan dianalisis menggunakan model machine learning untuk mengidentifikasi pola pemborosan.\n\nTemuan kami berpotensi menghemat hingga 28% biaya listrik kampus per tahun jika rekomendasi kami diimplementasikan sepenuhnya.",
-    date: "Aug 2023",
-    image: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&q=80",
-    galleryImages: [
-      "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80",
-      "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80",
-      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=800&q=80",
-    ],
-    likes: 89,
-    views: 654,
-    tech: ["Python", "TensorFlow", "IoT Sensors", "Power BI"],
-    status: "Published",
-    specs: {
-      Sensor: "48 node IoT",
-      Periode: "6 bulan",
-      "Data Points": "2.3 juta",
-      "Potensi Hemat": "28% per tahun",
-    },
-    team: [
-      { name: "Fauzan Hakim", role: "Research Lead", avatar: "https://i.pravatar.cc/80?img=60", github: "https://github.com", linkedin: "https://linkedin.com" },
-      { name: "Anisa Dewi", role: "Data Analyst", avatar: "https://i.pravatar.cc/80?img=44", github: "https://github.com", linkedin: "https://linkedin.com" },
-    ],
-    challenges: [
-      { title: "Data Heterogeneity", desc: "Menggabungkan data dari 48 sensor berbeda merk dengan format dan frekuensi sampling yang tidak seragam." },
-      { title: "Anomaly Detection", desc: "Membangun model yang dapat membedakan lonjakan energi normal (kegiatan kampus) dari pemborosan yang sesungguhnya." },
-      { title: "Stakeholder Buy-in", desc: "Meyakinkan pihak rektorat tentang validitas data dan urgensi implementasi rekomendasi." },
-    ],
-    process: [
-      { phase: "Sensor Deployment", desc: "Pemasangan 48 node sensor IoT di 12 gedung kampus dan kalibrasi jaringan pengumpulan data terpusat.", image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80" },
-      { phase: "Analysis & Report", desc: "Analisis 2.3 juta data point menggunakan model time-series dan clustering untuk identifikasi pola konsumsi.", image: "https://images.unsplash.com/photo-1565728744382-61accd4aa148?w=800&q=80" },
-    ],
-    quote: "After six months of meticulous data collection, the patterns became clear the biggest culprits were HVAC systems running overnight in empty buildings.",
-    githubUrl: "https://github.com",
-  },
-};
+import { createClient } from "@/utils/supabase/client";
+import { useToast } from "@/components/ui/Toast";
 
 const categoryColors: Record<string, string> = {
   TECHNOLOGY: "bg-blue-100 text-blue-700",
@@ -167,39 +21,164 @@ const categoryColors: Record<string, string> = {
   MULTIMEDIA: "bg-yellow-100 text-yellow-700",
 };
 
-type Direction = 1 | -1;
-
 export default function ProjectDetailPage() {
   const params = useParams();
-  const id = Number(params.id);
-  const project = projectsDetail[id];
+  const id = params.id as string;
+  const router = useRouter();
+  const supabase = createClient();
+  const { toast } = useToast();
+  
+  const [project, setProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
-  const [activeGallery, setActiveGallery] = useState(0);
-  const [direction, setDirection] = useState<Direction>(1);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const allImages = project ? [project.image, ...project.galleryImages] : [];
-
-  const goTo = useCallback((index: number, dir: Direction) => {
-    setDirection(dir);
-    setActiveGallery(index);
-  }, []);
-
-  const next = useCallback(() => {
-    const nextIndex = (activeGallery + 1) % allImages.length;
-    goTo(nextIndex, 1);
-  }, [activeGallery, allImages.length, goTo]);
-
-  const prev = useCallback(() => {
-    const prevIndex = (activeGallery - 1 + allImages.length) % allImages.length;
-    goTo(prevIndex, -1);
-  }, [activeGallery, allImages.length, goTo]);
+  const [isLiking, setIsLiking] = useState(false);
+  const [viewCount, setViewCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
-    if (isPaused || !project) return;
-    const timer = setInterval(next, 4000);
-    return () => clearInterval(timer);
-  }, [isPaused, next, project]);
+    const fetchProjectAndTrackView = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('karya')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error || !data) {
+          setLoading(false);
+          return;
+        }
+
+        setProject(data);
+        setViewCount(data.views || 0);
+        setLikeCount(data.likes || 0);
+        setLoading(false);
+
+        // Check authenticated user
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id || null;
+
+        // Anti-Spam View & Likes Tracking (Device Fingerprinting via LocalStorage)
+        let deviceId = localStorage.getItem('karya_device_id');
+        if (!deviceId) {
+          deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('karya_device_id', deviceId);
+        }
+
+        // Check if already liked via RPC (Bypass RLS on logs)
+        const { data: isLiked } = await supabase.rpc('check_karya_liked', {
+          p_karya_id: id,
+          p_device_id: deviceId,
+          p_user_id: userId
+        });
+          
+        if (isLiked) {
+          setLiked(true);
+        }
+
+        // Increment view via RPC (Cooldown 24 Jam)
+        const { error: rpcError } = await supabase.rpc('increment_karya_view', { 
+          p_karya_id: id, 
+          p_device_id: deviceId,
+          p_user_id: userId
+        });
+        
+        // Catatan: Jika RPC berhasil, artinya view bertambah di DB (atau di-ignore jika masih cooldown).
+        // Untuk optimisasi UX, kita bisa fetch ulang jumlah view terbaru, atau biarkan saja.
+        
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProjectAndTrackView();
+    }
+  }, [id, supabase]);
+
+  const handleToggleLike = async () => {
+    if (isLiking) return;
+    setIsLiking(true);
+    
+    // Optimistic UI Update
+    setLiked(!liked);
+    setLikeCount(prev => liked ? Math.max(0, prev - 1) : prev + 1);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || null;
+      const deviceId = localStorage.getItem('karya_device_id');
+
+      const { data: isNowLiked, error } = await supabase.rpc('toggle_karya_like', {
+        p_karya_id: id,
+        p_device_id: deviceId || 'unknown',
+        p_user_id: userId
+      });
+
+      if (error) throw error;
+      
+      // Sync with actual DB result just in case
+      setLiked(isNowLiked);
+    } catch (err) {
+      console.error(err);
+      // Revert optimistic update on error
+      setLiked(liked);
+      setLikeCount(prev => liked ? prev + 1 : Math.max(0, prev - 1));
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!project) return;
+    const shareData = {
+      title: project.title,
+      text: `Lihat karya inovatif "${project.title}" di Portal Inovasi BEM STMIK Tazkia!`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast("Tautan disalin ke clipboard!", "success");
+      } catch (err) {
+        toast("Gagal menyalin tautan", "error");
+      }
+    }
+  };
+
+  // Setup slider images (safe to run before early returns, project might be null initially)
+  const sliderImages = project 
+    ? [
+        project.image_url,
+        ...(Array.isArray(project.gallery) ? project.gallery.map((g: any) => typeof g === 'string' ? g : g.url) : [])
+      ].filter(Boolean)
+    : [];
+
+  useEffect(() => {
+    if (sliderImages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % sliderImages.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [sliderImages.length]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-[var(--color-background)] pt-28 pb-32">
+        <div className="w-12 h-12 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
+      </main>
+    );
+  }
 
   if (!project) {
     return (
@@ -215,58 +194,48 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const slideVariants = {
-    enter: (dir: Direction) => ({ x: dir * 60, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: Direction) => ({ x: dir * -60, opacity: 0 }),
-  };
+  // Handle Team (fallback to creator if empty)
+  const team = Array.isArray(project.team) && project.team.length > 0 
+    ? project.team 
+    : [{ name: "Kreator", role: "Project Lead" }];
+
+  // Parse team members – format bisa "Name (Role)" string atau object {name, role, avatar}
+  const parsedTeam = team.map((member: any) => {
+    if (typeof member === 'string') {
+      const match = member.match(/^(.+?)\s*\((.+)\)$/);
+      return match ? { name: match[1].trim(), role: match[2].trim(), avatar: '' } : { name: member, role: 'Anggota Tim', avatar: '' };
+    }
+    return { name: member.name || 'Anggota', role: member.role || 'Tim', avatar: member.avatar || '' };
+  });
+
+  // Handle Features
+  const features = Array.isArray(project.features) && project.features.length > 0
+    ? project.features
+    : [{ title: "Fitur Utama", desc: "Tidak ada detail fitur spesifik yang disediakan." }];
 
   return (
     <main className="min-h-screen bg-[#f8f9fc] pt-28 pb-32 md:pb-20">
-
       {/* ── HERO BANNER ─────────────────────────────────────────── */}
-      <div
-        className="relative h-[420px] md:h-[520px] w-full overflow-hidden mb-0"
-        onMouseEnter={() => {
-          if (typeof window !== "undefined" && window.innerWidth >= 1024) setIsPaused(true);
-        }}
-        onMouseLeave={() => {
-          if (typeof window !== "undefined" && window.innerWidth >= 1024) setIsPaused(false);
-        }}
-      >
-        {/* Animated slide */}
-        <AnimatePresence custom={direction} mode="popLayout">
-          <motion.img
-            key={activeGallery}
-            src={allImages[activeGallery]}
+      <div className="relative h-[420px] md:h-[520px] w-full overflow-hidden mb-0 bg-black">
+        {sliderImages.length > 0 ? (
+          sliderImages.map((src, idx) => (
+            <img
+              key={idx}
+              src={src}
+              alt={`${project.title} - Slide ${idx + 1}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentSlide ? 'opacity-80' : 'opacity-0'}`}
+            />
+          ))
+        ) : (
+          <img
+            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200"
             alt={project.title}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover opacity-80"
           />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-10" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10" />
 
-        {/* Prev / Next arrows */}
-        <button
-          onClick={prev}
-          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/35 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-black/55 hover:scale-110 transition-all"
-        >
-          <FiChevronLeft size={18} />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/35 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-black/55 hover:scale-110 transition-all"
-        >
-          <FiChevronRight size={18} />
-        </button>
-
-        {/* Back button */}
         <Link
           href="/karya"
           className="absolute top-6 left-6 md:left-10 z-20 flex items-center gap-2 text-white/90 hover:text-white bg-black/30 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:-translate-x-1"
@@ -274,60 +243,41 @@ export default function ProjectDetailPage() {
           <FiArrowLeft size={15} /> Semua Karya
         </Link>
 
-        {/* Category badge */}
         <div className="absolute top-6 right-6 md:right-10 z-20">
           <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${categoryColors[project.category] ?? "bg-surface/20 text-white"} backdrop-blur-sm`}>
             {project.category}
           </span>
         </div>
 
-        {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 px-14 md:px-10 pb-14 md:pb-10 max-w-7xl mx-auto z-20">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h1 className="text-2xl md:text-5xl font-bold text-white mb-2 leading-tight max-w-3xl">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 leading-tight max-w-3xl">
               {project.title}
             </h1>
-            <p className="text-white/70 text-xs md:text-lg mb-4 md:mb-5 max-w-2xl">{project.tagline}</p>
-
-            {/* Stats row */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-white/80 text-[11px] md:text-sm">
-              <span className="flex items-center gap-1.5"><FiCalendar size={13} /> {project.date}</span>
-              <span className="flex items-center gap-1.5"><FiEye size={13} /> {project.views.toLocaleString()} views</span>
-              <span className="flex items-center gap-1.5"><FiHeart size={13} /> {project.likes + (liked ? 1 : 0)} likes</span>
+            
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-white/80 text-[11px] md:text-sm mt-4">
+              <span className="flex items-center gap-1.5"><FiCalendar size={13} /> {new Date(project.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              <span className="flex items-center gap-1.5"><FiEye size={13} /> {viewCount.toLocaleString()} Kali Dilihat</span>
+              <span className="flex items-center gap-1.5"><FiHeart size={13} /> {likeCount.toLocaleString()} Disukai</span>
               <span className="flex items-center gap-1.5">
-                <span className={`w-2 h-2 rounded-full ${project.status === "Completed" ? "bg-green-400" : "bg-yellow-400"} animate-pulse`} />
-                {project.status}
+                <span className={`w-2 h-2 rounded-full ${project.status === "approved" ? "bg-green-400" : "bg-yellow-400"} animate-pulse`} />
+                {project.status === 'approved' ? 'Publik' : 'Menunggu Review'}
               </span>
             </div>
           </motion.div>
-        </div>
-
-        {/* Thumbnail strip */}
-        <div className="absolute bottom-4 right-6 md:right-10 z-20 hidden md:flex gap-2">
-          {allImages.map((img, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i, i > activeGallery ? 1 : -1)}
-              className={`w-14 h-10 md:w-16 md:h-12 rounded-lg overflow-hidden border-2 transition-all ${activeGallery === i ? "border-white scale-105" : "border-white/30 opacity-60 hover:opacity-90"}`}
-            >
-              <img src={img} alt="" className="w-full h-full object-cover" />
-            </button>
-          ))}
         </div>
       </div>
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 md:px-10 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
           {/* ── LEFT SIDEBAR ─────────────────────────────── */}
           <aside className="lg:col-span-1 space-y-6">
-
-            {/* Action buttons */}
             <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm flex gap-3">
               <button
-                onClick={() => setLiked(!liked)}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border ${liked ? "bg-red-50 border-red-200 text-red-500" : "border-outline-variant/30 text-on-surface-variant hover:border-red-200 hover:text-red-500"}`}
+                onClick={handleToggleLike}
+                disabled={isLiking}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border ${liked ? "bg-red-50 border-red-200 text-red-500" : "border-outline-variant/30 text-on-surface-variant hover:border-red-200 hover:text-red-500"} ${isLiking ? "opacity-70 cursor-not-allowed" : ""}`}
               >
                 <div className="w-6 h-6 flex items-center justify-center -ml-1 shrink-0">
                   {liked ? (
@@ -336,25 +286,27 @@ export default function ProjectDetailPage() {
                     <FiHeart size={16} />
                   )}
                 </div>
-                {project.likes + (liked ? 1 : 0)}
+                {likeCount.toLocaleString()}
               </button>
-              <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border border-outline-variant/30 text-on-surface-variant hover:border-gray-400">
-                <FiShare2 size={16} /> Share
+              <button 
+                onClick={handleShare}
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-300 border border-outline-variant/30 text-on-surface-variant hover:border-gray-400"
+              >
+                <FiShare2 size={16} /> Bagikan
               </button>
             </div>
 
-            {/* Links */}
-            {(project.githubUrl || project.liveUrl) && (
+            {(project.github_url || project.live_url) && (
               <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm space-y-3">
-                <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider">Links</h3>
-                {project.githubUrl && (
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+                <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider">Tautan</h3>
+                {project.github_url && (
+                  <a href={project.github_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all">
-                    <FiGithub size={16} /> GitHub Repository
+                    <FiGithub size={16} /> Repositori GitHub
                   </a>
                 )}
-                {project.liveUrl && (
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+                {project.live_url && (
+                  <a href={project.live_url} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-primary)] text-white text-sm font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all">
                     <FiExternalLink size={16} /> Live Demo
                   </a>
@@ -362,83 +314,58 @@ export default function ProjectDetailPage() {
               </div>
             )}
 
-            {/* Team */}
             <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
-              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Project Creator</h3>
-              <div className="space-y-5">
-                {project.team.map((member) => (
-                  <div key={member.name} className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                      <img src={member.avatar} alt={member.name} className="w-11 h-11 rounded-full object-cover ring-2 ring-gray-100" />
-                      <div>
-                        <p className="font-bold text-sm text-on-surface">{member.name}</p>
-                        <p className="text-xs text-on-surface-variant">{member.role}</p>
+              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Tim Pembuat</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                {parsedTeam.map((member: any, i: number) => {
+                  const initials = (member.name || 'U').split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase();
+                  return (
+                    <div key={i} className="bg-surface-variant/10 p-3 rounded-xl border border-outline-variant/20 flex items-center gap-3">
+                      <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-secondary/80 text-white flex items-center justify-center font-bold text-sm border border-outline-variant/20 overflow-hidden shadow-sm">
+                        {member.avatar ? (
+                          <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
+                        ) : (
+                          initials
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm text-on-surface truncate">{member.name}</p>
+                        <p className="text-[10px] text-[var(--color-secondary)] font-bold uppercase tracking-wider mt-0.5 truncate">{member.role}</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      {member.github && (
-                        <a href={member.github} target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold hover:-translate-y-0.5 transition-all">
-                          <FiGithub size={12} /> Github
-                        </a>
-                      )}
-                      {member.linkedin && (
-                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border border-outline-variant/30 text-on-surface-variant text-xs font-bold hover:-translate-y-0.5 hover:border-gray-400 transition-all">
-                          <FiExternalLink size={12} /> LinkedIn
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
-            {/* Specs */}
-            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
-              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Detail Proyek</h3>
-              <div className="space-y-3">
-                {Object.entries(project.specs).map(([key, val]) => (
-                  <div key={key} className="flex justify-between items-start gap-4 text-sm">
-                    <span className="text-on-surface-variant/70 font-medium shrink-0">{key}</span>
-                    <span className="font-semibold text-on-surface text-right">{val}</span>
-                  </div>
-                ))}
+            {project.tech_stack && project.tech_stack.length > 0 && (
+              <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
+                <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Tech Stack</h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech_stack.map((t: string) => (
+                    <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
+                      <FiTag size={10} /> {t}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Tech Stack */}
-            <div className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm">
-              <h3 className="text-sm font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4">Tech Stack</h3>
-              <div className="flex flex-wrap gap-2">
-                {project.tech.map((t) => (
-                  <span key={t} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-full">
-                    <FiTag size={10} /> {t}
-                  </span>
-                ))}
-              </div>
-            </div>
+            )}
           </aside>
 
           {/* ── MAIN ARTICLE ─────────────────────────────── */}
           <article className="lg:col-span-2 space-y-10">
-
-            {/* Overview */}
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
               className="bg-surface rounded-2xl p-8 border border-outline-variant/20 shadow-sm"
             >
               <h2 className="text-2xl font-bold text-[var(--color-primary)] mb-5 flex items-center gap-3">
-                <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Overview
+                <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Deskripsi
               </h2>
-              <div className="text-on-surface-variant leading-relaxed space-y-4 text-[15px]">
-                {project.description.split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
+              <div className="text-on-surface-variant leading-relaxed space-y-4 text-[15px] whitespace-pre-wrap">
+                {project.description}
               </div>
             </motion.section>
 
-            {/* Fitur / Tantangan */}
             <motion.section
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             >
@@ -446,51 +373,51 @@ export default function ProjectDetailPage() {
                 <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Fitur Utama
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {project.challenges.map((ch, i) => (
+                {features.map((feat: any, i: number) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.1 * i }}
                     className="bg-surface rounded-2xl p-5 border border-outline-variant/20 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                   >
-                    <h4 className="font-bold text-on-surface mb-2">{ch.title}</h4>
-                    <p className="text-sm text-on-surface-variant leading-relaxed">{ch.desc}</p>
+                    <h4 className="font-bold text-on-surface mb-2">{feat.title || "Fitur"}</h4>
+                    <p className="text-sm text-on-surface-variant leading-relaxed">{feat.desc || feat.description || ""}</p>
                   </motion.div>
                 ))}
               </div>
             </motion.section>
 
-            {/* Process & Development */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <h2 className="text-2xl font-bold text-on-surface mb-5 flex items-center gap-3">
-                <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Process & Development
-              </h2>
-              <div className="space-y-6">
-                {project.process.map((phase, i) => (
-                  <div key={i} className="bg-surface rounded-2xl overflow-hidden border border-outline-variant/20 shadow-sm flex flex-col md:flex-row group hover:shadow-md transition-all duration-300">
-                    <div className="md:w-64 shrink-0 h-48 md:h-auto overflow-hidden">
-                      <img src={phase.image} alt={phase.phase} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
-                    <div className="p-6 flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center">{i + 1}</span>
-                        <h4 className="font-bold text-[var(--color-primary)]">{phase.phase}</h4>
+            {/* GALLERY */}
+            {Array.isArray(project.gallery) && project.gallery.length > 0 && (
+              <motion.section
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <h2 className="text-2xl font-bold text-on-surface mb-5 flex items-center gap-3">
+                  <span className="w-1 h-6 rounded-full bg-[var(--color-secondary)] block" /> Galeri & Dokumentasi
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {project.gallery.map((item: any, i: number) => (
+                    <div key={i} className="rounded-2xl overflow-hidden border border-outline-variant/20 shadow-md bg-surface group flex flex-col transition-all duration-300 hover:shadow-lg">
+                      <div className="overflow-hidden relative border-b border-outline-variant/10">
+                        <img
+                          src={typeof item === 'string' ? item : item.url}
+                          alt={typeof item === 'object' && item.caption ? item.caption : `Dokumentasi ${i + 1}`}
+                          className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       </div>
-                      <p className="text-sm text-on-surface-variant leading-relaxed">{phase.desc}</p>
+                      {typeof item === 'object' && item.caption && (
+                        <div className="p-5 bg-gradient-to-b from-surface to-surface-variant/20 grow flex flex-col justify-center">
+                          <p className="text-[14px] font-medium text-on-surface-variant leading-relaxed border-l-4 border-[var(--color-secondary)] pl-4">
+                            {item.caption}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* Navigate to more */}
-            <div className="flex items-center pt-4 border-t border-outline-variant/30">
-              <Link href="/karya" className="flex items-center gap-2 text-on-surface-variant hover:text-[var(--color-primary)] font-semibold text-sm transition-colors group">
-                <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Semua Proyek
-              </Link>
-            </div>
+                  ))}
+                </div>
+              </motion.section>
+            )}
+            
           </article>
         </div>
       </div>

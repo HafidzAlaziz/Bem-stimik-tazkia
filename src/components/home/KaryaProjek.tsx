@@ -5,58 +5,31 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiArrowRight, FiEye, FiHeart, FiChevronLeft, FiChevronRight, FiTrendingUp } from "react-icons/fi";
 
-// Sorted by likes (top liked first)
-const projects = [
-  {
-    id: 2,
-    rank: 1,
-    badge: "UI/UX",
-    title: "Student Portal Redesign",
-    desc: "Transformasi menyeluruh pengalaman digital mahasiswa, meningkatkan task completion rate hingga 67%.",
-    imgUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80",
-    likes: 312,
-    views: 2800,
-    viewsLabel: "2.8k",
-    date: "Sept 2023",
-    badgeColor: "bg-purple-50 text-purple-600",
-    accentColor: "#9333ea",
-  },
-  {
-    id: 1,
-    rank: 2,
-    badge: "TECHNOLOGY",
-    title: "Autonomous Campus Rover",
-    desc: "Robot pengiriman mandiri untuk logistik intra-kampus menggunakan algoritma SLAM dan navigasi AI.",
-    imgUrl: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
-    likes: 145,
-    views: 1200,
-    viewsLabel: "1.2k",
-    date: "Jan 2024",
-    badgeColor: "bg-blue-50 text-blue-600",
-    accentColor: "#1b4086",
-  },
-  {
-    id: 3,
-    rank: 3,
-    badge: "RESEARCH",
-    title: "Sustainable Energy Audit",
-    desc: "Analisis konsumsi energi kampus berbasis IoT & machine learning dengan potensi penghematan 28%.",
-    imgUrl: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=800&q=80",
-    likes: 89,
-    views: 654,
-    viewsLabel: "654",
-    date: "Aug 2023",
-    badgeColor: "bg-green-50 text-green-600",
-    accentColor: "#16a34a",
-  },
-];
-
 const AUTOPLAY_INTERVAL = 4500;
-
-// const rankColors = ["#f59e0b", "#9ca3af", "#cd7c2e"]; // gold, silver, bronze
 const rankLabel = ["🥇", "🥈", "🥉"];
+const categoryColors: Record<string, { badge: string, accent: string }> = {
+  TECHNOLOGY: { badge: "bg-blue-50 text-blue-600", accent: "#1b4086" },
+  "UI/UX": { badge: "bg-purple-50 text-purple-600", accent: "#9333ea" },
+  RESEARCH: { badge: "bg-green-50 text-green-600", accent: "#16a34a" },
+  PROGRAMMING: { badge: "bg-orange-50 text-orange-600", accent: "#ea580c" },
+  "COMMUNITY SERVICE": { badge: "bg-pink-50 text-pink-600", accent: "#db2777" },
+  MULTIMEDIA: { badge: "bg-yellow-50 text-yellow-700", accent: "#ca8a04" },
+};
 
-export default function KaryaProjek() {
+export default function KaryaProjek({ karyaList = [] }: { karyaList?: any[] }) {
+  const projects = karyaList.map((k, idx) => ({
+    id: k.id,
+    rank: idx + 1,
+    badge: k.category || "UMUM",
+    title: k.title,
+    desc: k.description,
+    imgUrl: k.image_url || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80",
+    likes: k.likes || 0,
+    viewsLabel: (k.views || 0).toLocaleString(),
+    date: new Date(k.created_at).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' }),
+    badgeColor: categoryColors[k.category]?.badge || "bg-gray-50 text-gray-600",
+    accentColor: categoryColors[k.category]?.accent || "#4b5563",
+  }));
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -93,7 +66,11 @@ export default function KaryaProjek() {
     };
   }, [active, paused]);
 
-  const item = projects[active];
+  if (projects.length === 0) {
+    return null;
+  }
+
+  const item = projects[active] || projects[0];
 
   const variants = {
     enter: (d: number) => ({ x: d > 0 ? "60%" : "-60%", opacity: 0, scale: 0.95 }),
@@ -147,7 +124,7 @@ export default function KaryaProjek() {
                 draggable={false}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-              <div className="absolute top-4 left-4 text-2xl drop-shadow-lg">{rankLabel[p.rank - 1]}</div>
+              <div className="absolute top-4 left-4 text-2xl drop-shadow-lg">{rankLabel[p.rank - 1] || "🎖️"}</div>
               {/* accent top bar */}
               <div className="absolute top-0 left-0 w-full h-1 rounded-full" style={{ backgroundColor: p.accentColor }} />
               <div className="absolute bottom-0 left-0 right-0 p-5">
@@ -204,10 +181,11 @@ export default function KaryaProjek() {
                   transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
                   className="absolute inset-0"
                   style={{ willChange: "transform" }}
-                  drag="x"
+                  drag={projects.length > 1 ? "x" : false}
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.08}
                   onDragEnd={(_, info) => {
+                    if (projects.length <= 1) return;
                     if (info.offset.x < -40) next();
                     if (info.offset.x > 40) prev();
                   }}
@@ -219,7 +197,7 @@ export default function KaryaProjek() {
                     draggable={false}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute top-4 left-4 text-2xl drop-shadow-lg">{rankLabel[item.rank - 1]}</div>
+                  <div className="absolute top-4 left-4 text-2xl drop-shadow-lg">{rankLabel[item.rank - 1] || "🎖️"}</div>
                   <div className="absolute bottom-0 left-0 right-0 p-5">
                     <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest">{item.badge}</span>
                     <h3 className="text-white font-extrabold text-lg leading-tight mt-0.5">{item.title}</h3>
@@ -232,37 +210,43 @@ export default function KaryaProjek() {
               </AnimatePresence>
             </div>
 
-            {/* Prev / Next */}
-            <button
-              onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
-              aria-label="Sebelumnya"
-            >
-              <FiChevronLeft size={18} />
-            </button>
-            <button
-              onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
-              aria-label="Berikutnya"
-            >
-              <FiChevronRight size={18} />
-            </button>
+            {/* Prev / Next (Hidden if only 1 project) */}
+            {projects.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  className="absolute left-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
+                  aria-label="Sebelumnya"
+                >
+                  <FiChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={next}
+                  className="absolute right-3 top-1/2 -translate-y-6 z-10 w-9 h-9 rounded-full bg-surface/90 backdrop-blur-sm shadow-md flex items-center justify-center text-on-background hover:bg-surface hover:scale-110 transition-all duration-200"
+                  aria-label="Berikutnya"
+                >
+                  <FiChevronRight size={18} />
+                </button>
+              </>
+            )}
 
             {/* Dot indicators */}
-            <div className="flex items-center justify-center gap-2 mt-4">
-              {projects.map((p, i) => (
-                <button
-                  key={p.id}
-                  onClick={() => goTo(i)}
-                  aria-label={`Karya ${i + 1}`}
-                  className="h-2 rounded-full transition-all duration-300"
-                  style={{
-                    width: active === i ? 24 : 8,
-                    backgroundColor: active === i ? item.accentColor : "#c5c6d0",
-                  }}
-                />
-              ))}
-            </div>
+            {projects.length > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-4">
+                {projects.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => goTo(i)}
+                    aria-label={`Karya ${i + 1}`}
+                    className="h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: active === i ? 24 : 8,
+                      backgroundColor: active === i ? item.accentColor : "#c5c6d0",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

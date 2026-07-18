@@ -44,6 +44,7 @@ export async function updateSession(request: NextRequest) {
       // no user, potentially respond by redirecting the user to the login page
       const url = request.nextUrl.clone()
       url.pathname = '/login'
+      url.searchParams.set('next', request.nextUrl.pathname)
       return NextResponse.redirect(url)
     }
 
@@ -67,6 +68,7 @@ export async function updateSession(request: NextRequest) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
+      url.searchParams.set('next', request.nextUrl.pathname)
       return NextResponse.redirect(url)
     }
   }
@@ -80,7 +82,15 @@ export async function updateSession(request: NextRequest) {
       .single()
 
     const url = request.nextUrl.clone()
-    url.pathname = profile?.role === 'admin' ? '/admin' : '/dashboard'
+    const nextPath = request.nextUrl.searchParams.get('next')
+    
+    if (nextPath) {
+      url.pathname = nextPath
+      url.searchParams.delete('next')
+    } else {
+      url.pathname = profile?.role === 'admin' ? '/admin' : '/dashboard'
+    }
+    
     return NextResponse.redirect(url)
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
-import { FiUsers, FiFileText, FiBriefcase, FiCalendar, FiClock } from "react-icons/fi";
+import { FiUsers, FiFileText, FiBriefcase, FiCalendar, FiClock, FiHeart } from "react-icons/fi";
 import AdminDashboardCharts from "./AdminDashboardCharts";
 
 export const revalidate = 0; // Disable static caching for admin
@@ -31,11 +31,12 @@ export default async function AdminDashboardPage() {
     .order('views', { ascending: false })
     .limit(3);
 
-  // Fetch top viewed Karya
+  // Fetch top viewed Karya (now by likes as requested)
   const { data: topKarya } = await supabase
     .from('karya')
-    .select('title, views')
-    .order('views', { ascending: false })
+    .select('title, views, likes')
+    .eq('status', 'approved')
+    .order('likes', { ascending: false })
     .limit(3);
 
   return (
@@ -108,14 +109,14 @@ export default async function AdminDashboardPage() {
         {/* Top Karya */}
         <div className="bg-surface rounded-2xl border border-outline-variant/20 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-                <FiBriefcase size={20} />
+                <FiHeart size={20} />
               </div>
               <h3 className="text-xl font-bold text-on-surface">Top Karya Terpopuler</h3>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             {topKarya?.map((item, idx) => (
               <div key={idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-variant/20 transition-colors">
@@ -126,8 +127,8 @@ export default async function AdminDashboardPage() {
                   <p className="text-sm font-semibold text-on-surface truncate">{item.title}</p>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm font-bold text-on-surface bg-surface-variant/30 px-3 py-1 rounded-full">
-                  <FiUsers size={14} className="text-on-surface-variant" />
-                  {item.views}
+                  <FiHeart size={14} className="text-red-500" />
+                  {item.likes || 0}
                 </div>
               </div>
             ))}

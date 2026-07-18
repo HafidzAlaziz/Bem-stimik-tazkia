@@ -6,107 +6,26 @@ import { FiCalendar, FiMapPin, FiClock, FiArrowRight, FiZap, FiCheckCircle, FiCh
 import { motion, AnimatePresence } from "framer-motion";
 
 
-// --- STATIC DATA (akan diganti dengan data dari backend) ---
-
-const liveEvent = {
-  id: 1,
-  category: "Workshop",
-  title: "BEM Leadership Training 2024",
-  desc: "Dua hari penuh pengembangan kepemimpinan intensif untuk seluruh pengurus dan calon pemimpin BEM STMIK Tazkia 2024/2025 bersama Dosen & Alumni.",
-  date: "20–21 Agustus 2024",
-  time: "08:00 - 15:00 WIB",
-  location: "Auditorium STMIK",
-  registered: 47,
-  imgUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-};
-
-const upcomingEvents = [
-  {
-    id: 2,
-    category: "Workshop",
-    title: "UI/UX Design Bootcamp 2024",
-    date: "24 August 2024",
-    time: "09:00 - 14:00 WIB",
-    location: "Auditorium STMIK",
-    slots: 4,
-    imgUrl: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 3,
-    category: "Seminar",
-    title: "Tech Career Talks: AI Future",
-    date: "26 August 2024",
-    time: "13:00 - 16:00 WIB",
-    location: "Aula Utama",
-    slots: 12,
-    imgUrl: "https://images.unsplash.com/photo-1591453089816-0fbb971b454c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 7,
-    category: "Kompetisi",
-    title: "Tazkia IT Hackathon",
-    date: "10 September 2024",
-    time: "08:00 - 20:00 WIB",
-    location: "Lab Komputer Terpadu",
-    slots: 10,
-    imgUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-];
-
-const volunteerOpportunities = [
-  {
-    id: 1,
-    category: "KOORDINASI ACARA",
-    title: "Sponsorship Liaison",
-    desc: "Responsible for securing funding/partnerships for student events, facilitating communication and negotiation with respective parties.",
-    deadline: "31 Jan 2025",
-    isUrgent: true,
-    imgUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: 2,
-    category: "KREATIF & KONTEN",
-    title: "Content Creator",
-    desc: "Creating engaging visual content for social media platforms, including design of HTML, CSS, and social media assets.",
-    deadline: "15 Feb 2025",
-    isUrgent: false,
-    imgUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: 3,
-    category: "TEKNOLOGI & WEB",
-    title: "Web Developer Assistant",
-    desc: "Assist in maintaining and developing features for the BEM website. Knowledge of HTML, CSS, or JavaScript is required.",
-    deadline: "20 Feb 2025",
-    isUrgent: false,
-    imgUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-  },
-];
-
-const pastEvents = [
-  {
-    id: 4,
-    category: "Festival",
-    title: "Summer Networking Gala",
-    imgUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 5,
-    category: "Kompetisi",
-    title: "Annual Hackathon 2024",
-    imgUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 6,
-    category: "Seminar",
-    title: "Mental Health Awareness Week",
-    imgUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-];
+import { AgendaKegiatan } from "@/types/agenda";
+import { formatDateToIndo } from "@/utils/dateFormatter";
 
 // --- MAIN COMPONENT ---
 
-export default function EventVolunteer({ showHeader = true }: { showHeader?: boolean }) {
+interface EventVolunteerProps {
+  showHeader?: boolean;
+  liveEvents?: AgendaKegiatan[];
+  upcomingEvents?: AgendaKegiatan[];
+  volunteerOpportunities?: AgendaKegiatan[];
+  pastEvents?: AgendaKegiatan[];
+}
+
+export default function EventVolunteer({ 
+  showHeader = true,
+  liveEvents = [],
+  upcomingEvents = [],
+  volunteerOpportunities = [],
+  pastEvents = []
+}: EventVolunteerProps) {
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -154,10 +73,55 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
   }, [active, paused]);
 
   const variants = {
-    enter: (d: number) => ({ x: d > 0 ? "60%" : "-60%", opacity: 0, scale: 0.95 }),
+    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0, scale: 0.95 }),
     center: { x: 0, opacity: 1, scale: 1 },
-    exit: (d: number) => ({ x: d > 0 ? "-60%" : "60%", opacity: 0, scale: 0.95 }),
+    exit: (d: number) => ({ x: d > 0 ? "-100%" : "100%", opacity: 0, scale: 0.95 }),
   };
+
+  // Live Event Slider States
+  const [activeLive, setActiveLive] = useState(0);
+  const [directionLive, setDirectionLive] = useState(1);
+  const [pausedLive, setPausedLive] = useState(false);
+  const [progressLive, setProgressLive] = useState(0);
+  const intervalLiveRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressLiveRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goToLive = useCallback((index: number, dir?: number) => {
+    if (liveEvents.length === 0) return;
+    const d = dir ?? (index > activeLive ? 1 : -1);
+    setDirectionLive(d);
+    setActiveLive(index);
+    setProgressLive(0);
+  }, [activeLive, liveEvents.length]);
+
+  const nextLive = useCallback(() => {
+    if (liveEvents.length === 0) return;
+    goToLive((activeLive + 1) % liveEvents.length, 1);
+  }, [activeLive, goToLive, liveEvents.length]);
+
+  const prevLive = useCallback(() => {
+    if (liveEvents.length === 0) return;
+    goToLive((activeLive - 1 + liveEvents.length) % liveEvents.length, -1);
+  }, [activeLive, goToLive, liveEvents.length]);
+
+  useEffect(() => {
+    if (pausedLive || liveEvents.length <= 1) return;
+    intervalLiveRef.current = setInterval(nextLive, AUTOPLAY_INTERVAL);
+    return () => { if (intervalLiveRef.current) clearInterval(intervalLiveRef.current); };
+  }, [pausedLive, nextLive, liveEvents.length]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgressLive(0), 0);
+    if (pausedLive || liveEvents.length <= 1) return () => clearTimeout(timer);
+    const start = Date.now();
+    progressLiveRef.current = setInterval(() => {
+      setProgressLive(Math.min(((Date.now() - start) / AUTOPLAY_INTERVAL) * 100, 100));
+    }, 40);
+    return () => {
+      clearTimeout(timer);
+      if (progressLiveRef.current) clearInterval(progressLiveRef.current);
+    };
+  }, [activeLive, pausedLive, liveEvents.length]);
 
   // Volunteer Slider States
   const [activeVol, setActiveVol] = useState(0);
@@ -292,40 +256,114 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
         <div className="flex items-center gap-3 mb-6">
           <h2 className="text-xl font-bold text-on-background">Event Sedang Berjalan</h2>
           <span className="flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-            <FiZap size={11} /> LIVE
+            <FiZap size={11} /> LIVE ({liveEvents.length})
           </span>
         </div>
 
-        {/* Live Event Card */}
-        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group cursor-pointer">
-          {/* BG Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-            style={{ backgroundImage: `url('${liveEvent.imgUrl}')` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/75 to-primary/20" />
+        {/* Live Event Card / Slider */}
+        {liveEvents.length > 0 ? (
+          <div 
+            className="relative"
+            onMouseEnter={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedLive(true);
+            }}
+            onMouseLeave={() => {
+              if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedLive(false);
+            }}
+            onMouseDown={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.clientX); }}
+            onMouseUp={(e) => {
+              const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+              const diff = start - e.clientX;
+              if (Math.abs(diff) > 40) {
+                if (diff > 0) nextLive();
+                else prevLive();
+              }
+            }}
+            onTouchStart={(e) => { (e.currentTarget as HTMLElement).dataset.dragX = String(e.touches[0].clientX); }}
+            onTouchEnd={(e) => {
+              const start = Number((e.currentTarget as HTMLElement).dataset.dragX);
+              const diff = start - e.changedTouches[0].clientX;
+              if (Math.abs(diff) > 40) {
+                if (diff > 0) nextLive();
+                else prevLive();
+              }
+            }}
+          >
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group cursor-pointer h-[280px] sm:h-[300px] md:h-[350px]">
+              {liveEvents.length > 1 && (
+                <div
+                  className="absolute top-0 left-0 h-1.5 z-20 transition-none rounded-full"
+                  style={{ width: `${progressLive}%`, backgroundColor: "var(--color-primary)" }}
+                />
+              )}
+              <AnimatePresence custom={directionLive} initial={false}>
+                <motion.div
+                  key={liveEvents[activeLive].id}
+                  custom={directionLive}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ type: "spring", stiffness: 300, damping: 32, mass: 0.9 }}
+                  className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7 md:p-10"
+                  style={{ willChange: "transform" }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.08}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) nextLive();
+                    if (info.offset.x > 40) prevLive();
+                  }}
+                >
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+                    style={{ backgroundImage: `url('${liveEvents[activeLive].image_url || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"}')` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/75 to-primary/20 pointer-events-none" />
 
-          {/* Content */}
-          <div className="relative z-10 flex flex-col justify-end p-5 sm:p-7 md:p-10 min-h-[280px] sm:min-h-[300px] md:min-h-[320px]">
-            <span className="bg-surface/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm w-fit border border-white/30 mb-3">
-              {liveEvent.category}
-            </span>
+                  {/* Content */}
+                  <div className="relative z-10 w-full md:w-3/4">
+                    <span className="bg-surface/20 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm w-fit border border-white/30 mb-3 inline-block">
+                      {liveEvents[activeLive].category}
+                    </span>
 
-            <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight">{liveEvent.title}</h3>
+                    <h3 className="text-white text-xl sm:text-2xl md:text-3xl font-bold mb-3 leading-tight drop-shadow-md">{liveEvents[activeLive].title}</h3>
 
-            <div className="flex flex-col gap-1 text-white/80 text-xs sm:text-sm mb-4">
-              <span className="flex items-center gap-1.5"><FiCalendar size={13} /> {liveEvent.date}</span>
-              <span className="flex items-center gap-1.5"><FiClock size={13} /> {liveEvent.time}</span>
-              <span className="flex items-center gap-1.5"><FiMapPin size={13} /> {liveEvent.location}</span>
+                    <div className="flex flex-col gap-1 text-white/90 text-xs sm:text-sm mb-5 font-medium">
+                      <span className="flex items-center gap-2"><FiCalendar size={14} className="text-white/70" /> {formatDateToIndo(liveEvents[activeLive].date)}</span>
+                      <span className="flex items-center gap-2"><FiClock size={14} className="text-white/70" /> {liveEvents[activeLive].time_range}</span>
+                      <span className="flex items-center gap-2"><FiMapPin size={14} className="text-white/70" /> {liveEvents[activeLive].location || "Online"}</span>
+                    </div>
+
+                    <div>
+                      <Link href={`/agenda/${liveEvents[activeLive].id}`} className="bg-secondary text-white text-sm font-bold px-6 py-3 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-2">
+                        Masuk ke Live <FiArrowRight size={16} />
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
-
-            <div>
-              <Link href="#" className="bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-secondary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-2">
-                Masuk ke Live <FiArrowRight size={16} />
-              </Link>
-            </div>
+            
+            {liveEvents.length > 1 && (
+              <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-20 flex gap-3">
+                <button onClick={prevLive} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-primary backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all duration-300 shadow-lg" aria-label="Sebelumnya"><FiChevronLeft size={22} /></button>
+                <button onClick={nextLive} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-primary backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all duration-300 shadow-lg" aria-label="Berikutnya"><FiChevronRight size={22} /></button>
+              </div>
+            )}
+            {liveEvents.length > 1 && (
+              <div className="absolute top-4 right-6 md:top-6 md:right-10 z-20 flex items-center gap-2">
+                {liveEvents.map((p, i) => (
+                  <button key={p.id} onClick={() => goToLive(i)} aria-label={`Live Event ${i + 1}`} className="rounded-full transition-all duration-300 shadow-sm" style={{ width: activeLive === i ? 24 : 8, height: 8, backgroundColor: activeLive === i ? "#ffffff" : "rgba(255,255,255,0.3)" }} />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm text-on-surface-variant">
+            Belum ada event yang sedang berlangsung hari ini.
+          </div>
+        )}
       </section>
 
 
@@ -348,7 +386,10 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
             {/* Header */}
             <div className="flex justify-between items-start gap-3 mb-4">
               <div>
-                <h2 className="text-base font-bold text-on-background">Upcoming Events</h2>
+                <h2 className="text-base font-bold text-on-background flex items-center gap-2">
+                  Upcoming Events 
+                  <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">{upcomingEvents.length}</span>
+                </h2>
                 <p className="text-xs text-on-surface-variant mt-0.5">Agenda kegiatan BEM terdekat</p>
               </div>
               <Link href="/agenda" className="group flex items-center gap-1 text-primary hover:text-secondary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
@@ -413,7 +454,7 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                         if (info.offset.x > 40) prev();
                       }}
                     >
-                      <img src={upcomingEvents[active].imgUrl} alt={upcomingEvents[active].title} className="w-full h-full object-cover select-none" draggable={false} />
+                      <img src={upcomingEvents[active].image_url || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"} alt={upcomingEvents[active].title} className="w-full h-full object-cover select-none" draggable={false} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                       <div className="absolute top-4 left-4 bg-surface/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                         {upcomingEvents[active].category}
@@ -421,11 +462,11 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                         <h3 className="font-extrabold text-sm leading-tight mb-2">{upcomingEvents[active].title}</h3>
                         <div className="flex flex-col gap-0.5 text-white/80 text-[10px] mb-3">
-                          <span className="flex items-center gap-1.5"><FiCalendar size={11} className="text-secondary" /> {upcomingEvents[active].date}</span>
-                          <span className="flex items-center gap-1.5"><FiClock size={11} className="text-secondary" /> {upcomingEvents[active].time}</span>
-                          <span className="flex items-center gap-1.5"><FiMapPin size={11} className="text-secondary" /> {upcomingEvents[active].location}</span>
+                          <span className="flex items-center gap-1.5"><FiCalendar size={11} className="text-secondary" /> {formatDateToIndo(upcomingEvents[active].date)}</span>
+                          <span className="flex items-center gap-1.5"><FiClock size={11} className="text-secondary" /> {upcomingEvents[active].time_range}</span>
+                          <span className="flex items-center gap-1.5"><FiMapPin size={11} className="text-secondary" /> {upcomingEvents[active].location || "Online"}</span>
                         </div>
-                        <Link href={`/agenda/${upcomingEvents[active].id}?from=home`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
+                        <Link href={`/agenda/${upcomingEvents[active].id}`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
                           Detail Event <FiArrowRight size={12} />
                         </Link>
                       </div>
@@ -461,7 +502,10 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
           >
             <div className="flex justify-between items-start gap-3 mb-4">
               <div>
-                <h2 className="text-base font-bold text-on-background">Volunteer Opportunities</h2>
+                <h2 className="text-base font-bold text-on-background flex items-center gap-2">
+                  Volunteer Opportunities
+                  <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">{volunteerOpportunities.length}</span>
+                </h2>
                 <p className="text-xs text-on-surface-variant mt-0.5">Bergabunglah dan jadilah bagian perubahan!</p>
               </div>
               <Link href="/volunteer" className="group flex items-center gap-1 text-primary hover:text-secondary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
@@ -520,9 +564,9 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                         if (info.offset.x > 40) prevVol();
                       }}
                     >
-                      <img src={volunteerOpportunities[activeVol].imgUrl} alt={volunteerOpportunities[activeVol].title} className="w-full h-full object-cover select-none" draggable={false} />
+                      <img src={volunteerOpportunities[activeVol].image_url || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"} alt={volunteerOpportunities[activeVol].title} className="w-full h-full object-cover select-none" draggable={false} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
-                      {volunteerOpportunities[activeVol].isUrgent && (
+                      {volunteerOpportunities[activeVol].is_urgent && (
                         <div className="absolute top-4 left-4 bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                           <FiClock size={10} /> SEGERA
                         </div>
@@ -530,12 +574,12 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                         <span className="text-[10px] font-bold text-secondary uppercase tracking-wider block mb-1">{volunteerOpportunities[activeVol].category}</span>
                         <h3 className="font-extrabold text-sm leading-tight mb-1">{volunteerOpportunities[activeVol].title}</h3>
-                        <p className="text-white/80 text-[10px] mb-2 leading-relaxed line-clamp-2">{volunteerOpportunities[activeVol].desc}</p>
+                        <p className="text-white/80 text-[10px] mb-2 leading-relaxed line-clamp-2">{volunteerOpportunities[activeVol].description}</p>
                         <div className="flex items-center gap-1 text-[10px] text-white/70 mb-3">
                           <FiClock size={11} className="text-secondary" />
-                          <span>Deadline: <span className="font-semibold text-white">{volunteerOpportunities[activeVol].deadline}</span></span>
+                          <span>Deadline: <span className="font-semibold text-white">{formatDateToIndo(volunteerOpportunities[activeVol].deadline)}</span></span>
                         </div>
-                        <Link href={`/volunteer/${volunteerOpportunities[activeVol].id}?from=home`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
+                        <Link href={`/agenda/${volunteerOpportunities[activeVol].id}`} className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md inline-flex items-center gap-1.5">
                           <FiCheckCircle size={12} /> Apply Posisi
                         </Link>
                       </div>
@@ -571,7 +615,10 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
           >
             <div className="flex justify-between items-start gap-3 mb-4">
               <div>
-                <h2 className="text-base font-bold text-on-background">Event yang Sudah Berakhir</h2>
+                <h2 className="text-base font-bold text-on-background flex items-center gap-2">
+                  Event yang Sudah Berakhir
+                  <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">{pastEvents.length}</span>
+                </h2>
                 <p className="text-xs text-on-surface-variant mt-0.5">Galeri arsip kegiatan BEM terdahulu</p>
               </div>
               <Link href="/agenda" className="group flex items-center gap-1 text-on-surface-variant hover:text-primary font-semibold text-xs transition-colors whitespace-nowrap shrink-0">
@@ -630,14 +677,14 @@ export default function EventVolunteer({ showHeader = true }: { showHeader?: boo
                         if (info.offset.x > 40) prevPast();
                       }}
                     >
-                      <img src={pastEvents[activePast].imgUrl} alt={pastEvents[activePast].title} className="w-full h-full object-cover grayscale select-none" draggable={false} />
+                      <img src={pastEvents[activePast].image_url || pastEvents[activePast].gallery?.[0] || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"} alt={pastEvents[activePast].title} className="w-full h-full object-cover grayscale select-none" draggable={false} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
                       <div className="absolute top-4 left-4 bg-surface/95 backdrop-blur-sm text-secondary text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                         {pastEvents[activePast].category}
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                         <h3 className="font-extrabold text-sm leading-tight mb-3">{pastEvents[activePast].title}</h3>
-                        <Link href="#" className="bg-surface/20 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-surface/30 transition-all duration-300 inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-sm">
+                        <Link href={`/agenda/${pastEvents[activePast].id}`} className="bg-surface/20 text-white text-[10px] font-bold px-4 py-2 rounded-full hover:bg-surface/30 transition-all duration-300 inline-flex items-center gap-1.5 border border-white/20 backdrop-blur-sm">
                           Lihat Dokumentasi <FiArrowRight size={12} />
                         </Link>
                       </div>

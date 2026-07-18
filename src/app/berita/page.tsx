@@ -27,64 +27,7 @@ interface NewsItem {
   likes: number;
 }
 
-// ─── DUMMY FALLBACK DATA ───────────────────────────────────────────────────
-const dummyNews: NewsItem[] = [
-  {
-    id: "1",
-    title: "Pelantikan Pengurus BEM STMIK Tazkia Periode 2024/2025 Resmi Dilaksanakan",
-    slug: "pelantikan-pengurus-bem-2024-2025",
-    excerpt: "Prosesi pelantikan berjalan khidmat dihadiri oleh jajaran rektorat dan seluruh perwakilan unit kegiatan mahasiswa.",
-    category: "Berita",
-    created_at: "2024-10-12T08:00:00.000Z",
-    image_url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
-    views: 520,
-    likes: 120
-  },
-  {
-    id: "2",
-    title: "BEM Tazkia Gelar Workshop UI/UX Design Kolaborasi dengan Industri",
-    slug: "workshop-uiux-design-bem-tazkia",
-    excerpt: "Membekali mahasiswa dengan keterampilan desain produk digital terkini bersama mentor ahli dari tech startup ternama.",
-    category: "Artikel",
-    created_at: "2024-10-10T10:00:00.000Z",
-    image_url: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80",
-    views: 310,
-    likes: 85
-  },
-  {
-    id: "3",
-    title: "Pernyataan Sikap BEM STMIK Tazkia Terhadap Isu Pendidikan Nasional",
-    slug: "pernyataan-sikap-bem-tazkia-pendidikan-nasional",
-    excerpt: "Rilis pers resmi menyuarakan aspirasi mahasiswa mengenai pemerataan akses pendidikan tinggi digital di Indonesia.",
-    category: "Rilis",
-    created_at: "2024-10-08T14:30:00.000Z",
-    image_url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80",
-    views: 245,
-    likes: 64
-  },
-  {
-    id: "4",
-    title: "Tips Produktif Mengatur Waktu Kuliah dan Organisasi Kampus",
-    slug: "tips-produktif-kuliah-dan-organisasi",
-    excerpt: "Bagaimana cara menyeimbangkan prestasi akademik dengan kontribusi di organisasi kemahasiswaan? Simak tips selengkapnya.",
-    category: "Artikel",
-    created_at: "2024-10-05T09:00:00.000Z",
-    image_url: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&q=80",
-    views: 412,
-    likes: 98
-  },
-  {
-    id: "5",
-    title: "Bakti Sosial Mahasiswa Tazkia Peduli Lingkungan Sekitar",
-    slug: "bakti-sosial-mahasiswa-tazkia-lingkungan",
-    excerpt: "Aksi nyata membersihkan sampah plastik dan penanaman pohon di daerah sekitar kampus STMIK Tazkia.",
-    category: "Berita",
-    created_at: "2024-10-01T07:30:00.000Z",
-    image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
-    views: 180,
-    likes: 55
-  }
-];
+
 
 export default function BeritaPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -103,11 +46,7 @@ export default function BeritaPage() {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (data && data.length > 0) {
-        setAllNews(data);
-      } else {
-        setAllNews(dummyNews);
-      }
+      setAllNews(data || []);
       setIsLoading(false);
     }
     fetchNews();

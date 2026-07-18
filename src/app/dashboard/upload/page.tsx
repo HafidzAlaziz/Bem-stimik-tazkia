@@ -1,33 +1,104 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { FiPlus, FiTrash2, FiSend, FiArrowLeft, FiLoader } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FiPlus, FiTrash2, FiSend, FiArrowLeft, FiLoader, FiAlertCircle } from "react-icons/fi";
 import Link from "next/link";
+import { useToast } from "@/components/ui/Toast";
+import ImageUpload from "@/components/ui/ImageUpload";
+import { motion, AnimatePresence } from "framer-motion";
 
 const KATEGORI_OPTIONS = ["Technology", "UI/UX", "Research", "Programming", "Community Service", "Multimedia"];
 
+const initialFormState = {
+  title: "",
+  category: "",
+  description: "",
+  image_url: "",
+  tech_stack: "",
+  github_url: "",
+  live_url: "",
+  features: [{ title: "", desc: "" }],
+  team: [{ name: "", role: "", avatar: "" }],
+  gallery: [{ url: "", caption: "" }] as { url: string; caption: string }[],
+};
+
 export default function UploadKaryaPage() {
-  const router = useRouter();
   const supabase = createClient();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [invalidField, setInvalidField] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    description: "",
-    tech_stack: "",
-    github_url: "",
-    live_url: "",
-    features: [
-      { title: "", desc: "" }
-    ],
-    team: [
-      { name: "", role: "" }
-    ],
-  });
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState(initialFormState);
+
+  // Load from LocalStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("karya_upload_draft");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Merge with defaults to handle old drafts missing new fields
+        setFormData(prev => ({
+          ...prev,
+          ...parsed,
+          gallery: Array.isArray(parsed.gallery) ? parsed.gallery : [],
+          features: Array.isArray(parsed.features) && parsed.features.length > 0 ? parsed.features : prev.features,
+          team: Array.isArray(parsed.team) && parsed.team.length > 0 ? parsed.team.map((t: any) => ({
+            name: typeof t === 'string' ? t : (t.name || ''),
+            role: typeof t === 'string' ? '' : (t.role || ''),
+            avatar: typeof t === 'string' ? '' : (t.avatar || ''),
+          })) : prev.team,
+        }));
+      } catch (e) {
+        console.error("Failed to parse saved draft");
+      }
+    }
+  }, []);
+
+  // Save to LocalStorage on change
+  useEffect(() => {
+    localStorage.setItem("karya_upload_draft", JSON.stringify(formData));
+  }, [formData]);
+
+  const isDirty = JSON.stringify(formData) !== JSON.stringify(initialFormState);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  const handleBackNavigation = (e: React.MouseEvent, url: string) => {
+    if (isDirty) {
+      e.preventDefault();
+      setPendingUrl(url);
+      setShowLeaveConfirm(true);
+    }
+  };
+
+  // Listen to auth state changes to kick user out if they log out in another tab or click logout
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        window.location.href = '/login';
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,7 +111,7 @@ export default function UploadKaryaPage() {
     setFormData(prev => ({ ...prev, features: updated }));
   };
 
-  const handleTim = (index: number, field: "name" | "role", value: string) => {
+  const handleTim = (index: number, field: "name" | "role" | "avatar", value: string) => {
     const updated = [...formData.team];
     updated[index][field] = value;
     setFormData(prev => ({ ...prev, team: updated }));
@@ -55,17 +126,77 @@ export default function UploadKaryaPage() {
   }
 
   const addAnggota = () => {
-    setFormData(prev => ({ ...prev, team: [...prev.team, { name: "", role: "" }] }));
+    setFormData(prev => ({ ...prev, team: [...prev.team, { name: "", role: "", avatar: "" }] }));
   };
 
   const removeAnggota = (index: number) => {
     setFormData(prev => ({ ...prev, team: prev.team.filter((_, i) => i !== index) }));
   };
 
+  const addGallery = () => {
+    setFormData(prev => ({ ...prev, gallery: [...prev.gallery, { url: "", caption: "" }] }));
+  };
+
+  const removeGallery = (index: number) => {
+    setFormData(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
+  };
+
+  const handleGallery = (index: number, field: "url" | "caption", value: string) => {
+    const updated = [...formData.gallery];
+    updated[index][field] = value;
+    setFormData(prev => ({ ...prev, gallery: updated }));
+  };
+
+  const isValidUrl = (urlString: string) => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setErrorMsg("");
+    setInvalidField(null);
+
+    const scrollToAndSetInvalid = (id: string, msg: string) => {
+      setInvalidField(id);
+      toast(msg, "error");
+      document.getElementById(id)?.focus();
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+
+    // Manual Validation
+    if (!formData.image_url) {
+      setInvalidField("section-image");
+      toast("Foto Utama Karya wajib diupload!", "error");
+      document.getElementById("section-image")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    
+    if (!formData.title.trim()) return scrollToAndSetInvalid("input-title", "Judul Karya wajib diisi!");
+    if (!formData.category) return scrollToAndSetInvalid("input-category", "Kategori wajib dipilih!");
+    if (!formData.description.trim()) return scrollToAndSetInvalid("input-description", "Deskripsi/Abstrak wajib diisi!");
+    if (!formData.tech_stack.trim()) return scrollToAndSetInvalid("input-tech-stack", "Tech Stack wajib diisi!");
+    
+    if (!formData.github_url.trim()) return scrollToAndSetInvalid("input-github-url", "GitHub URL wajib diisi!");
+    else if (!isValidUrl(formData.github_url.trim())) return scrollToAndSetInvalid("input-github-url", "Format GitHub URL tidak valid! Harus berupa link lengkap (misal: https://github.com/...)");
+    
+    if (!formData.live_url.trim()) return scrollToAndSetInvalid("input-live-url", "Live Demo / Link Karya wajib diisi!");
+    else if (!isValidUrl(formData.live_url.trim())) return scrollToAndSetInvalid("input-live-url", "Format Live Demo URL tidak valid! Harus berupa link lengkap (misal: https://...)");
+    
+    const validFeatures = formData.features.filter(f => f.title.trim() !== "" && f.desc.trim() !== "");
+    if (validFeatures.length === 0) return scrollToAndSetInvalid("input-feature-0-title", "Minimal 1 Fitur Utama harus diisi (Judul & Deskripsi)!");
+
+    const validTeam = formData.team.filter(t => t.name.trim() !== "" && t.role.trim() !== "");
+    if (validTeam.length === 0) return scrollToAndSetInvalid("input-team-0-name", "Minimal 1 Anggota Tim harus diisi (Nama & Peran)!");
+
+    const validGallery = formData.gallery.filter(g => g.url.trim() !== "");
+    if (validGallery.length === 0) return scrollToAndSetInvalid("input-gallery-0-url", "Minimal 1 Foto Dokumentasi wajib diupload!");
+
+    setIsLoading(true);
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -74,9 +205,10 @@ export default function UploadKaryaPage() {
       // Clean up tech stack string to array
       const techStackArray = formData.tech_stack.split(',').map(item => item.trim()).filter(Boolean);
 
-      // Clean up team to array of strings for simplicity if needed, or store as JSON. 
-      // Based on schema, team is TEXT[]. Let's format it as "Name (Role)".
-      const teamArray = formData.team.map(member => `${member.name} (${member.role})`).filter(m => m !== ' ()');
+      // Save team as JSONB objects (with name, role, avatar)
+      const teamObjects = formData.team
+        .filter(t => t.name.trim() !== "")
+        .map(t => ({ name: t.name, role: t.role, avatar: t.avatar || "" }));
 
       const { error } = await supabase.from('karya').insert({
         user_id: user.id,
@@ -87,13 +219,19 @@ export default function UploadKaryaPage() {
         tech_stack: techStackArray,
         github_url: formData.github_url || null,
         live_url: formData.live_url || null,
-        team: teamArray,
+        team: teamObjects,
         features: formData.features.filter(f => f.title.trim() !== ""),
+        gallery: formData.gallery.filter(g => g.url.trim() !== ""),
         status: 'pending',
-        image_url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80', // Placeholder
+        image_url: formData.image_url,
       });
 
       if (error) throw error;
+
+      // Clear draft on success
+      localStorage.removeItem("karya_upload_draft");
+
+      toast("Karya berhasil diajukan! Silakan tunggu review dari BEM.", "success");
 
       router.push('/dashboard');
       router.refresh();
@@ -105,7 +243,11 @@ export default function UploadKaryaPage() {
     }
   };
 
-  const inputClass = "w-full px-4 py-3 bg-surface-variant/20 border border-outline-variant/30 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)] transition-all";
+  const getInputClass = (id: string) => `w-full px-4 py-3 bg-surface-variant/20 border rounded-xl text-sm focus:outline-none focus:ring-2 transition-all ${
+    invalidField === id 
+      ? "border-red-500 focus:ring-red-500/40 focus:border-red-500 bg-red-50/50" 
+      : "border-outline-variant/30 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)]"
+  }`;
   const labelClass = "block text-sm font-semibold text-on-surface mb-1.5";
 
   return (
@@ -113,7 +255,7 @@ export default function UploadKaryaPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="mb-8">
-          <Link href="/dashboard" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-[var(--color-primary)] transition-colors text-sm font-medium mb-4">
+          <Link href="/dashboard" onClick={(e) => handleBackNavigation(e, "/dashboard")} className="inline-flex items-center gap-2 text-on-surface-variant hover:text-[var(--color-primary)] transition-colors text-sm font-medium mb-4">
             <FiArrowLeft /> Kembali ke Dashboard
           </Link>
           <h1 className="text-3xl font-extrabold text-[var(--color-primary)] mb-2">
@@ -124,13 +266,27 @@ export default function UploadKaryaPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-surface p-6 md:p-8 rounded-3xl shadow-sm border border-outline-variant/20 space-y-8">
+        <form noValidate onSubmit={handleSubmit} className="bg-surface p-6 md:p-8 rounded-3xl shadow-sm border border-outline-variant/20 space-y-8">
           
           {errorMsg && (
             <div className="p-4 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm font-medium">
               {errorMsg}
             </div>
           )}
+
+          {/* Foto Utama */}
+          <div id="section-image">
+            <h3 className="text-sm font-bold text-[var(--color-primary)] uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Foto Utama Karya <span className="text-red-400 normal-case">*</span>
+            </h3>
+            <div className={`mb-2 p-1 rounded-[1.25rem] transition-all ${invalidField === 'section-image' ? 'border-2 border-red-500 bg-red-50/50 shadow-[0_0_0_4px_rgba(239,68,68,0.15)]' : 'border-2 border-transparent'}`}>
+              <ImageUpload
+                value={formData.image_url}
+                onChange={(url) => { setFormData(prev => ({ ...prev, image_url: url })); if(invalidField === 'section-image') setInvalidField(null); }}
+              />
+            </div>
+            <p className="text-xs text-on-surface-variant mt-1 px-1">Format: JPG/PNG, maksimal 2MB. Akan digunakan sebagai cover karya.</p>
+          </div>
 
           {/* Informasi Utama */}
           <div>
@@ -140,20 +296,20 @@ export default function UploadKaryaPage() {
             <div className="space-y-4">
               <div>
                 <label className={labelClass}>Judul Karya <span className="text-red-400">*</span></label>
-                <input name="title" type="text" required value={formData.title} onChange={handleInput} placeholder="Contoh: Smart Campus Navigation System" className={inputClass} />
+                <input id="input-title" name="title" type="text" value={formData.title} onChange={handleInput} placeholder="Contoh: Smart Campus Navigation System" className={getInputClass("input-title")} />
               </div>
               
               <div>
                 <label className={labelClass}>Kategori <span className="text-red-400">*</span></label>
-                <select name="category" required value={formData.category} onChange={handleInput} className={inputClass}>
-                  <option value="">Pilih kategori...</option>
-                  {KATEGORI_OPTIONS.map(k => <option key={k} value={k}>{k}</option>)}
+                <select id="input-category" name="category" value={formData.category} onChange={handleInput} className={getInputClass("input-category")}>
+                  <option value="" disabled>Pilih Kategori...</option>
+                  {KATEGORI_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                 </select>
               </div>
 
               <div>
-                <label className={labelClass}>Deskripsi / Abstrak <span className="text-red-400">*</span></label>
-                <textarea name="description" required rows={4} value={formData.description} onChange={handleInput} placeholder="Jelaskan latar belakang, tujuan, dan hasil dari proyekmu..." className={`${inputClass} resize-none`} />
+                <label className={labelClass}>Deskripsi Singkat / Abstrak <span className="text-red-400">*</span></label>
+                <textarea id="input-description" name="description" rows={4} value={formData.description} onChange={handleInput} placeholder="Jelaskan latar belakang, tujuan, dan hasil dari proyekmu..." className={`${getInputClass("input-description")} resize-none`} />
               </div>
             </div>
           </div>
@@ -165,17 +321,17 @@ export default function UploadKaryaPage() {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className={labelClass}>Tech Stack</label>
-                <input name="tech_stack" type="text" value={formData.tech_stack} onChange={handleInput} placeholder="Contoh: React, Next.js, Python (pisahkan dengan koma)" className={inputClass} />
+                <label className={labelClass}>Tech Stack <span className="text-red-400">*</span></label>
+                <input id="input-tech-stack" name="tech_stack" type="text" value={formData.tech_stack} onChange={handleInput} placeholder="Contoh: React, Next.js, Python (pisahkan dengan koma)" className={getInputClass("input-tech-stack")} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className={labelClass}>GitHub Repository</label>
-                  <input name="github_url" type="url" value={formData.github_url} onChange={handleInput} placeholder="https://github.com/..." className={inputClass} />
+                  <label className={labelClass}>GitHub Repository <span className="text-red-400">*</span></label>
+                  <input id="input-github-url" name="github_url" type="url" value={formData.github_url} onChange={handleInput} placeholder="https://github.com/..." className={getInputClass("input-github-url")} />
                 </div>
                 <div>
-                  <label className={labelClass}>Live Demo / Link Karya</label>
-                  <input name="live_url" type="url" value={formData.live_url} onChange={handleInput} placeholder="https://..." className={inputClass} />
+                  <label className={labelClass}>Live Demo / Link Karya <span className="text-red-400">*</span></label>
+                  <input id="input-live-url" name="live_url" type="url" value={formData.live_url} onChange={handleInput} placeholder="https://..." className={getInputClass("input-live-url")} />
                 </div>
               </div>
             </div>
@@ -185,7 +341,7 @@ export default function UploadKaryaPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Fitur Utama
+                <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Fitur Utama <span className="text-red-400 normal-case">*</span>
               </h3>
               <button type="button" onClick={addFitur} className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary)] hover:text-[var(--color-secondary)] transition-colors">
                 <FiPlus size={14} /> Tambah Fitur
@@ -202,9 +358,9 @@ export default function UploadKaryaPage() {
                       </button>
                     )}
                   </div>
-                  <div className="space-y-2">
-                    <input type="text" value={fitur.title} onChange={(e) => handleFitur(i, "title", e.target.value)} placeholder={`Nama fitur ${i + 1}...`} className={inputClass} />
-                    <textarea rows={2} value={fitur.desc} onChange={(e) => handleFitur(i, "desc", e.target.value)} placeholder="Deskripsi singkat fitur ini..." className={`${inputClass} resize-none`} />
+                  <div className="flex-1 space-y-3">
+                    <input id={`input-feature-${i}-title`} type="text" value={fitur.title} onChange={(e) => handleFitur(i, "title", e.target.value)} placeholder={`Nama fitur ${i + 1}...`} className={getInputClass(`input-feature-${i}-title`)} />
+                    <textarea id={`input-feature-${i}-desc`} rows={2} value={fitur.desc} onChange={(e) => handleFitur(i, "desc", e.target.value)} placeholder="Deskripsi singkat fitur ini..." className={`${getInputClass(`input-feature-${i}-desc`)} resize-none`} />
                   </div>
                 </div>
               ))}
@@ -215,7 +371,7 @@ export default function UploadKaryaPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Anggota Tim
+                <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Anggota Tim <span className="text-red-400 normal-case">*</span>
               </h3>
               {formData.team.length < 5 && (
                 <button type="button" onClick={addAnggota} className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary)] hover:text-[var(--color-secondary)] transition-colors">
@@ -234,12 +390,73 @@ export default function UploadKaryaPage() {
                       </button>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <input type="text" value={anggota.name} onChange={e => handleTim(i, "name", e.target.value)} placeholder="Nama Lengkap" className={inputClass} />
-                    <input type="text" value={anggota.role} onChange={e => handleTim(i, "role", e.target.value)} placeholder="Peran (Cth: UI Designer)" className={inputClass} />
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 flex flex-col items-center gap-1">
+                      <ImageUpload
+                        value={anggota.avatar || ""}
+                        onChange={(url) => handleTim(i, "avatar", url)}
+                      />
+                      <span className="text-[10px] text-on-surface-variant/60">Foto (opsional)</span>
+                    </div>
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <input id={`input-team-${i}-name`} type="text" value={anggota.name} onChange={e => handleTim(i, "name", e.target.value)} placeholder="Nama Lengkap" className={getInputClass(`input-team-${i}-name`)} />
+                      <input id={`input-team-${i}-role`} type="text" value={anggota.role} onChange={e => handleTim(i, "role", e.target.value)} placeholder="Peran (Cth: UI Designer)" className={getInputClass(`input-team-${i}-role`)} />
+                    </div>
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Galeri Dokumentasi */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
+                <span className="w-1 h-4 bg-[var(--color-secondary)] rounded-full block" /> Galeri / Proses Pembuatan <span className="text-red-400 normal-case">*</span>
+              </h3>
+              {formData.gallery.length < 10 && (
+                <button type="button" onClick={addGallery} className="flex items-center gap-1.5 text-xs font-bold text-[var(--color-primary)] hover:text-[var(--color-secondary)] transition-colors">
+                  <FiPlus size={14} /> Tambah Foto
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-on-surface-variant mb-4">Unggah foto-foto tambahan terkait karya ini.</p>
+            <div className="space-y-3">
+              {formData.gallery.map((gal, i) => (
+                <div 
+                  key={i} 
+                  id={`input-gallery-${i}-url`}
+                  className={`rounded-2xl p-4 border flex flex-col sm:flex-row gap-4 items-start transition-all ${
+                    invalidField === `input-gallery-${i}-url` 
+                      ? 'border-red-500 bg-red-50/50 shadow-[0_0_0_4px_rgba(239,68,68,0.15)]' 
+                      : 'border-outline-variant/20 bg-surface-variant/20'
+                  }`}
+                >
+                  <div className="shrink-0">
+                    <ImageUpload
+                      value={gal.url}
+                      onChange={(url) => { handleGallery(i, "url", url); if(invalidField === `input-gallery-${i}-url`) setInvalidField(null); }}
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-3 justify-center">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs font-bold text-on-surface-variant/70 uppercase tracking-wide">Foto {i + 1}</p>
+                      <button type="button" onClick={() => removeGallery(i)} className="text-gray-300 hover:text-red-400 transition-colors">
+                        <FiTrash2 size={14} />
+                      </button>
+                    </div>
+                    <input id={`input-gallery-${i}-caption`} type="text" value={gal.caption} onChange={e => handleGallery(i, "caption", e.target.value)} placeholder="Keterangan foto (misal: Tahap Wireframing)..." className={getInputClass(`input-gallery-${i}-caption`)} />
+                  </div>
+                </div>
+              ))}
+              {formData.gallery.length === 0 && (
+                <div id="section-gallery" className={`text-center py-6 rounded-2xl transition-all ${invalidField === 'section-gallery' ? 'border-2 border-red-500 bg-red-50/50 shadow-[0_0_0_4px_rgba(239,68,68,0.15)]' : 'border-2 border-dashed border-outline-variant/30'}`}>
+                  <p className="text-sm text-on-surface-variant/70 mb-3">Belum ada foto galeri.</p>
+                  <button type="button" onClick={() => { addGallery(); if(invalidField === 'section-gallery') setInvalidField(null); }} className="inline-flex items-center gap-1.5 text-sm font-bold bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-4 py-2 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors">
+                    <FiPlus size={16} /> Tambah Foto Dokumentasi
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -256,6 +473,49 @@ export default function UploadKaryaPage() {
 
         </form>
       </div>
+
+      {/* Leave Confirmation Modal */}
+      <AnimatePresence>
+        {showLeaveConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-surface rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center border border-outline-variant/20"
+            >
+              <div className="w-16 h-16 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mb-4">
+                <FiAlertCircle size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-on-surface mb-2">Perubahan Belum Disimpan</h3>
+              <p className="text-on-surface-variant text-sm mb-8">Apakah kamu yakin ingin keluar? Semua isian pada form ini akan hilang jika belum disimpan.</p>
+              <div className="flex w-full gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowLeaveConfirm(false)}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-on-surface bg-surface-variant hover:bg-outline-variant transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (pendingUrl) router.push(pendingUrl);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
+                >
+                  Ya, Keluar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

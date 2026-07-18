@@ -3,85 +3,13 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 
-// ============================================================
-// DATA
-// ============================================================
-const dokumentasiData = [
-  {
-    id: 1,
-    kategori: "Event",
-    subKategori: "Internal",
-    judul: "BEM Leadership Training Bootcamp 2024",
-    tanggal: "12 - 14 September 2024",
-    mediaCount: "12 Photos",
-    mediaType: "photo",
-    image: "/images/doc_leadership.png",
-    tags: ["event", "semua"],
-  },
-  {
-    id: 2,
-    kategori: "Seminar",
-    subKategori: "Akademik",
-    judul: "Seminar Nasional Statistik Terapan",
-    tanggal: "28 Agustus 2024",
-    mediaCount: "45 Photos",
-    mediaType: "photo",
-    image: "/images/doc_seminar.png",
-    tags: ["event", "semua"],
-  },
-  {
-    id: 3,
-    kategori: "Sosial",
-    subKategori: "Pengabdian",
-    judul: "Tazkia Mengajar: Desa Binaan 2024",
-    tanggal: "10 - 20 Agustus 2024",
-    mediaCount: "1 Video",
-    mediaType: "video",
-    image: "/images/doc_sosial.png",
-    tags: ["sosial", "semua"],
-  },
-  {
-    id: 4,
-    kategori: "Event",
-    subKategori: "Eksternal",
-    judul: "Workshop Desain UI/UX Mahasiswa 2024",
-    tanggal: "5 Oktober 2024",
-    mediaCount: "28 Photos",
-    mediaType: "photo",
-    image: "/images/doc_leadership.png",
-    tags: ["event", "semua"],
-  },
-  {
-    id: 5,
-    kategori: "Internal",
-    subKategori: "Rapat",
-    judul: "Rapat Koordinasi Kabinet Sinergi Q3",
-    tanggal: "3 Juli 2024",
-    mediaCount: "8 Photos",
-    mediaType: "photo",
-    image: "/images/doc_seminar.png",
-    tags: ["internal", "semua"],
-  },
-  {
-    id: 6,
-    kategori: "Galeri",
-    subKategori: "Dokumentasi",
-    judul: "Galeri Momen Terbaik BEM 2024",
-    tanggal: "15 November 2024",
-    mediaCount: "60 Photos",
-    mediaType: "photo",
-    image: "/images/doc_sosial.png",
-    tags: ["galeri", "semua"],
-  },
-];
+import { getKegiatans } from "@/app/admin/kegiatan/actions";
 
-const filterTabs = [
-  { label: "Semua", value: "semua" },
-  { label: "Event", value: "event" },
-  { label: "Internal", value: "internal" },
-  { label: "Sosial", value: "sosial" },
-  { label: "Galeri", value: "galeri" },
-];
+// ============================================================
+// DATA (Now fetched dynamically)
+// ============================================================
+
+
 
 const ITEMS_PER_PAGE = 6;
 
@@ -89,22 +17,15 @@ const ITEMS_PER_PAGE = 6;
 // COMPONENTS
 // ============================================================
 
-function MediaBadge({ count, type }: { count: string; type: string }) {
+function MediaBadge({ count }: { count: number | string }) {
   return (
     <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-bold">
-      {type === "video" ? (
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <rect x="2" y="3" width="15" height="15" rx="2" ry="2" />
-          <polygon points="17 7 22 3 22 18 17 14" />
-        </svg>
-      ) : (
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-        </svg>
-      )}
-      {count}
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+      {count} Foto
     </div>
   );
 }
@@ -124,24 +45,29 @@ function KategoriChip({ kategori }: { kategori: string }) {
   );
 }
 
-function DocCard({ item }: { item: (typeof dokumentasiData)[0] }) {
+import Link from "next/link";
+
+function DocCard({ item }: { item: any }) {
   return (
-    <div className="group relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-[260px] md:h-[300px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      {/* Full-bleed Image */}
-      <Image
-        src={item.image}
-        alt={item.judul}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
+    <Link href={`/agenda/${item.id}?from=dokumentasi`} className="block w-full">
+      <div className="group relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-[260px] md:h-[300px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+        
+        {/* Full-bleed Image */}
+        <Image
+          src={item.image}
+          alt={item.judul}
+          fill
+          priority
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
       {/* Media badge top-right */}
       <div className="absolute top-3 right-3 z-10">
-        <MediaBadge count={item.mediaCount} type={item.mediaType} />
+        <MediaBadge count={item.mediaCount} />
       </div>
 
       {/* Category badge top-left */}
@@ -166,7 +92,8 @@ function DocCard({ item }: { item: (typeof dokumentasiData)[0] }) {
           {item.tanggal}
         </div>
       </div>
-    </div>
+      </div>
+    </Link>
   );
 }
 
@@ -251,6 +178,56 @@ export default function DokumentasiPage() {
   const [activeFilter, setActiveFilter] = useState("semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [dokumentasiData, setDokumentasiData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getKegiatans();
+        const filtered = data.filter(item => {
+           if (!item.is_published) return false;
+           const isFinished = item.date && (new Date(item.date).setHours(0,0,0,0) <= new Date().setHours(0,0,0,0));
+           if (!isFinished) return false;
+           return Array.isArray(item.gallery) && item.gallery.length > 0;
+        });
+
+        const mapped = filtered.map(item => ({
+          id: item.id,
+          kategori: item.category || "Event",
+          subKategori: item.category || "General",
+          judul: item.title,
+          tanggal: item.date ? new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : "",
+          mediaCount: item.gallery?.length || 0,
+          image: item.image_url || ((item.gallery && item.gallery.length > 0) ? item.gallery[0] : "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80"),
+          tags: [ (item.category || "event").toLowerCase(), "semua" ]
+        }));
+        setDokumentasiData(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const dynamicFilterTabs = useMemo(() => {
+    const uniqueCategories = new Set<string>();
+    dokumentasiData.forEach((item) => {
+      if (item.kategori) {
+        uniqueCategories.add(item.kategori);
+      }
+    });
+
+    const tabs = [{ label: "Semua", value: "semua" }];
+    
+    Array.from(uniqueCategories).sort().forEach((cat) => {
+      tabs.push({ label: cat, value: cat.toLowerCase() });
+    });
+    
+    return tabs;
+  }, [dokumentasiData]);
 
   const filtered = useMemo(() => {
     return dokumentasiData.filter((item) => {
@@ -261,7 +238,7 @@ export default function DokumentasiPage() {
         item.kategori.toLowerCase().includes(searchQuery.toLowerCase());
       return matchFilter && matchSearch;
     });
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter, searchQuery, dokumentasiData]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
 
@@ -279,6 +256,10 @@ export default function DokumentasiPage() {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
+
+  const totalPhotos = useMemo(() => {
+    return dokumentasiData.reduce((acc, item) => acc + (typeof item.mediaCount === 'number' ? item.mediaCount : 0), 0);
+  }, [dokumentasiData]);
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-background overflow-hidden">
@@ -316,15 +297,7 @@ export default function DokumentasiPage() {
               <circle cx="8.5" cy="8.5" r="1.5" />
               <polyline points="21 15 16 10 5 21" />
             </svg>
-            +2.500 Foto
-          </div>
-          <div className="w-1 h-1 rounded-full bg-outline-variant" />
-          <div className="flex items-center gap-2 text-on-surface-variant text-sm font-semibold">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-              <rect x="2" y="3" width="15" height="15" rx="2" ry="2" />
-              <polygon points="17 7 22 3 22 18 17 14" />
-            </svg>
-            +150 Video
+            {totalPhotos} Foto
           </div>
         </div>
       </section>
@@ -336,7 +309,7 @@ export default function DokumentasiPage() {
       <section className="px-5 md:px-10 max-w-7xl mx-auto mb-8">
         {/* Scrollable filter chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-3 scrollbar-hide">
-          {filterTabs.map((tab) => (
+          {dynamicFilterTabs.map((tab) => (
             <button
               key={tab.value}
               id={`filter-${tab.value}`}
@@ -382,7 +355,12 @@ export default function DokumentasiPage() {
 
       {/* ── GRID ── */}
       <section className="px-5 md:px-10 max-w-7xl mx-auto">
-        {paginated.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+            <h3 className="text-xl font-bold text-on-background">Memuat Dokumentasi...</h3>
+          </div>
+        ) : paginated.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-20 h-20 bg-surface-variant rounded-full flex items-center justify-center mb-5">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-outline">

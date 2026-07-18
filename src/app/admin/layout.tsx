@@ -1,7 +1,7 @@
 import React from "react";
 import AdminSidebar from "./AdminSidebar";
 import AdminTopbar from "./AdminTopbar";
-import { ToastProvider } from "@/components/ui/Toast";
+
 
 import { createClient } from "@/utils/supabase/server";
 
@@ -14,7 +14,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <ToastProvider>
       <div className="min-h-screen bg-surface-variant/20 flex flex-col md:flex-row">
         <AdminSidebar />
 
@@ -26,6 +25,5 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </main>
       </div>
-    </ToastProvider>
   );
 }

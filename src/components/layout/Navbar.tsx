@@ -50,8 +50,7 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
     setUserProfile(null);
     setShowProfileMenu(false);
     setShowLogoutConfirm(false);
-    router.push('/');
-    router.refresh();
+    window.location.href = '/';
   };
 
   useEffect(() => {

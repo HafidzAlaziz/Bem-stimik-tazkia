@@ -1,22 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers, FiAward } from "react-icons/fi";
+import { usePathname, useSearchParams } from "next/navigation";
+import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers, FiAward, FiImage } from "react-icons/fi";
+import { createClient } from "@/utils/supabase/client";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: FiHome },
   { name: "Profil Kabinet", href: "/admin/kabinet", icon: FiAward },
   { name: "Kelola Berita", href: "/admin/berita", icon: FiFileText },
   { name: "Kelola Karya", href: "/admin/karya", icon: FiBriefcase },
-  { name: "Kelola Agenda", href: "/admin/agenda", icon: FiCalendar },
+  { name: "Kelola Kegiatan", href: "/admin/kegiatan", icon: FiCalendar },
+  { name: "Kelola Dokumentasi", href: "/admin/dokumentasi", icon: FiImage },
   { name: "Manajemen User", href: "/admin/users", icon: FiUsers },
 ];
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const fromParam = searchParams?.get("from");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [pendingKaryaCount, setPendingKaryaCount] = useState(0);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      const { count, error } = await supabase
+        .from('karya')
+        .select('*', { count: 'exact', head: true })
+        .or('status.in.(pending,deletion_pending),and(pending_edits.not.is.null,edit_reject_reason.is.null)');
+        
+      if (!error && count !== null) {
+        setPendingKaryaCount(count);
+      }
+    };
+
+    fetchPendingCount();
+    
+    // Polling as fallback if Supabase Realtime is not enabled on the table
+    const intervalId = setInterval(fetchPendingCount, 3000);
+    
+    // Optional: Set up real-time subscription to auto-update badge
+    const channel = supabase.channel('karya_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'karya' }, () => {
+        fetchPendingCount();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(intervalId);
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
 
   return (
     <aside 
@@ -51,7 +87,15 @@ export default function AdminSidebar() {
           <p className="px-4 text-xs font-bold text-on-surface-variant/70 uppercase tracking-wider mb-4 mt-2 whitespace-nowrap">Menu Utama</p>
         )}
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href + "/"));
+          let isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href + "/"));
+          
+          if (item.href === "/admin/kegiatan" && fromParam === "dokumentasi") {
+            isActive = false;
+          }
+          if (item.href === "/admin/dokumentasi" && fromParam === "dokumentasi") {
+            isActive = true;
+          }
+
           const Icon = item.icon;
 
           return (
@@ -71,7 +115,19 @@ export default function AdminSidebar() {
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
               )}
               <Icon size={20} className={`shrink-0 ${isActive ? "text-white" : "text-on-surface-variant/70 group-hover:text-primary"}`} /> 
-              {!isCollapsed && <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</span>}
+              {!isCollapsed && (
+                <span className="relative z-10 whitespace-nowrap overflow-hidden text-ellipsis flex-1 flex justify-between items-center">
+                  {item.name}
+                  {item.name === "Kelola Karya" && pendingKaryaCount > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
+                      {pendingKaryaCount}
+                    </span>
+                  )}
+                </span>
+              )}
+              {isCollapsed && item.name === "Kelola Karya" && pendingKaryaCount > 0 && (
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#f8fafc]"></span>
+              )}
             </Link>
           );
         })}

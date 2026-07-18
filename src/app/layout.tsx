@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import LayoutClientWrapper from "@/components/layout/LayoutClientWrapper";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ToastProvider } from "@/components/ui/Toast";
 import { createClient } from "@/utils/supabase/server";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -31,26 +33,12 @@ export default async function RootLayout({
           rel="stylesheet"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-        <script
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                let theme = localStorage.getItem('theme') || 'system';
-                let isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                if (isDark) {
-                  document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
-                }
-              } catch (e) {}
-            `,
-          }}
-        />
       </head>
       <body className="bg-background text-on-background font-sans antialiased overflow-x-hidden w-full max-w-full transition-colors duration-300" suppressHydrationWarning>
         <ThemeProvider defaultTheme="system">
-          <LayoutClientWrapper isLoggedIn={!!user}>{children}</LayoutClientWrapper>
+          <ToastProvider>
+            <LayoutClientWrapper isLoggedIn={!!user}>{children}</LayoutClientWrapper>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

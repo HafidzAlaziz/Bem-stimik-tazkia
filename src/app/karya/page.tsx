@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FiSearch, FiArrowRight, FiHeart, FiEye, FiUpload } from "react-icons/fi";
+import { FiSearch, FiArrowRight, FiHeart, FiEye, FiUpload, FiInfo } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { createClient } from "@/utils/supabase/client";
@@ -152,6 +152,10 @@ export default function KaryaInovasiPage() {
                 <FiUpload className="group-hover:-translate-y-0.5 transition-transform" size={18} />
                 Ajukan Karya Sekarang
               </Link>
+              <p className="text-[10px] md:text-xs text-white/70 text-center mt-3 flex items-center justify-center gap-1.5 font-medium">
+                <FiInfo size={12} className="shrink-0" />
+                * Memerlukan login akun Mahasiswa
+              </p>
             </div>
           </motion.div>
 
@@ -168,8 +172,8 @@ export default function KaryaInovasiPage() {
                     setCurrentPage(1);
                   }}
                   className={`px-4 py-2 md:px-6 md:py-2.5 rounded-full text-xs md:text-sm font-medium transition-all duration-300 whitespace-nowrap ${activeCategory === category
-                      ? "bg-[var(--color-primary)] text-white shadow-md"
-                      : "bg-surface text-[var(--color-on-surface-variant)] border border-outline-variant/30 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    ? "bg-[var(--color-primary)] text-white shadow-md"
+                    : "bg-surface text-[var(--color-on-surface-variant)] border border-outline-variant/30 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                     }`}
                 >
                   {category}
@@ -274,8 +278,8 @@ export default function KaryaInovasiPage() {
                   key={i}
                   onClick={() => setCurrentPage(page)}
                   className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${currentPage === page
-                      ? "bg-[var(--color-primary)] text-white shadow-md"
-                      : "bg-surface text-on-surface-variant border border-outline-variant/30 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    ? "bg-[var(--color-primary)] text-white shadow-md"
+                    : "bg-surface text-on-surface-variant border border-outline-variant/30 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                     }`}
                 >
                   {page}

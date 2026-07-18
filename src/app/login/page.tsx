@@ -24,12 +24,15 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     
+    const params = new URLSearchParams(window.location.search);
+    const nextPath = params.get('next') || '/dashboard';
+    
     const supabase = createClient();
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         queryParams: {
           prompt: 'consent select_account',
         },
