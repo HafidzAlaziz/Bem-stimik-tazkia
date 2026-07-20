@@ -1,17 +1,14 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
   
-  // Vercel internal URL fix: request.url may contain internal Vercel hostnames like sin1::xxx
-  // So we extract the actual public domain the user is visiting from headers
-  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'bem-stimik-tazkia.vercel.app';
-  const protocol = request.headers.get('x-forwarded-proto') || 'https';
-  const publicOrigin = `${protocol}://${forwardedHost}`;
+  // Use Next.js built-in nextUrl which correctly resolves Vercel's internal routing
+  const publicOrigin = request.nextUrl.origin;
 
   if (code) {
     const cookieStore = await cookies()
