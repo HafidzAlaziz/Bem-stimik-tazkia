@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   
   // Vercel internal URL fix: request.url may contain internal Vercel hostnames like sin1::xxx
   // So we extract the actual public domain the user is visiting from headers
-  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'bem-stmik-tazkia.vercel.app';
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'bem-stimik-tazkia.vercel.app';
   const protocol = request.headers.get('x-forwarded-proto') || 'https';
   const publicOrigin = `${protocol}://${forwardedHost}`;
 

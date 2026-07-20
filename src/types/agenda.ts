@@ -2,7 +2,7 @@ export interface AgendaKegiatan {
   id: string;
   title: string;
   slug: string;
-  type: 'event' | 'volunteer';
+  type: 'event' | 'volunteer' | 'dokumentasi';
   date: string | null;
   location: string | null;
   image_url: string | null;
