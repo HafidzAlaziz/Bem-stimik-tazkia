@@ -2,12 +2,12 @@
 
 import * as React from "react";
 
-type Theme = "light";
+type Theme = "light" | "dark";
 
 const ThemeContext = React.createContext<{
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  resolvedTheme: "light";
+  resolvedTheme: Theme;
 }>({
   theme: "light",
   setTheme: () => null,
