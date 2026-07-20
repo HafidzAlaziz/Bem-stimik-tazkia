@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff } from "react-icons/fi";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
+import DeleteBeritaButton from "./DeleteBeritaButton";
 
 export const revalidate = 0;
 
@@ -12,7 +13,9 @@ async function handleDelete(formData: FormData) {
   const supabase = await createClient();
   const id = formData.get("id") as string;
   if (id) {
-    await supabase.from("berita").delete().eq("id", id);
+    const { error } = await supabase.from("berita").delete().eq("id", id);
+    if (error) throw new Error(error.message);
+    
     revalidatePath("/admin/berita");
     revalidatePath("/berita");
   }
@@ -142,19 +145,7 @@ export default async function AdminBeritaPage() {
                         >
                           <FiEdit2 size={16} />
                         </Link>
-                        <form action={handleDelete}>
-                          <input type="hidden" name="id" value={item.id} />
-                          <button
-                            type="submit"
-                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                            title="Hapus Berita"
-                            onClick={(e) => {
-                              if (!confirm("Yakin hapus berita ini?")) e.preventDefault();
-                            }}
-                          >
-                            <FiTrash2 size={16} />
-                          </button>
-                        </form>
+                        <DeleteBeritaButton id={item.id} action={handleDelete} />
                       </div>
                     </td>
                   </tr>

@@ -1,6 +1,73 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/* === QUILL CONTENT RENDERING (halaman publik) === */
+.ql-content {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--color-on-surface-variant, #444);
+}
+.ql-content p { margin-bottom: 0.75em; }
+.ql-content strong, .ql-content b { font-weight: 700; }
+.ql-content em, .ql-content i { font-style: italic; }
+.ql-content u { text-decoration: underline; }
+.ql-content s { text-decoration: line-through; }
+
+/* Alignment - pakai !important agar menang dari Tailwind reset */
+.ql-content .ql-align-center,
+.ql-content p.ql-align-center,
+.ql-content h1.ql-align-center,
+.ql-content h2.ql-align-center,
+.ql-content h3.ql-align-center { text-align: center !important; }
+
+.ql-content .ql-align-right,
+.ql-content p.ql-align-right,
+.ql-content h1.ql-align-right,
+.ql-content h2.ql-align-right,
+.ql-content h3.ql-align-right { text-align: right !important; }
+
+.ql-content .ql-align-justify,
+.ql-content p.ql-align-justify,
+.ql-content h1.ql-align-justify,
+.ql-content h2.ql-align-justify,
+.ql-content h3.ql-align-justify { text-align: justify !important; }
+
+.ql-content .ql-align-left { text-align: left !important; }
+
+/* Headings */
+.ql-content h1 { font-size: 2em; font-weight: 700; margin: 0.5em 0; color: var(--color-on-background); }
+.ql-content h2 { font-size: 1.5em; font-weight: 700; margin: 0.75em 0; color: var(--color-on-background); }
+.ql-content h3 { font-size: 1.25em; font-weight: 700; margin: 0.75em 0; color: var(--color-on-background); }
+
+/* Lists */
+.ql-content ul { list-style-type: disc; padding-left: 1.8em; margin: 0.5em 0; }
+.ql-content ol { list-style-type: decimal; padding-left: 1.8em; margin: 0.5em 0; }
+.ql-content li { margin: 0.25em 0; }
+.ql-content li.ql-indent-1 { padding-left: 2em; }
+.ql-content li.ql-indent-2 { padding-left: 4em; }
+.ql-content li.ql-indent-3 { padding-left: 6em; }
+
+/* Link */
+.ql-content a { color: var(--color-primary); text-decoration: underline; }
+.ql-content a:hover { opacity: 0.8; }
+
+/* Blockquote */
+.ql-content blockquote {
+  border-left: 4px solid var(--color-secondary);
+  background: color-mix(in srgb, var(--color-secondary) 5%, transparent);
+  padding: 1em 1.5em;
+  border-radius: 0 1rem 1rem 0;
+  font-style: italic;
+  color: var(--color-primary);
+  margin: 1em 0;
+}
+
+/* Code */
+.ql-content pre { background: #1e293b; color: #e2e8f0; padding: 1em; border-radius: 0.5em; overflow-x: auto; }
+.ql-content code { background: #f1f5f9; padding: 0.15em 0.4em; border-radius: 0.25em; font-size: 0.9em; }
+
+
 @theme {
   /* === BRAND COLORS (same as Astro original) === */
   --color-primary: #1b4086;

@@ -3,9 +3,15 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
+  
+  // Vercel internal URL fix: request.url may contain internal Vercel hostnames like sin1::xxx
+  // So we extract the actual public domain the user is visiting from headers
+  const forwardedHost = request.headers.get('x-forwarded-host') || request.headers.get('host') || 'bem-stmik-tazkia.vercel.app';
+  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  const publicOrigin = `${protocol}://${forwardedHost}`;
 
   if (code) {
     const cookieStore = await cookies()
@@ -45,14 +51,14 @@ export async function GET(request: Request) {
           .single()
 
         if (profile?.role === 'admin') {
-          return NextResponse.redirect(`${origin}/admin`)
+          return NextResponse.redirect(`${publicOrigin}/admin`)
         }
       }
 
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${publicOrigin}${next}`)
     }
   }
 
   // Return the user to an error page with some instructions
-  return NextResponse.redirect(`${origin}/login?error=Tidak%20bisa%20login.%20Gunakan%20email%20kampus.`)
+  return NextResponse.redirect(`${publicOrigin}/login?error=Tidak%20bisa%20login.%20Gunakan%20email%20kampus.`)
 }

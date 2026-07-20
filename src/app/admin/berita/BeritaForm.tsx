@@ -7,6 +7,21 @@ import Link from "next/link";
 import { FiArrowLeft, FiSave, FiAlertCircle, FiRefreshCw } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "@/components/ui/ImageUpload";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false, loading: () => <p className="text-sm text-on-surface-variant p-4">Memuat editor...</p> });
+
+const QUILL_MODULES = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    [{ 'align': [] }],
+    ['link'],
+    ['clean']
+  ],
+};
 
 const CATEGORIES = ["Berita", "Artikel", "Rilis", "Kampus", "Pendidikan", "Mahasiswa", "Event"];
 
@@ -65,12 +80,53 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
     return () => window.removeEventListener("beforeunload", handler);
   }, [isDirty]);
 
+  // Draft loading — hanya muat draft jika halaman di-refresh, bukan navigasi baru
+  useEffect(() => {
+    if (!initialData) {
+      // Cek apakah ini refresh (sessionStorage punya flag) atau navigasi baru
+      const isRefresh = sessionStorage.getItem("berita_form_active");
+      if (isRefresh) {
+        const draft = localStorage.getItem("berita_draft");
+        if (draft) {
+          try {
+            const parsed = JSON.parse(draft);
+            setFormData(parsed);
+            setIsDirty(true);
+          } catch (e) {}
+        }
+      }
+      // Tandai bahwa form ini aktif (untuk deteksi refresh berikutnya)
+      sessionStorage.setItem("berita_form_active", "true");
+    }
+    
+    // Hapus draft & flag saat user menekan tombol Back browser
+    const handlePopState = () => {
+      localStorage.removeItem("berita_draft");
+      sessionStorage.removeItem("berita_form_active");
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [initialData]);
+
+  // Draft saving
+  useEffect(() => {
+    if (!initialData && isDirty) {
+      localStorage.setItem("berita_draft", JSON.stringify(formData));
+    }
+  }, [formData, initialData, isDirty]);
+
+  const clearDraft = () => {
+    localStorage.removeItem("berita_draft");
+    sessionStorage.removeItem("berita_form_active");
+  };
+
   const handleBackNavigation = (e: React.MouseEvent, url: string) => {
     if (isDirty) {
       e.preventDefault();
       setPendingUrl(url);
       setShowLeaveConfirm(true);
     } else {
+      clearDraft();
       router.push(url);
     }
   };
@@ -82,7 +138,8 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
     if (!formData.category) errors.category = "Kategori wajib dipilih";
     if (!formData.image_url.trim()) errors.image_url = "Gambar banner wajib diunggah";
     if (!formData.excerpt.trim()) errors.excerpt = "Ringkasan wajib diisi";
-    if (!formData.content.trim()) errors.content = "Isi konten berita wajib diisi";
+    const strippedContent = formData.content.replace(/<[^>]*>?/gm, '').trim();
+    if (!strippedContent) errors.content = "Isi konten berita wajib diisi";
     return errors;
   };
 
@@ -100,10 +157,33 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
     }
 
     setIsLoading(true);
+    let finalTags = formData.tags;
+    if (!finalTags.trim()) {
+      // Auto-generate tags from title and content
+      const textToAnalyze = (formData.title + " " + formData.content.replace(/<[^>]*>?/gm, ' ').replace(/&[a-z]+;/g, ' ')).toLowerCase();
+      const words = textToAnalyze.replace(/[^\w\s]/g, '').split(/\s+/);
+      
+      const stopWords = new Set(['dan', 'atau', 'tetapi', 'yang', 'di', 'ke', 'dari', 'pada', 'dalam', 'untuk', 'dengan', 'ini', 'itu', 'adalah', 'sebagai', 'tidak', 'akan', 'bisa', 'ada', 'juga', 'oleh', 'kepada']);
+      
+      const wordCounts: Record<string, number> = {};
+      words.forEach(w => {
+        if (w.length > 3 && !stopWords.has(w)) {
+          wordCounts[w] = (wordCounts[w] || 0) + 1;
+        }
+      });
+      
+      const topWords = Object.entries(wordCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4)
+        .map(entry => entry[0].charAt(0).toUpperCase() + entry[0].slice(1));
+        
+      finalTags = topWords.join(", ");
+    }
+
     try {
       const payload = {
         ...formData,
-        tags: formData.tags.split(",").map((t: string) => t.trim()).filter(Boolean),
+        tags: finalTags.split(",").map((t: string) => t.trim()).filter(Boolean),
       };
 
       const res = await fetch("/api/admin/berita", {
@@ -117,6 +197,7 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
         throw new Error(err.error || "Gagal menyimpan berita");
       }
 
+      if (!initialData) localStorage.removeItem("berita_draft");
       setIsDirty(false);
       toast("Berita berhasil disimpan!", "success");
       router.push("/admin/berita");
@@ -198,20 +279,13 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
           <div id="field-slug" className="space-y-2">
             <label className="text-sm font-bold text-on-surface flex items-center gap-2">
               Slug (URL) <span className="text-red-500">*</span>
-              <button
-                type="button"
-                title="Generate ulang dari judul"
-                onClick={() => handleChange("slug", generateSlug(formData.title))}
-                className="text-primary hover:text-primary/70 transition-colors"
-              >
-                <FiRefreshCw size={13} />
-              </button>
+              <span className="text-[10px] font-normal text-on-surface-variant bg-surface-variant/30 px-2 py-0.5 rounded-full">Otomatis</span>
             </label>
             <input
               type="text"
               value={formData.slug}
-              onChange={(e) => handleChange("slug", e.target.value)}
-              className={inputClass("slug")}
+              readOnly
+              className={inputClass("slug") + " bg-surface-variant/20 text-on-surface-variant cursor-not-allowed"}
               placeholder="judul-berita-anda"
             />
             {formErrors.slug && <p className="text-xs text-red-500 font-medium">{formErrors.slug}</p>}
@@ -257,17 +331,11 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
               {formErrors.image_url && <p className="text-xs text-red-500 font-medium">{formErrors.image_url}</p>}
             </div>
           </div>
-          {/* Preview if has url */}
-          {formData.image_url && (
-            <div className="mt-2 w-full aspect-[21/8] rounded-2xl overflow-hidden border border-outline-variant/30">
-              <img src={formData.image_url} alt="Preview Banner" className="w-full h-full object-cover" />
-            </div>
-          )}
         </div>
 
         {/* Tags */}
         <div className="space-y-2">
-          <label className="text-sm font-bold text-on-surface">Tags <span className="text-on-surface-variant font-normal">(pisahkan dengan koma)</span></label>
+          <label className="text-sm font-bold text-on-surface">Tags <span className="text-on-surface-variant font-normal">(pisahkan dengan koma, atau kosongkan untuk diisi otomatis)</span></label>
           <input
             type="text"
             value={formData.tags}
@@ -297,14 +365,16 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
           <label className="text-sm font-bold text-on-surface">
             Isi Konten Berita <span className="text-red-500">*</span>
           </label>
-          <p className="text-xs text-on-surface-variant">Bisa menggunakan HTML dasar seperti: <code className="bg-surface-variant/30 px-1 py-0.5 rounded text-xs">&lt;p&gt;, &lt;h3&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;blockquote&gt;</code></p>
-          <textarea
-            value={formData.content}
-            onChange={(e) => handleChange("content", e.target.value)}
-            rows={16}
-            className={inputClass("content") + " font-mono text-sm resize-y"}
-            placeholder={"<p>Tulis paragraf pertama berita di sini...</p>\n\n<h3>Sub Judul</h3>\n<p>Lanjutan isi berita...</p>"}
-          />
+          <div className={`${formErrors.content ? 'ring-2 ring-red-400 rounded-lg' : ''}`}>
+            <ReactQuill 
+              theme="snow"
+              value={formData.content}
+              onChange={(val) => handleChange("content", val === "<p><br></p>" ? "" : val)}
+              modules={QUILL_MODULES}
+              className="bg-surface rounded-xl overflow-hidden [&_.ql-toolbar]:border-outline-variant/30 [&_.ql-toolbar]:rounded-t-xl [&_.ql-container]:border-outline-variant/30 [&_.ql-container]:rounded-b-xl [&_.ql-editor]:min-h-[300px]"
+              placeholder="Tuliskan isi berita di sini..."
+            />
+          </div>
           {formErrors.content && <p className="text-xs text-red-500 font-medium">{formErrors.content}</p>}
         </div>
       </div>
@@ -364,7 +434,10 @@ export default function BeritaForm({ initialData = null }: { initialData?: any }
                 </button>
                 <button
                   type="button"
-                  onClick={() => { if (pendingUrl) router.push(pendingUrl); }}
+                  onClick={() => { 
+                    clearDraft();
+                    if (pendingUrl) router.push(pendingUrl); 
+                  }}
                   className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
                 >
                   Ya, Keluar

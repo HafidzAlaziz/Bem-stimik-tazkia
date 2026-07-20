@@ -20,6 +20,8 @@ import {
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { toggleLike } from "@/actions/like";
 import { createClient } from "@/utils/supabase/client";
+import { getDeviceId } from "@/utils/identity";
+import { useToast } from "@/components/ui/Toast";
 
 interface NewsDetail {
   id: string;
@@ -37,10 +39,47 @@ interface NewsDetail {
 
 export default function BeritaDetailPage() {
   const params = useParams();
+  const { toast } = useToast();
   const [liked, setLiked] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  const [viewCount, setViewCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
   const [newsDetail, setNewsDetail] = useState<NewsDetail | null>(null);
   const [relatedNews, setRelatedNews] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleShare = async () => {
+    if (!newsDetail) return;
+    const shareData = {
+      title: newsDetail.title,
+      text: `Baca berita menarik "${newsDetail.title}" di Portal BEM STMIK Tazkia!`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast("Tautan disalin ke clipboard!", "success");
+      } catch (err) {
+        toast("Gagal menyalin tautan", "error");
+      }
+    }
+  };
+
+  // Konversi class Quill alignment ke inline style agar 100% tampil di semua browser
+  function processQuillHtml(html: string): string {
+    return html
+      .replace(/class="ql-align-center"/g, 'style="text-align:center"')
+      .replace(/class="ql-align-right"/g, 'style="text-align:right"')
+      .replace(/class="ql-align-justify"/g, 'style="text-align:justify"')
+      .replace(/class="ql-align-left"/g, 'style="text-align:left"');
+  }
 
   useEffect(() => {
     async function fetchDetail() {
@@ -54,8 +93,40 @@ export default function BeritaDetailPage() {
         .single();
         
       if (detailData) {
-        setNewsDetail(detailData);
+        // Proses HTML untuk memastikan formatting tampil dengan benar
+        const processedData = {
+          ...detailData,
+          content: processQuillHtml(detailData.content || '')
+        };
+        setNewsDetail(processedData);
+        setViewCount(detailData.views || 0);
+        setLikeCount(detailData.likes || 0);
         
+        // Check authenticated user
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id || null;
+
+        // Anti-Spam View & Likes Tracking (Universal Identity)
+        const deviceId = getDeviceId();
+
+        // Check if already liked via RPC (Bypass RLS on logs)
+        const { data: isLiked } = await supabase.rpc('check_berita_liked', {
+          p_berita_id: detailData.id,
+          p_device_id: deviceId,
+          p_user_id: userId
+        });
+          
+        if (isLiked) {
+          setLiked(true);
+        }
+
+        // Increment view via RPC (Cooldown 24 Jam)
+        await supabase.rpc('increment_berita_view', { 
+          p_berita_id: detailData.id, 
+          p_device_id: deviceId,
+          p_user_id: userId
+        });
+
         // Fetch related based on category
         const { data: relatedData } = await supabase
           .from('berita')
@@ -74,6 +145,40 @@ export default function BeritaDetailPage() {
     }
   }, [params.id]);
 
+  const handleToggleLike = async () => {
+    if (!newsDetail || isLiking) return;
+    setIsLiking(true);
+    
+    // Optimistic UI Update
+    setLiked(!liked);
+    setLikeCount(prev => liked ? Math.max(0, prev - 1) : prev + 1);
+
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || null;
+      const deviceId = getDeviceId();
+
+      const { data: isNowLiked, error } = await supabase.rpc('toggle_berita_like', {
+        p_berita_id: newsDetail.id,
+        p_device_id: deviceId || 'unknown',
+        p_user_id: userId
+      });
+
+      if (error) throw error;
+      
+      // Sync with actual DB result just in case
+      setLiked(isNowLiked);
+    } catch (err) {
+      console.error(err);
+      // Revert optimistic update on error
+      setLiked(liked);
+      setLikeCount(prev => liked ? prev + 1 : Math.max(0, prev - 1));
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center pt-32 pb-20"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
   }
@@ -88,7 +193,7 @@ export default function BeritaDetailPage() {
   }
 
   return (
-    <div className="bg-[#f8f9fc] min-h-screen pt-24 pb-20">
+    <div className="bg-[#f8f9fc] min-h-screen pt-36 pb-20">
       
       {/* ── BACK BUTTON & HEADER INFO ───────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-5 md:px-10 mb-6">
@@ -106,17 +211,14 @@ export default function BeritaDetailPage() {
             </span>
           </div>
           
-          <div className="flex flex-wrap items-center gap-3 text-base font-bold text-on-background">
-            <span className="flex items-center gap-2 px-4 py-2 bg-surface rounded-full border border-outline-variant/30 shadow-sm">
-              <FiEye className="text-[var(--color-primary)]" size={20} /> {newsDetail.views}
+          <div className="flex flex-wrap items-center gap-4 text-base font-bold text-on-background mt-3 md:mt-0">
+            <span className="flex items-center gap-1.5 px-4 py-2 bg-surface rounded-full border border-outline-variant/30 shadow-sm">
+              <FiEye className="text-[var(--color-primary)]" size={20} /> {viewCount.toLocaleString()}
             </span>
             <button 
-              onClick={async () => {
-                const newLiked = !liked;
-                setLiked(newLiked);
-                await toggleLike('berita', newsDetail.id, newLiked);
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-surface rounded-full border border-outline-variant/30 shadow-sm hover:border-red-200 transition-colors cursor-pointer"
+              onClick={handleToggleLike}
+              disabled={isLiking}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-sm transition-colors cursor-pointer border ${liked ? "bg-red-50 border-red-200" : "bg-surface border-outline-variant/30 hover:border-red-200"} ${isLiking ? "opacity-70 cursor-not-allowed" : ""}`}
             >
               <div className="w-6 h-6 flex items-center justify-center -ml-1 -mr-1 shrink-0">
                 {liked ? (
@@ -126,10 +228,13 @@ export default function BeritaDetailPage() {
                 )}
               </div>
               <span className={liked ? "text-red-500 font-bold" : "text-on-surface-variant font-bold"}>
-                {newsDetail.likes + (liked ? 1 : 0)}
+                {likeCount.toLocaleString()}
               </span>
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-colors duration-300 shadow-sm">
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant/30 text-on-surface-variant rounded-full hover:border-gray-400 hover:text-on-background transition-colors duration-300 shadow-sm"
+            >
               <FiShare2 size={18} /> Bagikan
             </button>
           </div>
@@ -139,12 +244,15 @@ export default function BeritaDetailPage() {
           {newsDetail.title}
         </h1>
 
-        <div className="flex flex-wrap items-center gap-6 text-sm text-on-surface-variant font-medium mb-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center">
-              <FiUser />
+        <div className="flex flex-wrap items-center gap-6 mb-10 mt-2">
+          <div className="flex items-center gap-3 bg-surface p-2 pr-6 rounded-full border border-outline-variant/30 shadow-sm">
+            <div className="w-11 h-11 rounded-full overflow-hidden bg-white border border-outline-variant/20 flex items-center justify-center p-1 shrink-0">
+              <img src="/images/logo2.png" alt="BEM Logo" className="w-full h-full object-contain" />
             </div>
-            <span>Oleh <span className="font-bold text-on-background">{newsDetail.author}</span></span>
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase font-extrabold text-[var(--color-primary)] tracking-wider">Penulis Berita</span>
+              <span className="font-bold text-on-background text-sm">{newsDetail.author.replace(/Humas\s+/i, '')}</span>
+            </div>
           </div>
         </div>
       </section>
@@ -168,8 +276,19 @@ export default function BeritaDetailPage() {
         
         {/* Article Body */}
         <article className="lg:col-span-8 bg-surface rounded-3xl p-8 md:p-12 border border-outline-variant/20 shadow-sm">
-          <div 
-            className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-on-background prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4 prose-p:text-on-surface-variant prose-p:leading-relaxed prose-a:text-[var(--color-primary)] hover:prose-a:text-[var(--color-secondary)] prose-blockquote:border-l-4 prose-blockquote:border-[var(--color-secondary)] prose-blockquote:bg-[var(--color-secondary)]/5 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:text-[var(--color-primary)] prose-blockquote:font-medium prose-blockquote:italic prose-li:text-on-surface-variant"
+          {/* Inject CSS langsung ke DOM agar pasti bisa override Tailwind */}
+          <style>{`
+            .ql-content ul { list-style-type: disc !important; padding-left: 1.8em !important; margin: 0.5em 0 !important; }
+            .ql-content ol { list-style-type: decimal !important; padding-left: 1.8em !important; margin: 0.5em 0 !important; }
+            .ql-content li { display: list-item !important; }
+            .ql-content h1 { font-size: 1.8em; font-weight: 700; margin: 0.5em 0; }
+            .ql-content h2 { font-size: 1.4em; font-weight: 700; margin: 0.5em 0; }
+            .ql-content h3 { font-size: 1.2em; font-weight: 700; margin: 0.5em 0; }
+            .ql-content a { color: #1b4086; text-decoration: underline; }
+            .ql-content p { margin-bottom: 0.6em; }
+          `}</style>
+          <div
+            className="ql-content"
             dangerouslySetInnerHTML={{ __html: newsDetail.content }}
           />
 
@@ -179,7 +298,7 @@ export default function BeritaDetailPage() {
               <FiTag className="text-[var(--color-primary)]" /> Tags Terkait
             </h4>
             <div className="flex flex-wrap gap-2">
-              {newsDetail.tags.map((tag) => (
+              {newsDetail.tags.filter((tag: string) => tag.length <= 25).map((tag) => (
                 <Link key={tag} href={`/berita?tag=${tag.toLowerCase()}`} className="px-4 py-2 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-sm font-medium text-on-surface-variant hover:border-[var(--color-primary)]/50 hover:text-[var(--color-primary)] transition-colors">
                   #{tag}
                 </Link>
@@ -188,20 +307,20 @@ export default function BeritaDetailPage() {
           </div>
 
           {/* Social Share Bottom */}
-          <div className="mt-10 p-6 bg-[var(--color-primary)]/5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-[var(--color-primary)]/10">
-            <span className="font-bold text-[var(--color-primary)]">Bagikan artikel ini:</span>
-            <div className="flex items-center gap-3">
-              <button className="w-10 h-10 rounded-full bg-surface text-blue-600 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
-                <FiFacebook size={18} />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-surface text-sky-500 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
-                <FiTwitter size={18} />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-surface text-blue-800 shadow-sm flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all">
-                <FiLinkedin size={18} />
-              </button>
+          <div className="mt-12 p-8 bg-surface rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-outline-variant/30 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-primary)]/5 rounded-bl-full -z-0"></div>
+            <div className="flex flex-col z-10">
+              <span className="font-extrabold text-lg text-on-background">Bagikan Artikel Ini</span>
+              <span className="text-sm text-on-surface-variant">Sebarkan informasi menarik ini ke teman-temanmu!</span>
             </div>
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white rounded-xl font-bold shadow-md hover:-translate-y-1 hover:shadow-lg hover:bg-blue-800 transition-all duration-300 z-10"
+            >
+              <FiShare2 size={18} /> Bagikan Sekarang
+            </button>
           </div>
+
         </article>
 
         {/* Sidebar */}

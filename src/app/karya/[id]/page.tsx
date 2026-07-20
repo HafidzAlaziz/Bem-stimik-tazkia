@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ui/Toast";
+import { getDeviceId } from "@/utils/identity";
 
 const categoryColors: Record<string, string> = {
   TECHNOLOGY: "bg-blue-100 text-blue-700",
@@ -59,12 +60,8 @@ export default function ProjectDetailPage() {
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id || null;
 
-        // Anti-Spam View & Likes Tracking (Device Fingerprinting via LocalStorage)
-        let deviceId = localStorage.getItem('karya_device_id');
-        if (!deviceId) {
-          deviceId = 'dev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-          localStorage.setItem('karya_device_id', deviceId);
-        }
+        // Anti-Spam View & Likes Tracking (Universal Identity)
+        const deviceId = getDeviceId();
 
         // Check if already liked via RPC (Bypass RLS on logs)
         const { data: isLiked } = await supabase.rpc('check_karya_liked', {
@@ -109,7 +106,7 @@ export default function ProjectDetailPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id || null;
-      const deviceId = localStorage.getItem('karya_device_id');
+      const deviceId = getDeviceId();
 
       const { data: isNowLiked, error } = await supabase.rpc('toggle_karya_like', {
         p_karya_id: id,

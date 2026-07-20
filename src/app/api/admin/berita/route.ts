@@ -21,6 +21,7 @@ export async function POST(req: Request) {
       content: content.trim(),
       image_url: image_url?.trim() || null,
       tags: Array.isArray(tags) ? tags : [],
+      is_published: is_published ?? true,
     };
 
     if (id) {
