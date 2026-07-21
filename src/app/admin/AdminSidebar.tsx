@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers, FiAward, FiImage } from "react-icons/fi";
+import { FiHome, FiFileText, FiBriefcase, FiCalendar, FiChevronLeft, FiChevronRight, FiCheckCircle, FiUsers, FiAward, FiImage, FiMessageSquare } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { name: "Kelola Karya", href: "/admin/karya", icon: FiBriefcase },
   { name: "Kelola Kegiatan", href: "/admin/kegiatan", icon: FiCalendar },
   { name: "Kelola Dokumentasi", href: "/admin/dokumentasi", icon: FiImage },
+  { name: "Kotak Saran", href: "/admin/saran-aduan", icon: FiMessageSquare },
   { name: "Manajemen User", href: "/admin/users", icon: FiUsers },
 ];
 
