@@ -20,40 +20,25 @@ export default function Footer() {
 
       <div className="px-5 md:px-10 max-w-7xl mx-auto flex flex-col gap-12 relative z-10">
 
-        {/* Subscription Banner */}
-        <div className="w-full bg-surface/10 border border-white/10 rounded-2xl md:rounded-3xl p-5 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-8 shadow-lg relative overflow-hidden">
+        {/* Karya & Inovasi Showcase Banner */}
+        <div className="w-full bg-surface/10 border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
 
           <div className="flex-1 relative z-10">
-            <h3 className="text-xl md:text-3xl text-white font-bold mb-1 md:mb-2">Jangan Ketinggalan Informasi!</h3>
-            <p className="text-white/80 text-sm md:text-base max-w-lg">
-              <span className="hidden sm:inline">Dapatkan notifikasi kegiatan terbaru BEM STMIK Tazkia secara eksklusif langsung ke WhatsApp Anda.</span>
-              <span className="sm:hidden">Notifikasi kegiatan BEM langsung ke WhatsApp Anda.</span>
+            <h3 className="text-xl md:text-3xl text-white font-bold mb-2">Punya Karya, atau Inovasi Keren?</h3>
+            <p className="text-white/80 text-sm md:text-base max-w-xl leading-relaxed">
+              Tunjukkan karya terbaikmu kepada seluruh civitas akademika STMIK Tazkia. Masuk dengan akun email kampus dan unggah karyamu!
             </p>
           </div>
 
-          <div className="relative w-full md:w-auto">
-            <div className={`absolute -top-10 right-2 md:-top-12 md:right-4 bg-surface text-primary px-3 py-1.5 rounded-xl text-xs font-bold shadow-lg pointer-events-none z-20 flex items-center gap-1.5 border border-primary/10 animate-bounce transition-opacity duration-1000 ${showTooltip ? 'opacity-100' : 'opacity-0'}`}>
-              <span className="text-base">😁</span>
-              Bukan Bayar yah
-              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-surface border-b border-r border-primary/10 rotate-45 rounded-sm"></div>
-            </div>
-
-            <form className="w-full flex flex-col sm:flex-row gap-2 md:gap-3 relative z-10" onSubmit={(e) => { e.preventDefault(); alert("Berhasil Berlangganan! Anda akan menerima notifikasi via WhatsApp."); }}>
-              <input
-                type="tel"
-                required
-                placeholder="Nomor WhatsApp (Cth: 0812...)"
-                className="w-full sm:w-64 md:w-80 px-4 py-3 md:px-5 md:py-3.5 rounded-xl bg-surface/10 border border-white/20 text-white text-sm placeholder-white/50 focus:outline-none focus:border-secondary focus:bg-surface/20 focus:ring-1 focus:ring-secondary transition-all"
-              />
-              <button
-                type="submit"
-                className="group bg-secondary text-white font-bold py-3 md:py-3.5 px-5 md:px-6 rounded-xl text-sm hover:bg-secondary/90 hover:-translate-y-0.5 hover:shadow-[0_0_20px_rgba(242,121,30,0.5)] transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
-              >
-                <FiBell className="text-base md:text-lg" />
-                Berlangganan
-              </button>
-            </form>
+          <div className="relative w-full md:w-auto shrink-0 z-10">
+            <Link
+              href="/dashboard/upload"
+              className="group bg-secondary text-white font-bold py-3.5 px-6 md:px-8 rounded-2xl text-sm md:text-base hover:bg-secondary/90 hover:-translate-y-0.5 hover:shadow-[0_0_25px_rgba(242,121,30,0.5)] transition-all duration-300 flex items-center justify-center gap-2.5 whitespace-nowrap shadow-soft"
+            >
+              <span>Unggah Karya</span>
+              <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </Link>
           </div>
         </div>
 
@@ -61,12 +46,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5 flex flex-col gap-6">
             <div className="bg-surface p-2 rounded-xl mb-6 shadow-sm inline-block w-fit">
-              <Image 
-                src="/images/logo.png" 
-                alt="Logo BEM" 
-                width={80} 
-                height={48} 
-                className="h-12 w-auto object-contain bg-surface rounded-lg p-1.5 shadow-sm" 
+              <Image
+                src="/images/logo.png"
+                alt="Logo BEM"
+                width={80}
+                height={48}
+                className="h-12 w-auto object-contain bg-surface rounded-lg p-1.5 shadow-sm"
               />
             </div>
             <div className="flex flex-row items-center gap-1.5">

@@ -84,11 +84,20 @@ export default function LoginPage() {
           </div>
         )}
 
+        {/* Campus Email Info Box */}
+        <div className="p-3.5 bg-primary/5 border border-primary/20 rounded-xl text-xs text-on-surface-variant flex items-start gap-2.5 mb-6">
+          <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">info</span>
+          <div>
+            <p className="font-bold text-primary mb-0.5">Khusus Mahasiswa Tazkia</p>
+            <p>Gunakan email resmi kampus <code className="bg-primary/10 px-1 py-0.5 rounded text-primary font-mono text-[11px]">@student.stmik.tazkia.ac.id</code> saat melakukan login Google.</p>
+          </div>
+        </div>
+
         {/* Google OAuth Button */}
         <button 
           onClick={handleGoogleLogin} 
           disabled={isLoading} 
-          className="w-full bg-surface border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 mt-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full bg-surface border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
         >
           {isLoading ? (
             <span className="material-symbols-outlined text-[20px] animate-spin text-primary">progress_activity</span>
@@ -97,10 +106,6 @@ export default function LoginPage() {
           )}
           Lanjutkan dengan Akun Google
         </button>
-        
-        <p className="text-xs text-center text-on-surface-variant mt-6">
-          *Hanya email resmi kampus STMIK Tazkia yang diizinkan.
-        </p>
 
       </div>
     </main>

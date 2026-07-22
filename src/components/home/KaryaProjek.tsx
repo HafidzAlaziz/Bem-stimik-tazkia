@@ -99,7 +99,9 @@ export default function KaryaProjek({ karyaList = [] }: { karyaList?: any[] }) {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary leading-tight">
               Karya & Inovasi
             </h2>
-            <p className="text-on-surface-variant text-sm mt-1 whitespace-nowrap">3 karya paling disukai mahasiswa</p>
+            <p className="text-on-surface-variant text-sm mt-1 whitespace-nowrap">
+              {projects.length} karya paling disukai mahasiswa
+            </p>
           </div>
           <Link
             href="/karya"
@@ -109,8 +111,14 @@ export default function KaryaProjek({ karyaList = [] }: { karyaList?: any[] }) {
           </Link>
         </div>
 
-        {/* ===== DESKTOP: 3-column grid ===== */}
-        <div className="hidden lg:grid grid-cols-3 gap-6">
+        {/* ===== DESKTOP: Dynamic Grid ===== */}
+        <div className={`hidden lg:grid gap-6 ${
+          projects.length === 1 
+            ? "grid-cols-1 max-w-md mx-auto" 
+            : projects.length === 2 
+            ? "grid-cols-2 max-w-4xl mx-auto" 
+            : "grid-cols-3"
+        }`}>
           {projects.map((p) => (
             <Link
               key={p.id}

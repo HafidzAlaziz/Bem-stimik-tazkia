@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { FiCalendar, FiMapPin, FiClock, FiArrowRight, FiZap, FiCheckCircle, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 
 import { AgendaKegiatan } from "@/types/agenda";
@@ -19,7 +20,7 @@ interface EventVolunteerProps {
   pastEvents?: AgendaKegiatan[];
 }
 
-export default function EventVolunteer({ 
+export default function EventVolunteer({
   showHeader = true,
   liveEvents = [],
   upcomingEvents = [],
@@ -221,31 +222,31 @@ export default function EventVolunteer({
       {/*  HERO HEADER                                */}
       {/* ============================================ */}
       {showHeader && (
-      <section className="px-4 sm:px-6 md:px-10 max-w-7xl mx-auto mb-10 md:mb-16 text-center">
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
-          <FiCalendar size={13} /> Program Kegiatan
-        </span>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight">
-          Events &amp; <span className="text-[var(--color-primary)]">Volunteer</span> Hub
-        </h1>
-        <p className="text-on-surface-variant text-sm md:text-base max-w-2xl mx-auto mb-8">
-          Temukan event terkini, daftarkan diri sebagai relawan, dan jadilah bagian dari perubahan nyata di kampus.
-        </p>
-        <div className="flex flex-wrap gap-3 justify-center">
-          <Link
-            href="#upcoming"
-            className="bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all"
-          >
-            Lihat Events
-          </Link>
-          <Link
-            href="#volunteer"
-            className="border border-[var(--color-primary)] text-[var(--color-primary)] px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-primary)]/5 hover:-translate-y-0.5 transition-all"
-          >
-            Jadi Volunteer
-          </Link>
-        </div>
-      </section>
+        <section className="px-4 sm:px-6 md:px-10 max-w-7xl mx-auto mb-10 md:mb-16 text-center">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider mb-5">
+            <FiCalendar size={13} /> Program Kegiatan
+          </span>
+          <h1 className="text-3xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight">
+            Events &amp; <span className="text-[var(--color-primary)]">Volunteer</span> Hub
+          </h1>
+          <p className="text-on-surface-variant text-sm md:text-base max-w-2xl mx-auto mb-8">
+            Temukan event terkini, daftarkan diri sebagai relawan, dan jadilah bagian dari perubahan nyata di kampus.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="#upcoming"
+              className="bg-[var(--color-primary)] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[var(--color-primary)]/30 transition-all"
+            >
+              Lihat Events
+            </Link>
+            <Link
+              href="#volunteer"
+              className="border border-[var(--color-primary)] text-[var(--color-primary)] px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[var(--color-primary)]/5 hover:-translate-y-0.5 transition-all"
+            >
+              Jadi Volunteer
+            </Link>
+          </div>
+        </section>
       )}
 
       {/* ============================================ */}
@@ -262,7 +263,7 @@ export default function EventVolunteer({
 
         {/* Live Event Card / Slider */}
         {liveEvents.length > 0 ? (
-          <div 
+          <div
             className="relative"
             onMouseEnter={() => {
               if (typeof window !== "undefined" && window.innerWidth >= 1024) setPausedLive(true);
@@ -344,7 +345,7 @@ export default function EventVolunteer({
                 </motion.div>
               </AnimatePresence>
             </div>
-            
+
             {liveEvents.length > 1 && (
               <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-20 flex gap-3">
                 <button onClick={prevLive} className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-primary backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all duration-300 shadow-lg" aria-label="Sebelumnya"><FiChevronLeft size={22} /></button>
@@ -360,8 +361,20 @@ export default function EventVolunteer({
             )}
           </div>
         ) : (
-          <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm text-on-surface-variant">
-            Belum ada event yang sedang berlangsung hari ini.
+          <div className="bg-surface border border-outline-variant/30 rounded-3xl p-6 sm:p-8 text-center shadow-sm text-on-surface-variant flex flex-col items-center justify-center gap-2">
+            <div className="w-40 h-40 md:w-52 md:h-52 relative -my-2">
+              <DotLottieReact
+                src="/animations/Panda sleeping waiting lottie animation.lottie"
+                loop
+                autoplay
+              />
+            </div>
+            <div>
+              <h3 className="text-base md:text-lg font-bold text-on-background">Belum Ada Event Live Hari Ini</h3>
+              <p className="text-xs md:text-sm text-on-surface-variant mt-1 max-w-md mx-auto">
+                Pantau terus halaman ini atau cek agenda mendatang di bawah!
+              </p>
+            </div>
           </div>
         )}
       </section>
@@ -387,7 +400,7 @@ export default function EventVolunteer({
             <div className="flex justify-between items-start gap-3 mb-4">
               <div>
                 <h2 className="text-base font-bold text-on-background flex items-center gap-2">
-                  Upcoming Events 
+                  Upcoming Events
                   <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full">{upcomingEvents.length}</span>
                 </h2>
                 <p className="text-xs text-on-surface-variant mt-0.5">Agenda kegiatan BEM terdekat</p>
