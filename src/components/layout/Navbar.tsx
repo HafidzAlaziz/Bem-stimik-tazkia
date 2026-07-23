@@ -14,12 +14,15 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
   const [userProfile, setUserProfile] = useState<any>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
   const isHome = pathname === "/";
   const isDashboard = pathname?.startsWith("/dashboard");
   const supabase = createClient();
+
+  const currentPath = pendingPath || pathname;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,6 +36,16 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
     };
     fetchUser();
   }, [supabase]);
+
+  // Pre-fetch main routes for instant navigation response on mobile
+  useEffect(() => {
+    router.prefetch("/");
+    router.prefetch("/agenda");
+    router.prefetch("/karya");
+    router.prefetch("/berita");
+    router.prefetch("/kabinet");
+    router.prefetch("/dokumentasi");
+  }, [router]);
 
   // Handle click outside for profile dropdown
   useEffect(() => {
@@ -61,6 +74,7 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
   }, []);
 
   useEffect(() => {
+    setPendingPath(null);
     setActiveBottomSheet(null);
   }, [pathname]);
 
@@ -278,34 +292,57 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
         </div>
       </nav>
 
+      {/* Top Loading Progress Line for Instant Page Route Feedback */}
+      {pendingPath !== null && (
+        <div className="fixed top-0 left-0 right-0 z-[100] h-1.5 bg-gradient-to-r from-primary via-secondary to-primary animate-pulse shadow-md" />
+      )}
+
       {/* Mobile & Tablet Bottom Navigation Bar */}
       {!isDashboard && (
         <>
           <nav className="lg:hidden fixed bottom-0 left-0 w-full z-50 bg-surface/90 backdrop-blur-lg border-t border-outline-variant/30 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] pb-5 pt-2 px-2 flex justify-between items-center rounded-t-3xl touch-manipulation">
-        <Link href="/" onClick={() => setActiveBottomSheet(null)} className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${pathname === "/" ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
-          <FiHome size={22} className={pathname === "/" ? "fill-secondary/20" : ""} />
+        <Link 
+          href="/" 
+          onClick={() => { setPendingPath("/"); setActiveBottomSheet(null); }} 
+          className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${currentPath === "/" ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}
+        >
+          <FiHome size={22} className={currentPath === "/" ? "fill-secondary/20" : ""} />
           <span className="text-[10px] font-bold">Beranda</span>
         </Link>
 
-        <Link href="/agenda" onClick={() => setActiveBottomSheet(null)} className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${pathname.startsWith("/agenda") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
-          <FiCalendar size={22} className={pathname.startsWith("/agenda") ? "fill-secondary/20" : ""} />
+        <Link 
+          href="/agenda" 
+          onClick={() => { setPendingPath("/agenda"); setActiveBottomSheet(null); }} 
+          className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${currentPath.startsWith("/agenda") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}
+        >
+          <FiCalendar size={22} className={currentPath.startsWith("/agenda") ? "fill-secondary/20" : ""} />
           <span className="text-[10px] font-bold">Agenda</span>
         </Link>
 
-        <Link href="/karya" onClick={() => setActiveBottomSheet(null)} className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${pathname.startsWith("/karya") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
+        <Link 
+          href="/karya" 
+          onClick={() => { setPendingPath("/karya"); setActiveBottomSheet(null); }} 
+          className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${currentPath.startsWith("/karya") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}
+        >
           <div className="bg-primary text-white p-3 rounded-full -mt-6 shadow-glow border-4 border-white flex items-center justify-center">
             <FiAward size={22} />
           </div>
           <span className="text-[10px] font-bold">Karya</span>
         </Link>
 
-        <button onClick={() => setActiveBottomSheet(activeBottomSheet === 'publikasi' ? null : 'publikasi')} className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${activeBottomSheet === 'publikasi' || pathname.startsWith("/berita") || pathname.startsWith("/dokumentasi") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
-          <FiBookOpen size={22} className={activeBottomSheet === 'publikasi' || pathname.startsWith("/berita") || pathname.startsWith("/dokumentasi") ? "fill-secondary/20" : ""} />
+        <button 
+          onClick={() => setActiveBottomSheet(activeBottomSheet === 'publikasi' ? null : 'publikasi')} 
+          className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${activeBottomSheet === 'publikasi' || currentPath.startsWith("/berita") || currentPath.startsWith("/dokumentasi") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}
+        >
+          <FiBookOpen size={22} className={activeBottomSheet === 'publikasi' || currentPath.startsWith("/berita") || currentPath.startsWith("/dokumentasi") ? "fill-secondary/20" : ""} />
           <span className="text-[10px] font-bold">Publikasi</span>
         </button>
 
-        <button onClick={() => setActiveBottomSheet(activeBottomSheet === 'profil' ? null : 'profil')} className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${activeBottomSheet === 'profil' || pathname.startsWith("/kabinet") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}>
-          <FiUser size={22} className={activeBottomSheet === 'profil' || pathname.startsWith("/kabinet") ? "fill-secondary/20" : ""} />
+        <button 
+          onClick={() => setActiveBottomSheet(activeBottomSheet === 'profil' ? null : 'profil')} 
+          className={`flex-1 flex flex-col items-center gap-1 transition-transform active:scale-95 ${activeBottomSheet === 'profil' || currentPath.startsWith("/kabinet") ? "text-secondary" : "text-on-surface-variant hover:text-primary"}`}
+        >
+          <FiUser size={22} className={activeBottomSheet === 'profil' || currentPath.startsWith("/kabinet") ? "fill-secondary/20" : ""} />
           <span className="text-[10px] font-bold text-center">Profil BEM</span>
         </button>
       </nav>
@@ -336,11 +373,19 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
             className="lg:hidden fixed bottom-24 left-4 right-4 z-50 bg-surface rounded-2xl shadow-xl overflow-hidden border border-outline-variant/30"
           >
             <div className="flex flex-col p-2">
-              <Link href="/berita" onClick={() => setActiveBottomSheet(null)} className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between">
+              <Link 
+                href="/berita" 
+                onClick={() => { setPendingPath("/berita"); setActiveBottomSheet(null); }} 
+                className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between"
+              >
                 Berita
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </Link>
-              <Link href="/dokumentasi" onClick={() => setActiveBottomSheet(null)} className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between">
+              <Link 
+                href="/dokumentasi" 
+                onClick={() => { setPendingPath("/dokumentasi"); setActiveBottomSheet(null); }} 
+                className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between"
+              >
                 Dokumentasi
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </Link>
@@ -357,11 +402,19 @@ export default function Navbar({ isLoggedIn: initialIsLoggedIn }: { isLoggedIn?:
             className="lg:hidden fixed bottom-24 left-4 right-4 z-50 bg-surface rounded-2xl shadow-xl overflow-hidden border border-outline-variant/30"
           >
             <div className="flex flex-col p-2">
-              <Link href="/kabinet" onClick={() => setActiveBottomSheet(null)} className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between">
+              <Link 
+                href="/kabinet" 
+                onClick={() => { setPendingPath("/kabinet"); setActiveBottomSheet(null); }} 
+                className="px-5 py-4 font-bold text-sm border-b border-outline-variant/30 text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between"
+              >
                 Kabinet
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </Link>
-              <Link href="/#saran" onClick={() => setActiveBottomSheet(null)} className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between">
+              <Link 
+                href="/#saran" 
+                onClick={() => { setPendingPath("/#saran"); setActiveBottomSheet(null); }} 
+                className="px-5 py-4 font-bold text-sm text-on-surface hover:bg-surface-container active:bg-primary/10 transition-colors flex items-center justify-between"
+              >
                 Kotak Saran & Aduan
                 <span className="material-symbols-outlined text-[18px]">chevron_right</span>
               </Link>
