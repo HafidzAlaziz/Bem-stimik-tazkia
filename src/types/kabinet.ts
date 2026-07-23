@@ -29,6 +29,7 @@ export interface KabinetDepartemenProker {
   nama: string;
   deskripsi: string;
   tag: string;
+  icon?: string;
 }
 
 export interface KabinetDepartemen {

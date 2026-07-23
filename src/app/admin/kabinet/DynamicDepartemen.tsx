@@ -94,7 +94,7 @@ export default function DynamicDepartemen({ departemen, onChange }: DynamicDepar
   // Proker Operations
   const handleAddProker = (deptIndex: number) => {
     const newProker: KabinetDepartemenProker = {
-      nama: "", deskripsi: "", tag: "Wajib"
+      nama: "", deskripsi: "", tag: "Wajib", icon: ""
     };
     const newDeptList = [...departemen];
     newDeptList[deptIndex].proker.push(newProker);
