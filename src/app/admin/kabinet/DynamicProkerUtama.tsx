@@ -3,7 +3,7 @@
 import React from "react";
 import { FiPlus, FiTrash2, FiTarget, FiStar } from "react-icons/fi";
 import { KabinetProkerUtama } from "@/types/kabinet";
-import ImageUpload from "@/components/ui/ImageUpload";
+import LottieUpload from "@/components/ui/LottieUpload";
 
 interface DynamicProkerUtamaProps {
   proker: KabinetProkerUtama[];
@@ -64,18 +64,18 @@ export default function DynamicProkerUtama({ proker, onChange }: DynamicProkerUt
               </button>
               
               <div className="w-full sm:w-auto shrink-0 space-y-1.5 flex flex-col items-center">
-                <label className="text-xs font-bold text-on-surface">Ikon / Gambar</label>
-                <ImageUpload 
-                  value={item.icon.startsWith('http') && !item.icon.endsWith('.json') && !item.icon.endsWith('.lottie') ? item.icon : ""}
+                <label className="text-xs font-bold text-on-surface">Ikon / Lottie / Gambar</label>
+                <LottieUpload 
+                  value={item.icon}
                   onChange={(url) => handleChange(index, 'icon', url)}
-                  className="w-20"
+                  className="w-24"
                 />
                 <input 
                   type="text" 
-                  value={item.icon.startsWith('http') && !item.icon.endsWith('.json') && !item.icon.endsWith('.lottie') ? "" : item.icon}
+                  value={item.icon}
                   onChange={(e) => handleChange(index, 'icon', e.target.value)}
-                  className="w-full sm:w-20 mt-1 text-center bg-surface border border-outline-variant/50 rounded-lg px-2 py-2 text-xs focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                  placeholder="Atau link lottie"
+                  className="w-full sm:w-28 mt-1 text-center bg-surface border border-outline-variant/50 rounded-lg px-2 py-1.5 text-[10px] focus:border-primary focus:ring-1 focus:ring-primary outline-none font-mono"
+                  placeholder="URL lottie / emoji"
                 />
               </div>
 

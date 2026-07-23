@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FiInstagram, FiTwitter, FiLinkedin, FiYoutube, FiMapPin, FiMail, FiBell } from "react-icons/fi";
+import { FiMapPin, FiMail } from "react-icons/fi";
+import { SiInstagram, SiYoutube, SiDiscord, SiTiktok } from "react-icons/si";
 
 export default function Footer() {
   const [showTooltip, setShowTooltip] = useState(true);
@@ -58,32 +59,69 @@ export default function Footer() {
               <span className="font-bold leading-none text-xl text-white">BEM STMIK</span>
               <span className="font-bold leading-none text-xl text-secondary">Tazkia</span>
             </div>
-            <p className="text-white/80 max-w-sm leading-relaxed">
+            <p className="text-white/80 max-w-sm leading-relaxed text-sm">
               Badan Eksekutif Mahasiswa STMIK Tazkia Bogor. Satu langkah untuk STMIK Tazkia berdampak.
             </p>
           </div>
 
           <div className="md:col-span-4 flex flex-col gap-6">
-            <h4 className="text-lg text-white font-bold tracking-wide">Layanan BEM</h4>
-            <div className="flex flex-col gap-4 text-white/80">
-              <a className="flex items-start gap-3 hover:text-white hover:-translate-y-0.5 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] transition-all duration-300" href="#">
-                <FiMapPin className="text-xl shrink-0 mt-0.5" />
-                <span>Jl. Ir. H. Juanda No. 78,<br />Bogor, Jawa Barat 16122</span>
+            <h4 className="text-lg text-white font-bold tracking-wide">Layanan & Sekertariat BEM</h4>
+            <div className="flex flex-col gap-4 text-white/80 text-sm">
+              <a
+                className="flex items-start gap-3 hover:text-white hover:-translate-y-0.5 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] transition-all duration-300 leading-relaxed"
+                href="https://maps.google.com/?q=Jalan+Raya+Dramaga+Km.7,+Kelurahan+Margajaya,+Kecamatan+Bogor+Barat,+Kota+Bogor,+Jawa+Barat+16680,+Indonesia"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FiMapPin className="text-xl shrink-0 mt-1 text-secondary" />
+                <span>Jalan Raya Dramaga Km.7, Kelurahan Margajaya, Kecamatan Bogor Barat, Kota Bogor, Jawa Barat 16680, Indonesia</span>
               </a>
-              <a className="flex items-center gap-3 hover:text-white hover:-translate-y-0.5 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] transition-all duration-300" href="mailto:bem@tazkia.ac.id">
-                <FiMail className="text-xl shrink-0" />
-                bem@tazkia.ac.id
+              <a className="flex items-center gap-3 hover:text-white hover:-translate-y-0.5 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] transition-all duration-300" href="mailto:bem@stmik.tazkia.ac.id">
+                <FiMail className="text-xl shrink-0 text-secondary" />
+                bem@stmik.tazkia.ac.id
               </a>
             </div>
           </div>
 
           <div className="md:col-span-3 flex flex-col gap-6">
-            <h4 className="text-lg text-white font-bold tracking-wide">Sosial Media</h4>
-            <div className="flex gap-4 text-white/80 mt-2">
-              <a className="hover:text-[#E1306C] hover:-translate-y-2 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(225,48,108,0.6)] transition-all duration-300" href="#" aria-label="Instagram"><FiInstagram size={26} /></a>
-              <a className="hover:text-[#1DA1F2] hover:-translate-y-2 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(29,161,242,0.6)] transition-all duration-300" href="#" aria-label="Twitter"><FiTwitter size={24} /></a>
-              <a className="hover:text-[#0077b5] hover:-translate-y-2 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(0,119,181,0.6)] transition-all duration-300" href="#" aria-label="LinkedIn"><FiLinkedin size={26} /></a>
-              <a className="hover:text-[#FF0000] hover:-translate-y-2 hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(255,0,0,0.6)] transition-all duration-300" href="#" aria-label="YouTube"><FiYoutube size={26} /></a>
+            <h4 className="text-lg text-white font-bold tracking-wide">Sosial Media Resmi</h4>
+            <div className="flex gap-4 text-white/80 mt-2 flex-wrap">
+              <a
+                className="hover:text-[#E1306C] hover:-translate-y-1 hover:scale-110 transition-all duration-300 p-2 bg-white/10 rounded-xl hover:bg-white"
+                href="https://www.instagram.com/bem_stmiktazkia?igsh=amNsbWRqODVwemV4"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram BEM"
+              >
+                <SiInstagram size={22} />
+              </a>
+              <a
+                className="hover:text-[#FF0000] hover:-translate-y-1 hover:scale-110 transition-all duration-300 p-2 bg-white/10 rounded-xl hover:bg-white"
+                href="https://www.youtube.com/@ofcbemstmiktazkia"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube BEM"
+              >
+                <SiYoutube size={22} />
+              </a>
+              <a
+                className="hover:text-[#5865F2] hover:-translate-y-1 hover:scale-110 transition-all duration-300 p-2 bg-white/10 rounded-xl hover:bg-white"
+                href="https://discord.gg/dFVN24ZMXU"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Discord BEM"
+              >
+                <SiDiscord size={22} />
+              </a>
+              <a
+                className="hover:text-black hover:-translate-y-1 hover:scale-110 transition-all duration-300 p-2 bg-white/10 rounded-xl hover:bg-white"
+                href="https://www.tiktok.com/@bem.stmik.tazkia?_r=1&_t=ZS-98AM268GYS4"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok BEM"
+              >
+                <SiTiktok size={22} />
+              </a>
             </div>
           </div>
 

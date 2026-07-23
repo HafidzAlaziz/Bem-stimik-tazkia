@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { KabinetProfile, KabinetPengurusInti, KabinetProkerUtama } from "@/types/kabinet";
 import DepartemenCard from "@/components/kabinet/DepartemenCard";
 import ProkerIcon from "@/components/kabinet/ProkerIcon";
+import LottieIcon from "@/components/ui/LottieIcon";
 
 // ─────────────────────────────────────────────
 // ICONS
@@ -168,8 +169,8 @@ export default async function KabinetPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-init-fade-up anim-delay-400">
           {/* VISI */}
           <div className="bg-surface rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-primary/50 hover:shadow-xl transition-all duration-300 group">
-            <div className="w-14 h-14 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <LottieIcon src="/animations/lamp.lottie" className="w-12 h-12" />
             </div>
             <h3 className="text-2xl font-bold text-on-background mb-4 group-hover:text-primary transition-colors">Visi</h3>
             <p className="text-on-surface-variant leading-relaxed text-sm">
@@ -179,8 +180,8 @@ export default async function KabinetPage() {
 
           {/* MISI */}
           <div className="bg-surface rounded-3xl p-8 border border-outline-variant/30 shadow-sm hover:border-secondary/50 hover:shadow-xl transition-all duration-300 group">
-            <div className="w-14 h-14 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+            <div className="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <LottieIcon src="/animations/Target.lottie" className="w-12 h-12" />
             </div>
             <h3 className="text-2xl font-bold text-on-background mb-4 group-hover:text-secondary transition-colors">Misi</h3>
             <ul className="space-y-3 text-sm text-on-surface-variant">

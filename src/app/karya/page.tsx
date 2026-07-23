@@ -46,9 +46,25 @@ export default function KaryaInovasiPage() {
   const supabase = createClient();
   const [activeCategory, setActiveCategory] = useState("All Projects");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      setDebouncedSearchQuery("");
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setIsSearching(false);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -74,8 +90,8 @@ export default function KaryaInovasiPage() {
       activeCategory === "All Projects" ||
       project.category.toLowerCase() === activeCategory.toLowerCase();
     const matchesSearch =
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase());
+      project.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -184,23 +200,33 @@ export default function KaryaInovasiPage() {
             {/* Search Input */}
             <div className="relative w-full md:w-80">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FiSearch className="text-on-surface-variant/70" />
+                <FiSearch className={`transition-colors ${isSearching ? "text-[var(--color-primary)]" : "text-on-surface-variant/70"}`} />
               </div>
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 md:py-3 bg-surface border border-outline-variant/30 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-sm"
+                className="w-full pl-11 pr-10 py-2.5 md:py-3 bg-surface border border-outline-variant/30 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-sm"
               />
+              {isSearching && (
+                <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                  <div className="w-3.5 h-3.5 border-2 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
             </div>
           </div>
 
           {/* Projects Grid */}
-          {loading ? (
-            <div className="text-center py-20">
-              <div className="inline-block w-8 h-8 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-on-surface-variant mt-4 font-medium">Memuat karya...</p>
+          {loading || isSearching ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <div key={n} className="bg-surface rounded-2xl p-6 shadow-sm border border-outline-variant/20 h-80 flex flex-col justify-between animate-pulse">
+                  <div className="w-full h-44 bg-surface-variant/60 rounded-xl" />
+                  <div className="h-5 bg-surface-variant/70 rounded-md w-3/4 mt-4" />
+                  <div className="h-4 bg-surface-variant/40 rounded-md w-1/2 mt-2" />
+                </div>
+              ))}
             </div>
           ) : paginatedProjects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
@@ -258,9 +284,49 @@ export default function KaryaInovasiPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <h3 className="text-xl font-medium text-on-surface-variant">Belum ada karya yang ditemukan.</h3>
-            </div>
+            (() => {
+              const isUserSearching = searchQuery.trim() !== "" || debouncedSearchQuery.trim() !== "" || activeCategory !== "All Projects";
+              return (
+                <div className="bg-white border border-outline-variant/30 rounded-3xl p-8 sm:p-12 text-center shadow-sm max-w-lg mx-auto flex flex-col items-center justify-center gap-2 my-8">
+                  <div className="w-48 h-48 sm:w-56 sm:h-56 relative -my-4">
+                    <DotLottieReact
+                      src="/animations/Developer.lottie"
+                      loop
+                      autoplay
+                    />
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-on-background">
+                    {isUserSearching ? "Karya Tidak Ditemukan" : "Belum Ada Karya yang Diunggah"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant max-w-md leading-relaxed">
+                    {isUserSearching
+                      ? searchQuery
+                        ? `Tidak ada karya yang sesuai dengan pencarian "${searchQuery}".`
+                        : `Tidak ada karya yang ditemukan untuk kategori "${activeCategory}".`
+                      : "Jadilah mahasiswa STMIK Tazkia pertama yang memamerkan karya atau inovasimu di website BEM!"}
+                  </p>
+                  {isUserSearching ? (
+                    <button
+                      onClick={() => {
+                        setActiveCategory("All Projects");
+                        setSearchQuery("");
+                        setCurrentPage(1);
+                      }}
+                      className="mt-3 inline-flex items-center gap-2 bg-[var(--color-primary)] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full hover:bg-[var(--color-primary)]/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md"
+                    >
+                      Reset Filter & Pencarian
+                    </button>
+                  ) : (
+                    <Link
+                      href="/dashboard/upload"
+                      className="mt-3 inline-flex items-center gap-2 bg-[var(--color-primary)] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full hover:bg-[var(--color-primary)]/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md"
+                    >
+                      Unggah Karya Pertama <FiArrowRight />
+                    </Link>
+                  )}
+                </div>
+              );
+            })()
           )}
 
           {/* Pagination */}

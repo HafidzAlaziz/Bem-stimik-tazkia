@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { KabinetDepartemen } from "@/types/kabinet";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react'; // We have @lottiefiles/dotlottie-react in package.json
+import LottieIcon from "@/components/ui/LottieIcon";
 
 // Icons
 function UsersIcon() {
@@ -119,14 +119,22 @@ function AnggotaCard({
   );
 }
 
-function ProkerRow({ proker }: { proker: { nama: string; deskripsi: string; tag: string } }) {
+import ProkerIcon from "@/components/kabinet/ProkerIcon";
+
+function ProkerRow({ proker }: { proker: { nama: string; deskripsi: string; tag: string; icon?: string } }) {
   return (
     <div className="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low/60 border border-outline-variant/10 hover:border-outline-variant/30 hover:bg-surface transition-all duration-200">
-      <div className="w-5 h-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 text-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      </div>
+      {proker.icon ? (
+        <div className="shrink-0 pt-0.5">
+          <ProkerIcon icon={proker.icon} />
+        </div>
+      ) : (
+        <div className="w-5 h-5 shrink-0 rounded-full bg-primary/10 flex items-center justify-center mt-0.5 text-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap mb-0.5">
           <span className="font-bold text-sm text-on-background">{proker.nama}</span>
@@ -140,8 +148,8 @@ function ProkerRow({ proker }: { proker: { nama: string; deskripsi: string; tag:
 
 // Check if icon is a Lottie URL, Image URL, or Emoji
 function DeptIcon({ icon }: { icon: string }) {
-  if (icon.endsWith('.json') || icon.endsWith('.lottie')) {
-    return <div className="w-10 h-10"><DotLottieReact src={icon} loop autoplay /></div>;
+  if (icon.endsWith('.json') || icon.endsWith('.lottie') || icon.includes('lottiefiles.com')) {
+    return <LottieIcon src={icon} className="w-10 h-10" />;
   } else if (icon.startsWith('http') || icon.startsWith('/')) {
     return <img src={icon} alt="Icon" className="w-8 h-8 object-contain" />;
   }

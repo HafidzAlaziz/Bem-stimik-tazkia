@@ -411,11 +411,13 @@ export default function EventVolunteer({
             </div>
 
             {upcomingEvents.length === 0 ? (
-              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
-                <FiCalendar size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+              <div className="bg-white border border-outline-variant/30 rounded-3xl p-6 text-center shadow-sm flex flex-col items-center justify-center gap-2">
+                <div className="w-24 h-24 relative -my-1">
+                  <DotLottieReact src="/animations/Calendar.lottie" loop autoplay />
+                </div>
                 <h3 className="text-base font-bold text-on-background">Belum Ada Event Mendatang</h3>
-                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada agenda kegiatan terdekat yang dijadwalkan.</p>
-                <Link href="/agenda" className="mt-4 inline-flex items-center gap-2 bg-primary text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-primary/95 transition-all shadow-md">
+                <p className="text-xs text-on-surface-variant leading-relaxed max-w-xs">Belum ada agenda kegiatan terdekat yang dijadwalkan.</p>
+                <Link href="/agenda" className="mt-2 inline-flex items-center gap-2 bg-primary text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-primary/95 transition-all shadow-md">
                   Lihat Arsip <FiArrowRight />
                 </Link>
               </div>
@@ -527,10 +529,12 @@ export default function EventVolunteer({
             </div>
 
             {volunteerOpportunities.length === 0 ? (
-              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
-                <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+              <div className="bg-white border border-outline-variant/30 rounded-3xl p-6 text-center shadow-sm flex flex-col items-center justify-center gap-2">
+                <div className="w-24 h-24 relative -my-1">
+                  <DotLottieReact src="/animations/Calendar.lottie" loop autoplay />
+                </div>
                 <h3 className="text-base font-bold text-on-background">Belum Ada Lowongan</h3>
-                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada posisi relawan baru. Pantau terus!</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed max-w-xs">Belum ada posisi relawan baru. Pantau terus!</p>
               </div>
             ) : (
               <div
@@ -640,10 +644,12 @@ export default function EventVolunteer({
             </div>
 
             {pastEvents.length === 0 ? (
-              <div className="bg-surface border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm">
-                <FiCheckCircle size={40} className="mx-auto text-primary/40 mb-3 animate-pulse" />
+              <div className="bg-white border border-outline-variant/30 rounded-3xl p-6 text-center shadow-sm flex flex-col items-center justify-center gap-2">
+                <div className="w-24 h-24 relative -my-1">
+                  <DotLottieReact src="/animations/Calendar.lottie" loop autoplay />
+                </div>
                 <h3 className="text-base font-bold text-on-background">Belum Ada Arsip</h3>
-                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">Belum ada data dokumentasi kegiatan.</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed max-w-xs">Belum ada data dokumentasi kegiatan.</p>
               </div>
             ) : (
               <div

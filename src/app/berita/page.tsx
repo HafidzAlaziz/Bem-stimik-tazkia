@@ -14,6 +14,7 @@ import {
 import { createClient } from "@/utils/supabase/client";
 import LikeButton from "@/components/ui/LikeButton";
 import { motion } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 interface NewsItem {
   id: string;
@@ -27,15 +28,29 @@ interface NewsItem {
   likes: number;
 }
 
-
-
 export default function BeritaPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
 
   const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      setDebouncedSearchQuery("");
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+      setIsSearching(false);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     async function fetchNews() {
@@ -62,11 +77,11 @@ export default function BeritaPage() {
 
   // Filter & Search Logic
   const filteredNews = useMemo(() => {
-    const listToFilter = selectedCategory === "Semua" && searchQuery === "" ? newsList : allNews;
+    const listToFilter = selectedCategory === "Semua" && debouncedSearchQuery === "" ? newsList : allNews;
     return listToFilter.filter((item) => {
       const matchesSearch = 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+        item.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        item.excerpt.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       
       const matchesCategory = 
         selectedCategory === "Semua" || 
@@ -74,7 +89,7 @@ export default function BeritaPage() {
 
       return matchesSearch && matchesCategory;
     });
-  }, [allNews, newsList, searchQuery, selectedCategory]);
+  }, [allNews, newsList, debouncedSearchQuery, selectedCategory]);
 
   // Pagination Logic
   const itemsPerPage = 4;
@@ -119,15 +134,20 @@ export default function BeritaPage() {
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
-              <FiSearch size={18} />
+              <FiSearch size={18} className={isSearching ? "text-primary" : ""} />
             </span>
             <input
               type="text"
               placeholder="Cari berita atau artikel..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-background border border-outline-variant/40 rounded-xl text-sm placeholder-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full pl-10 pr-10 py-2.5 bg-background border border-outline-variant/40 rounded-xl text-sm placeholder-on-surface-variant/70 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
             />
+            {isSearching && (
+              <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                <div className="w-3.5 h-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
           </div>
 
           {/* Category Tabs */}
@@ -203,7 +223,17 @@ export default function BeritaPage() {
               <span className="w-2.5 h-4 bg-primary rounded-full inline-block"></span>
               Berita
             </h3>
-            {paginatedNews.length > 0 ? (
+            {isLoading || isSearching ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="bg-surface rounded-3xl p-6 shadow-sm border border-outline-variant/20 h-80 flex flex-col justify-between animate-pulse">
+                    <div className="w-full h-40 bg-surface-variant/60 rounded-xl" />
+                    <div className="h-5 bg-surface-variant/70 rounded-md w-3/4 mt-4" />
+                    <div className="h-4 bg-surface-variant/40 rounded-md w-1/2 mt-2" />
+                  </div>
+                ))}
+              </div>
+            ) : paginatedNews.length > 0 ? (
               <div className="flex flex-row overflow-x-auto gap-6 pb-6 w-full md:grid md:grid-cols-2 md:overflow-visible md:pb-0 scrollbar-hide flex-nowrap md:flex-wrap">
                 {paginatedNews.map((news, index) => (
                   <motion.div
@@ -266,13 +296,30 @@ export default function BeritaPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16 bg-surface border border-outline-variant/30 rounded-3xl shadow-sm">
-                <span className="material-symbols-outlined text-6xl text-primary/30 mb-4 block">search_off</span>
-                <h3 className="text-xl font-bold text-primary mb-1">Berita Tidak Ditemukan</h3>
-                <p className="text-on-surface-variant text-sm max-w-sm mx-auto">
-                  Kami tidak dapat menemukan berita yang sesuai dengan kata kunci atau filter yang Anda pilih.
-                </p>
-              </div>
+              (() => {
+                const isUserSearching = searchQuery.trim() !== "" || debouncedSearchQuery.trim() !== "" || selectedCategory !== "Semua";
+                return (
+                  <div className="bg-white border border-outline-variant/30 rounded-3xl p-8 text-center shadow-sm flex flex-col items-center justify-center gap-2">
+                    <div className="w-40 h-40 sm:w-48 sm:h-48 relative -my-3">
+                      <DotLottieReact
+                        src="/animations/Social Media Marketing announcement.lottie"
+                        loop
+                        autoplay
+                      />
+                    </div>
+                    <h3 className="text-lg font-bold text-on-background">
+                      {isUserSearching ? "Berita Tidak Ditemukan" : "Belum Ada Berita Dipublikasikan"}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-on-surface-variant max-w-sm leading-relaxed">
+                      {isUserSearching
+                        ? searchQuery
+                          ? `Tidak ada berita yang sesuai dengan pencarian "${searchQuery}".`
+                          : `Tidak ada berita yang ditemukan untuk kategori "${selectedCategory}".`
+                        : "Pantau terus halaman ini untuk mendapatkan informasi dan pengumuman terbaru dari BEM STMIK Tazkia."}
+                    </p>
+                  </div>
+                );
+              })()
             )}
 
             {/* Pagination Component */}

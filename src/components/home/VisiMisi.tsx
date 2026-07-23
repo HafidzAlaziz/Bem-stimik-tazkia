@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import LottieIcon from "@/components/ui/LottieIcon";
 
 export default function VisiMisi() {
   return (
@@ -9,7 +10,7 @@ export default function VisiMisi() {
         <div className="text-center mb-16 animate-on-scroll animate-fade-up">
           <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-4">Visi &amp; Misi</h2>
           <p className="text-on-surface-variant max-w-2xl mx-auto">
-            Landasan gerak dan arah tujuan Kabinet Karya Adhigana dalam membawa perubahan positif bagi sivitas akademika STMIK Tazkia.
+            Landasan gerak dan arah tujuan Kabinet BEM STMIK Tazkia dalam membawa perubahan positif bagi sivitas akademika STMIK Tazkia.
           </p>
         </div>
 
@@ -24,7 +25,7 @@ export default function VisiMisi() {
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-secondary/30 group-hover:scale-150 transition-all duration-700"></div>
             <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mb-8 rotate-3 group-hover:rotate-0 group-hover:scale-110 transition-all duration-300">
-              <span className="material-symbols-outlined text-primary text-3xl group-hover:animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>visibility</span>
+              <LottieIcon src="/animations/lamp.lottie" className="w-12 h-12" />
             </div>
             <h3 className="text-2xl md:text-3xl text-primary font-bold mb-4 md:mb-6 group-hover:translate-x-1 transition-transform duration-300">Visi</h3>
             <p className="text-lg text-on-surface-variant leading-relaxed">
@@ -42,8 +43,8 @@ export default function VisiMisi() {
           >
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 group-hover:bg-primary/20 group-hover:scale-150 transition-all duration-700"></div>
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 bg-secondary-container rounded-xl flex items-center justify-center -rotate-3 group-hover:rotate-0 group-hover:scale-110 transition-all duration-300">
-                <span className="material-symbols-outlined text-secondary text-2xl group-hover:animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>format_list_bulleted</span>
+              <div className="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center -rotate-3 group-hover:rotate-0 group-hover:scale-110 transition-all duration-300">
+                <LottieIcon src="/animations/Target.lottie" className="w-10 h-10" />
               </div>
               <h3 className="text-3xl text-primary font-bold">Misi</h3>
             </div>

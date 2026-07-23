@@ -14,7 +14,7 @@ export default function LoginPage() {
     const params = new URLSearchParams(window.location.search);
     const errorMsg = params.get('error');
     const errorDesc = params.get('error_description');
-    
+
     if (errorMsg || errorDesc) {
       setError(errorDesc || errorMsg || "Terjadi kesalahan saat login.");
     }
@@ -23,12 +23,12 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     const params = new URLSearchParams(window.location.search);
     const nextPath = params.get('next') || '/dashboard';
-    
+
     const supabase = createClient();
-    
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -47,14 +47,14 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-surface-variant/30 flex items-center justify-center p-4 relative overflow-hidden">
-      
+
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
       {/* Login Card */}
       <div className="w-full max-w-md bg-surface rounded-[2rem] shadow-xl p-8 sm:p-10 relative z-10 border border-outline-variant/20 animate-fade-up">
-        
+
         {/* Back Button */}
         <Link href="/" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md mb-6">
           <span className="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -64,12 +64,12 @@ export default function LoginPage() {
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-20 h-20 bg-primary/5 rounded-2xl flex items-center justify-center p-3 mb-5 shadow-inner">
-            <Image 
-              src="/images/logo.png" 
-              alt="Logo BEM" 
-              width={80} 
-              height={80} 
-              className="w-full h-full object-contain hover:scale-105 transition-transform" 
+            <Image
+              src="/images/logo.png"
+              alt="Logo BEM"
+              width={80}
+              height={80}
+              className="w-full h-full object-contain hover:scale-105 transition-transform"
             />
           </div>
           <h1 className="text-2xl font-display-md text-on-background mb-1.5 font-bold">Selamat Datang 👋</h1>
@@ -88,15 +88,15 @@ export default function LoginPage() {
         <div className="p-3.5 bg-primary/5 border border-primary/20 rounded-xl text-xs text-on-surface-variant flex items-start gap-2.5 mb-6">
           <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">info</span>
           <div>
-            <p className="font-bold text-primary mb-0.5">Khusus Mahasiswa Tazkia</p>
-            <p>Gunakan email resmi kampus <code className="bg-primary/10 px-1 py-0.5 rounded text-primary font-mono text-[11px]">@student.stmik.tazkia.ac.id</code> saat melakukan login Google.</p>
+            <p className="font-bold text-primary mb-0.5">Khusus Mahasiswa</p>
+            <p>Gunakan email resmi kampus saat melakukan login Google.</p>
           </div>
         </div>
 
         {/* Google OAuth Button */}
-        <button 
-          onClick={handleGoogleLogin} 
-          disabled={isLoading} 
+        <button
+          onClick={handleGoogleLogin}
+          disabled={isLoading}
           className="w-full bg-surface border border-outline-variant/40 text-on-background font-bold py-3.5 px-6 rounded-xl hover:bg-surface-variant/30 hover:border-outline-variant transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed shadow-sm"
         >
           {isLoading ? (

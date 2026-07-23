@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FiArrowRight, FiHeart, FiEye, FiCalendar } from "react-icons/fi";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function BeritaSorotan() {
@@ -12,14 +13,10 @@ export default async function BeritaSorotan() {
     .select('*')
     .order('created_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (error) {
+  if (error && error.code !== 'PGRST116') {
     console.error("Error fetching sorotan:", error);
-  }
-
-  if (!featuredNews) {
-    return null; // Don't render anything if there's no news
   }
 
   return (
@@ -38,12 +35,33 @@ export default async function BeritaSorotan() {
           href="/berita"
           className="group flex items-center gap-1.5 text-primary hover:text-secondary font-semibold text-sm transition-colors duration-300 whitespace-nowrap"
         >
-          View All Activity <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+          Lihat Semua Berita <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
-      {/* Featured News Banner - Single consistent card */}
-      <div className="w-full">
+      {!featuredNews ? (
+        <div className="bg-white border border-outline-variant/30 rounded-3xl p-6 sm:p-10 text-center shadow-sm max-w-3xl mx-auto flex flex-col items-center justify-center gap-2">
+          <div className="w-48 h-48 sm:w-60 sm:h-60 relative -my-4">
+            <DotLottieReact
+              src="/animations/Social Media Marketing announcement.lottie"
+              loop
+              autoplay
+            />
+          </div>
+          <h3 className="text-lg md:text-xl font-bold text-on-background">Belum Ada Berita Dipublikasikan</h3>
+          <p className="text-xs sm:text-sm text-on-surface-variant max-w-md leading-relaxed">
+            Pantau terus halaman ini untuk mendapatkan informasi dan pengumuman terbaru dari BEM STMIK Tazkia.
+          </p>
+          <Link
+            href="/berita"
+            className="mt-3 inline-flex items-center gap-2 bg-primary text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all duration-300 shadow-md"
+          >
+            Jelajahi Berita <FiArrowRight />
+          </Link>
+        </div>
+      ) : (
+        /* Featured News Banner - Single consistent card */
+        <div className="w-full">
         <Link href={`/berita/${featuredNews.slug}`} className="group relative rounded-2xl md:rounded-3xl overflow-hidden shadow-md border border-outline-variant/20 bg-surface min-h-[420px] sm:min-h-[380px] md:min-h-[420px] flex flex-col justify-end transition-all duration-300 hover:shadow-xl block">
           {/* Background Image with Zoom */}
           <div
@@ -88,6 +106,7 @@ export default async function BeritaSorotan() {
           </div>
         </Link>
       </div>
+      )}
     </section>
   );
 }

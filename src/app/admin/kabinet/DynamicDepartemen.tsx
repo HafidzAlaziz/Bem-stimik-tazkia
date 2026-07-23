@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FiPlus, FiTrash2, FiBriefcase, FiChevronDown, FiChevronUp, FiUsers, FiTarget } from "react-icons/fi";
 import { KabinetDepartemen, KabinetDepartemenAnggota, KabinetDepartemenProker } from "@/types/kabinet";
 import ImageUpload from "@/components/ui/ImageUpload";
+import LottieUpload from "@/components/ui/LottieUpload";
 
 interface DynamicDepartemenProps {
   departemen: KabinetDepartemen[];
@@ -197,27 +198,70 @@ export default function DynamicDepartemen({ departemen, onChange }: DynamicDepar
                           <label className="text-xs font-bold text-on-surface">Singkatan</label>
                           <input type="text" value={dept.singkatan} onChange={(e) => handleChangeDept(deptIndex, 'singkatan', e.target.value)} className="w-full bg-background border border-outline-variant/50 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none uppercase" placeholder="KOMINFO" />
                         </div>
-                        <div className="space-y-1.5 md:col-span-2">
-                          <label className="text-xs font-bold text-on-surface">Ikon Departemen / Animasi</label>
+                        <div className="space-y-2 md:col-span-2">
+                          <label className="text-xs font-bold text-on-surface">Ikon Departemen (Upload Lottie / Gambar / Link)</label>
                           <div className="flex flex-col sm:flex-row gap-4 items-start">
                             <div className="shrink-0">
-                              <ImageUpload 
-                                value={dept.icon.startsWith('http') && !dept.icon.endsWith('.json') && !dept.icon.endsWith('.lottie') ? dept.icon : ""} 
+                              <LottieUpload 
+                                value={dept.icon} 
                                 onChange={(url) => handleChangeDept(deptIndex, 'icon', url)} 
-                                className="w-24" 
+                                className="w-28" 
                               />
                             </div>
-                            <div className="flex-1 w-full space-y-1.5">
+                            <div className="flex-1 w-full space-y-2">
                               <p className="text-[10px] text-on-surface-variant leading-relaxed">
-                                Upload gambar menggunakan kotak di kiri, <strong>ATAU</strong> masukkan emoji / URL animasi Lottie di bawah ini.
+                                💡 <strong>Upload File Custom:</strong> Klik kotak di kiri lalu pilih file animasi Lottie (<strong>.json</strong> atau <strong>.lottie</strong>) yang Anda download dari LottieFiles, atau upload gambar biasa.
                               </p>
-                              <input 
-                                type="text" 
-                                value={dept.icon.startsWith('http') && !dept.icon.endsWith('.json') && !dept.icon.endsWith('.lottie') ? "" : dept.icon} 
-                                onChange={(e) => handleChangeDept(deptIndex, 'icon', e.target.value)} 
-                                className="w-full bg-background border border-outline-variant/50 rounded-lg px-3 py-2 text-sm focus:border-primary outline-none" 
-                                placeholder="📢 atau https://url.com/lottie.json" 
-                              />
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-on-surface-variant">Atau Paste Asset URL / Link Direct Lottie JSON / Emoji:</label>
+                                <input 
+                                  type="text" 
+                                  value={dept.icon} 
+                                  onChange={(e) => handleChangeDept(deptIndex, 'icon', e.target.value)} 
+                                  className="w-full bg-background border border-outline-variant/50 rounded-lg px-3 py-2 text-xs focus:border-primary outline-none font-mono" 
+                                  placeholder="https://lottie.host/.../anim.json atau /animations/Calendar.lottie" 
+                                />
+                                {dept.icon.includes('/share/') && (
+                                  <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 text-[10px] space-y-1 font-medium mt-1">
+                                    <p className="font-bold flex items-center gap-1">⚠️ Perhatian: Link yang ditempel adalah Link Halaman Web Share</p>
+                                    <p>Link web share (seperti <code>/share/...</code>) tidak bisa diputar langsung oleh pemutar Lottie.</p>
+                                    <p className="font-bold text-primary">Solusi Mudah:</p>
+                                    <ul className="list-disc pl-4 space-y-0.5">
+                                      <li>Klik tombol <strong>Download</strong> di LottieFiles (.json atau .lottie), lalu klik kotak <strong>Upload Lottie</strong> di sebelah kiri.</li>
+                                      <li>ATAU kopy <strong>Lottie JSON Asset URL</strong> (link langsung yang berakhiran <code>.json</code>).</li>
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Quick Preset Lottie Buttons */}
+                              <div className="pt-1">
+                                <span className="text-[10px] font-bold text-on-surface-variant block mb-1">Preset Animasi Lokal BEM:</span>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {[
+                                    { label: "📢 Medkom", value: "/animations/Social Media Marketing announcement.lottie" },
+                                    { label: "📅 Event/Agenda", value: "/animations/Calendar.lottie" },
+                                    { label: "💻 Developer", value: "/animations/Developer.lottie" },
+                                    { label: "💡 Visi (Lampu)", value: "/animations/lamp.lottie" },
+                                    { label: "🎯 Misi (Target)", value: "/animations/Target.lottie" },
+                                    { label: "❤️ Pengmas", value: "/animations/Heart Animated.lottie" },
+                                    { label: "🚀 Humas", value: "/animations/Marketing Campaign - Creative 3D Animation.lottie" },
+                                  ].map((item, idx) => (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      onClick={() => handleChangeDept(deptIndex, 'icon', item.value)}
+                                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all ${
+                                        dept.icon === item.value
+                                          ? "bg-primary text-white border-primary shadow-sm"
+                                          : "bg-surface text-on-surface-variant border-outline-variant/40 hover:border-primary hover:text-primary"
+                                      }`}
+                                    >
+                                      {item.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -278,9 +322,22 @@ export default function DynamicDepartemen({ departemen, onChange }: DynamicDepar
                     {tab === 'proker' && (
                       <div className="p-4 md:p-5 animate-init-fade-up space-y-4">
                         {dept.proker.map((pr, prIdx) => (
-                          <div key={prIdx} className="bg-background border border-outline-variant/50 p-4 rounded-xl relative group">
-                            <button type="button" onClick={() => handleRemoveProker(deptIndex, prIdx)} className="absolute top-2 right-2 p-1.5 text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg transition-colors"><FiTrash2 size={14} /></button>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pr-8">
+                          <div key={prIdx} className="bg-background border border-outline-variant/50 p-4 rounded-xl relative group flex flex-col sm:flex-row gap-4 items-start">
+                            <button type="button" onClick={() => handleRemoveProker(deptIndex, prIdx)} className="absolute top-2 right-2 p-1.5 text-red-500 bg-red-50 hover:bg-red-500 hover:text-white rounded-lg transition-colors z-10"><FiTrash2 size={14} /></button>
+                            
+                            <div className="shrink-0 flex flex-col items-center gap-1 w-full sm:w-24">
+                              <label className="text-[10px] font-bold text-on-surface-variant uppercase">Ikon Proker</label>
+                              <LottieUpload value={pr.icon || ""} onChange={(url) => handleChangeProker(deptIndex, prIdx, 'icon', url)} className="w-20" />
+                              <input 
+                                type="text" 
+                                value={pr.icon || ""} 
+                                onChange={(e) => handleChangeProker(deptIndex, prIdx, 'icon', e.target.value)} 
+                                className="w-full text-center bg-surface border border-outline-variant/50 rounded-lg px-2 py-1 text-[10px] focus:border-primary outline-none font-mono mt-1" 
+                                placeholder="Link lottie" 
+                              />
+                            </div>
+
+                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full pr-8">
                               <div className="space-y-1">
                                 <label className="text-xs font-bold text-on-surface">Nama Proker</label>
                                 <input type="text" value={pr.nama} onChange={(e) => handleChangeProker(deptIndex, prIdx, 'nama', e.target.value)} className="w-full bg-surface border border-outline-variant/50 rounded-md px-2.5 py-1.5 text-xs outline-none" placeholder="Nama Program" />
